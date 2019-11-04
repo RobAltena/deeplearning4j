@@ -14,7 +14,7 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.datavec.python;
+package org.datavec.local.transforms.transform;
 
 import org.datavec.api.transform.TransformProcess;
 import org.datavec.api.transform.condition.Condition;
@@ -24,6 +24,8 @@ import org.datavec.api.transform.schema.Schema;
 import org.datavec.local.transforms.LocalTransformExecutor;
 
 import org.datavec.api.writable.*;
+import org.datavec.python.PythonCondition;
+import org.datavec.python.PythonTransform;
 import org.junit.Test;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
