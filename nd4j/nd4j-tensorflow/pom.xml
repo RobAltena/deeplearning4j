@@ -46,6 +46,11 @@
             <version>${tensorflow.javacpp.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>tensorflow-platform</artifactId>
+            <version>${tensorflow.javacpp.version}</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
