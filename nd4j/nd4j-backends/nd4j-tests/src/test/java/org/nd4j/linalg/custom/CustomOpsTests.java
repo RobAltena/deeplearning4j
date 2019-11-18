@@ -841,6 +841,26 @@ public class CustomOpsTests extends BaseNd4jTest {
     }
 
     @Test
+    public void testAdjustSaturation() {
+        INDArray in = Nd4j.createFromArray(new double[]{50,100,78, 118.5,220,112.5,190,163.5,230, 255,128.5,134}).reshape(2,2,3);
+        INDArray out = Nd4j.create(in.shape());
+        INDArray expected = Nd4j.createFromArray(new double[]{0,100,56, 17,220,5, 150,97,230, 255,2,13}).reshape(2,2,3);
+
+        Nd4j.exec(new AdjustSaturation(in, 2.0, out));
+        assertEquals(expected, out);
+    }
+
+    @Test
+    public void testAdjustHue() {
+        INDArray in = Nd4j.createFromArray(new double[]{0,100,56, 17,220,5, 150,97,230, 255,2,13}).reshape(2,2,3);
+        INDArray out = Nd4j.create(in.shape());
+        INDArray expected = Nd4j.createFromArray(new double[]{100,0,44, 208,5,220, 177,230,97, 2,255,244}).reshape(2,2,3);
+
+        Nd4j.exec(new AdjustHue(in, 0.5, out));
+        assertEquals(expected, out);
+    }
+
+    @Test
     public void testBitCast() {
         INDArray in = Nd4j.linspace(DataType.FLOAT, 1.0f, 1.0f, 8).reshape(2,2,2);
         INDArray out = Nd4j.createUninitialized(2,2);
@@ -963,4 +983,6 @@ public class CustomOpsTests extends BaseNd4jTest {
         assertEquals(1, lsd.size());
         assertArrayEquals(new long[]{1,10, 2}, lsd.get(0).getShape());
     }
+
+
 }

@@ -585,7 +585,9 @@ public class ImportClassMapping {
             org.nd4j.linalg.api.ops.custom.CompareAndBitpack.class,
             org.nd4j.linalg.api.ops.custom.DivideNoNan.class,
             org.nd4j.linalg.api.ops.custom.DrawBoundingBoxes.class,
-            org.nd4j.linalg.api.ops.custom.FakeQuantWithMinMaxVarsPerChannel.class
+            org.nd4j.linalg.api.ops.custom.FakeQuantWithMinMaxVarsPerChannel.class,
+            org.nd4j.linalg.api.ops.custom.AdjustSaturation.class,
+            org.nd4j.linalg.api.ops.custom.AdjustHue.class
     );
 
     static {
