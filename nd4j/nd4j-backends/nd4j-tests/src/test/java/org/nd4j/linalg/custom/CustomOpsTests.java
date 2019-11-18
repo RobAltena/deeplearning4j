@@ -984,5 +984,14 @@ public class CustomOpsTests extends BaseNd4jTest {
         assertArrayEquals(new long[]{1,10, 2}, lsd.get(0).getShape());
     }
 
-
+    @Test
+    public void testBetaInc() {
+        INDArray a = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 10).reshape(1,10);
+        INDArray b = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 10).reshape(1,10);
+        INDArray x = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 10).reshape(1,10);
+        INDArray out = Nd4j.createUninitialized(a.shape());
+        BetaInc op = new BetaInc(a,b,x,out);
+        Nd4j.exec(op);
+        System.out.println(out);
+    }
 }
