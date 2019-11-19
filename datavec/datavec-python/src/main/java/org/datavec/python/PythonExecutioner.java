@@ -27,9 +27,8 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.json.JSONObject;
+import org.json.JSONArray;
 import org.bytedeco.javacpp.*;
 import org.bytedeco.cpython.*;
 import static org.bytedeco.cpython.global.python.*;
@@ -42,18 +41,124 @@ import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.io.ClassPathResource;
 
+
 /**
- *  Python executioner
+ *  Allows execution of python scripts managed by
+ *  an internal interpreter.
+ *  An end user may specify a python script to run
+ *  via any of the execution methods available in this class.
+ *
+ *  At static initialization time (when the class is first initialized)
+ *  a number of components are setup:
+ *  1. The python path. A user may over ride this with the system property {@link #DEFAULT_PYTHON_PATH_PROPERTY}
+ *
+ *  2. Since this executioner uses javacpp to manage and run python interpreters underneath the covers,
+ *  a user may also over ride the system property {@link #JAVACPP_PYTHON_APPEND_TYPE} with one of the {@link JavaCppPathType}
+ *  values. This will allow the user to determine whether the javacpp default python path is used at all, and if so
+ *  whether it is appended, prepended, or not used. This behavior is useful when you need to use an external
+ *  python distribution such as anaconda.
+ *
+ *  3. A main interpreter: This is the default interpreter to be used with the main thread.
+ *  We may initialize one or more relative to the thread invoking the python code.
+ *
+ *  4. A proper numpy import for use with javacpp: We call numpy import ourselves to ensure proper loading of
+ *  native libraries needed by numpy are allowed to load in the proper order. If we don't do this,
+ *  it causes a variety of issues with running numpy.
+ *
+ *  5. Various python scripts pre defined on the classpath included right with the java code.
+ *  These are auxillary python scripts used for loading classes, pre defining certain kinds of behavior
+ *  in order for us to manipulate values within the python memory, as well as pulling them out of memory
+ *  for integration within the internal python executioner. You can see this behavior in {@link #_readOutputs(PythonVariables)}
+ *  as an example.
+ *
+ *  For more information on how this works, please take a look at the {@link #init()}
+ *  method.
+ *
+ *  Generally, a user defining a python script for use by the python executioner
+ *  will have a set of defined target input values and output values.
+ *  These values should not be present when actually running the script, but just referenced.
+ *  In order to test your python script for execution outside the engine,
+ *  we recommend commenting out a few default values as dummy input values.
+ *  This will allow an end user to test their script before trying to use the server.
+ *
+ *  In order to get output values out of a python script, all a user has to do
+ *  is define the output variables they want being used in the final output in the actual pipeline.
+ *  For example, if a user wants to return a dictionary, they just have to create a dictionary with that name
+ *  and based on the configured {@link PythonVariables} passed as outputs
+ *  to one of the execution methods, we can pull the values out automatically.
+ *
+ *  For input definitions, it is similar. You just define the values you want used in
+ *  {@link PythonVariables} and we will automatically generate code for defining those values
+ *  as desired for running. This allows the user to customize values dynamically
+ *  at runtime but reference them by name in a python script.
+ *
  *
  *  @author Fariz Rahman
+ * @author Adam Gibson
+ */
+
+
+/**
+ *  Allows execution of python scripts managed by
+ *  an internal interpreter.
+ *  An end user may specify a python script to run
+ *  via any of the execution methods available in this class.
+ *
+ *  At static initialization time (when the class is first initialized)
+ *  a number of components are setup:
+ *  1. The python path. A user may over ride this with the system property {@link #DEFAULT_PYTHON_PATH_PROPERTY}
+ *
+ *  2. Since this executioner uses javacpp to manage and run python interpreters underneath the covers,
+ *  a user may also over ride the system property {@link #JAVACPP_PYTHON_APPEND_TYPE} with one of the {@link JavaCppPathType}
+ *  values. This will allow the user to determine whether the javacpp default python path is used at all, and if so
+ *  whether it is appended, prepended, or not used. This behavior is useful when you need to use an external
+ *  python distribution such as anaconda.
+ *
+ *  3. A main interpreter: This is the default interpreter to be used with the main thread.
+ *  We may initialize one or more relative to the thread invoking the python code.
+ *
+ *  4. A proper numpy import for use with javacpp: We call numpy import ourselves to ensure proper loading of
+ *  native libraries needed by numpy are allowed to load in the proper order. If we don't do this,
+ *  it causes a variety of issues with running numpy.
+ *
+ *  5. Various python scripts pre defined on the classpath included right with the java code.
+ *  These are auxillary python scripts used for loading classes, pre defining certain kinds of behavior
+ *  in order for us to manipulate values within the python memory, as well as pulling them out of memory
+ *  for integration within the internal python executioner. You can see this behavior in {@link #_readOutputs(PythonVariables)}
+ *  as an example. More of these python scripts can be found: https://github.com/KonduitAI/konduit-serving/tree/master/konduit-serving-python/src/main/resources/pythonexec
+ *
+ *  For more information on how this works, please take a look at the {@link #init()}
+ *  method.
+ *
+ *  Generally, a user defining a python script for use by the python executioner
+ *  will have a set of defined target input values and output values.
+ *  These values should not be present when actually running the script, but just referenced.
+ *  In order to test your python script for execution outside the engine,
+ *  we recommend commenting out a few default values as dummy input values.
+ *  This will allow an end user to test their script before trying to use the server.
+ *
+ *  In order to get output values out of a python script, all a user has to do
+ *  is define the output variables they want being used in the final output in the actual pipeline.
+ *  For example, if a user wants to return a dictionary, they just have to create a dictionary with that name
+ *  and based on the configured {@link PythonVariables} passed as outputs
+ *  to one of the execution methods, we can pull the values out automatically.
+ *
+ *  For input definitions, it is similar. You just define the values you want used in
+ *  {@link PythonVariables} and we will automatically generate code for defining those values
+ *  as desired for running. This allows the user to customize values dynamically
+ *  at runtime but reference them by name in a python script.
+ *
+ *
+ *  @author Fariz Rahman
+ * @author Adam Gibson
  */
 @Slf4j
 public class PythonExecutioner {
 
     private final static String fileVarName = "_f" + Nd4j.getRandom().nextInt();
     private static boolean init;
-    public final static String DEFAULT_PYTHON_PATH_PROPERTY = "org.deeplearning4j.serving.python.path";
-    public final static String JAVACPP_PYTHON_APPEND_TYPE = "org.deeplearning4j.serving.python.javacpp.path.append";
+    public final static String DEFAULT_PYTHON_PATH_PROPERTY = "ai.konduit.serving.python.path";
+    public final static String JAVACPP_PYTHON_APPEND_TYPE = "ai.konduit.serving.python.javacpp.path.append";
     public final static String DEFAULT_APPEND_TYPE = "before";
     private static Map<String, PyThreadState> interpreters = new java.util.concurrent.ConcurrentHashMap<>();
     private static PyThreadState currentThreadState;
@@ -64,6 +169,14 @@ public class PythonExecutioner {
 
     private static String currentInterpreter = MAIN_INTERPRETER_NAME;
 
+    /**
+     * One of a few desired values
+     * for how we should handle
+     * using javacpp's python path.
+     * BEFORE: Prepend the python path alongside a defined one
+     * AFTER: Append the javacpp python path alongside the defined one
+     * NONE: Don't use javacpp's python path at all
+     */
     public enum JavaCppPathType {
         BEFORE,AFTER,NONE
     }
@@ -237,7 +350,11 @@ public class PythonExecutioner {
         currentInterpreter = interpreterName;
     }
 
-    public static String getInterpreter(){
+    /**
+     * Returns the current interpreter.
+     * @return
+     */
+    public static String getInterpreter() {
         return currentInterpreter;
     }
 
@@ -430,34 +547,32 @@ public class PythonExecutioner {
             return;
         }
 
-
-        JSONParser p = new JSONParser();
-        try{
-            JSONObject jobj = (JSONObject) p.parse(json);
-            for (String varName: pyOutputs.getVariables()){
+        try {
+            JSONObject jobj = new JSONObject(json);
+            for (String varName: pyOutputs.getVariables()) {
                 PythonVariables.Type type = pyOutputs.getType(varName);
-                if (type == PythonVariables.Type.NDARRAY){
+                if (type == PythonVariables.Type.NDARRAY) {
                     JSONObject varValue = (JSONObject)jobj.get(varName);
-                    long address = (Long)varValue.get("address");
-                    JSONArray shapeJson = (JSONArray)varValue.get("shape");
-                    JSONArray stridesJson = (JSONArray)varValue.get("strides");
+                    long address = (Long) varValue.getLong("address");
+                    JSONArray shapeJson = (JSONArray) varValue.get("shape");
+                    JSONArray stridesJson = (JSONArray) varValue.get("strides");
                     long[] shape = jsonArrayToLongArray(shapeJson);
                     long[] strides = jsonArrayToLongArray(stridesJson);
                     String dtypeName = (String)varValue.get("dtype");
                     DataType dtype;
-                    if (dtypeName.equals("float64")){
+                    if (dtypeName.equals("float64")) {
                         dtype = DataType.DOUBLE;
                     }
-                    else if (dtypeName.equals("float32")){
+                    else if (dtypeName.equals("float32")) {
                         dtype = DataType.FLOAT;
                     }
-                    else if (dtypeName.equals("int16")){
+                    else if (dtypeName.equals("int16")) {
                         dtype = DataType.SHORT;
                     }
-                    else if (dtypeName.equals("int32")){
+                    else if (dtypeName.equals("int32")) {
                         dtype = DataType.INT;
                     }
-                    else if (dtypeName.equals("int64")){
+                    else if (dtypeName.equals("int64")) {
                         dtype = DataType.LONG;
                     }
                     else{
@@ -466,18 +581,14 @@ public class PythonExecutioner {
 
                     pyOutputs.setValue(varName, new NumpyArray(address, shape, strides, dtype, true));
 
-                    //pyOutputs.setValue(varName, evalNDARRAY(varName));
-
                 }
                 else if (type == PythonVariables.Type.LIST) {
-                    JSONArray varValue = (JSONArray)jobj.get(varName);
+                    JSONArray varValue = (JSONArray) jobj.get(varName);
                     pyOutputs.setValue(varName, varValue);
-                    //pyOutputs.setValue(varName, evalLIST(varName));
                 }
                 else if (type == PythonVariables.Type.DICT) {
                     Map map = toMap((JSONObject) jobj.get(varName));
                     pyOutputs.setValue(varName, map);
-                    //pyOutputs.setValue(varName, evalDICT(varName));
 
                 }
                 else{
@@ -505,7 +616,7 @@ public class PythonExecutioner {
         }
     }
 
-    private static synchronized  void _exec_wrapped(String code){
+    private static synchronized  void _exec_wrapped(String code) {
         _exec(getWrappedCode(code));
     }
 
@@ -534,7 +645,7 @@ public class PythonExecutioner {
         return hasVar;
     }
 
-    public static void execWithSetupAndRun(String code){
+    public static void execWithSetupAndRun(String code) {
         code = getWrappedCode(code);
         if(code.contains("import numpy") && !getInterpreter().equals("main")) { // FIXME
             throw new IllegalArgumentException("Unable to execute numpy on sub interpreter. See https://mail.python.org/pipermail/python-dev/2019-January/156095.html for the reasons.");
@@ -619,7 +730,18 @@ public class PythonExecutioner {
         exec(inputCode + code, pyOutputs);
     }
 
-    public static void execWithSetupAndRun(String code, PythonVariables pyInputs, PythonVariables pyOutputs) throws Exception{
+    /**
+     * Execute the given python code
+     * with the {@link PythonVariables}
+     * inputs and outputs for storing the values
+     * specified by the user and needed by the user
+     * as output
+     * @param code the python code to execute
+     * @param pyInputs the python variables input in to the python script
+     * @param pyOutputs the python variables output returned by the python script
+     * @throws Exception
+     */
+    public static void execWithSetupAndRun(String code, PythonVariables pyInputs, PythonVariables pyOutputs) throws Exception {
         String inputCode = inputCode(pyInputs);
         code = inputCode +code;
         code = getWrappedCode(code);
@@ -715,6 +837,16 @@ public class PythonExecutioner {
     }
 
 
+    /**
+     * Evaluate a string based on the
+     * current variable name.
+     * This variable named needs to be present
+     * or defined earlier in python code
+     * in order to pull out the values.
+     *
+     * @param varName the variable name to evaluate
+     * @return the evaluated value
+     */
     public static String evalString(String varName) {
         PythonVariables vars = new PythonVariables();
         vars.addStr(varName);
@@ -723,6 +855,17 @@ public class PythonExecutioner {
     }
 
 
+
+    /**
+     * Evaluate a string based on the
+     * current variable name.
+     * This variable named needs to be present
+     * or defined earlier in python code
+     * in order to pull out the values.
+     *
+     * @param varName the variable name to evaluate
+     * @return the evaluated value
+     */
     public static long evalInteger(String varName) {
         PythonVariables vars = new PythonVariables();
         vars.addInt(varName);
@@ -731,65 +874,75 @@ public class PythonExecutioner {
     }
 
 
-    public static Double evalFLOAT(String varName){
+    /**
+     * Evaluate a string based on the
+     * current variable name.
+     * This variable named needs to be present
+     * or defined earlier in python code
+     * in order to pull out the values.
+     *
+     * @param varName the variable name to evaluate
+     * @return the evaluated value
+     */
+    public static Double evalFloat(String varName) {
         PythonVariables vars = new PythonVariables();
         vars.addFloat(varName);
         exec("print('')", vars);
         return vars.getFloatValue(varName);
     }
-    public static Object[] evalLIST(String varName){
+
+
+    /**
+     * Evaluate a string based on the
+     * current variable name.
+     * This variable named needs to be present
+     * or defined earlier in python code
+     * in order to pull out the values.
+     *
+     * @param varName the variable name to evaluate
+     * @return the evaluated value
+     */
+    public static Object[] evalList(String varName) {
         PythonVariables vars = new PythonVariables();
         vars.addList(varName);
         exec("pass", vars);
         return vars.getListValue(varName);
     }
-    public static Map evalDict(String varName){
+
+
+    /**
+     * Evaluate a string based on the
+     * current variable name.
+     * This variable named needs to be present
+     * or defined earlier in python code
+     * in order to pull out the values.
+     *
+     * @param varName the variable name to evaluate
+     * @return the evaluated value
+     */
+    public static Map evalDict(String varName) {
         PythonVariables vars = new PythonVariables();
         vars.addDict(varName);
         exec("pass", vars);
         return vars.getDictValue(varName);
     }
 
-    public static NumpyArray evalNDARRAY(String varName){
+
+    /**
+     * Evaluate a string based on the
+     * current variable name.
+     * This variable named needs to be present
+     * or defined earlier in python code
+     * in order to pull out the values.
+     *
+     * @param varName the variable name to evaluate
+     * @return the evaluated value
+     */
+    public static NumpyArray evalNdArray(String varName) {
         PythonVariables vars = new PythonVariables();
         vars.addNDArray(varName);
         exec("pass", vars);
         return vars.getNDArrayValue(varName);
-    }
-
-
-
-    private static String getOutputCheckCode(PythonVariables pyOutputs){
-        // make sure all outputs exist and are of expected types
-        // helps avoid JVM crashes (most of the time)
-        String code= "__error_message=''\n";
-        String checkVarExists = "if '%s' not in locals(): __error_message += '%s not found.'\n";
-        String checkVarType = "if not isinstance(%s, %s): __error_message += '%s is not of required type.'\n";
-        for (String varName: pyOutputs.getVariables()){
-            PythonVariables.Type type = pyOutputs.getType(varName);
-            code += String.format(checkVarExists, varName, varName);
-            switch(type){
-                case INT:
-                    code += String.format(checkVarType, varName, "int", varName);
-                    break;
-                case STR:
-                    code += String.format(checkVarType, varName, "str", varName);
-                    break;
-                case FLOAT:
-                    code += String.format(checkVarType, varName, "float", varName);
-                    break;
-                case BOOL:
-                    code += String.format(checkVarType, varName, "bool", varName);
-                    break;
-                case NDARRAY:
-                    code += String.format(checkVarType, varName, "np.ndarray", varName);
-                    break;
-                case LIST:
-                    code += String.format(checkVarType, varName, "list", varName);
-                    break;
-            }
-        }
-        return code;
     }
 
     private static String outputVarName() {
@@ -866,6 +1019,7 @@ public class PythonExecutioner {
                 indentedCode.append("    " + split + "\n");
 
             }
+
             String out = base.replace("    pass",indentedCode);
             return out;
         } catch (IOException e) {
@@ -876,14 +1030,14 @@ public class PythonExecutioner {
 
 
 
-    private static String getTempFile(){
+    private static String getTempFile() {
         String ret =  "temp_" + Thread.currentThread().getId() + "_" + currentInterpreter +  ".json";
         log.info(ret);
         return ret;
     }
 
 
-    private static String outputCodeForAllVariables(){
+    private static String outputCodeForAllVariables() {
         String outputCode = "";
         try(BufferedInputStream bufferedInputStream = new BufferedInputStream(new ClassPathResource("pythonexec/outputcode.py").getInputStream())) {
             outputCode  += IOUtils.toString(bufferedInputStream,Charset.defaultCharset()).replace("f2",fileVarName);
@@ -928,7 +1082,7 @@ public class PythonExecutioner {
         }
     }
 
-    private static boolean _checkPatchApplied(String dest){
+    private static boolean _checkPatchApplied(String dest) {
         try {
             return FileUtils.readFileToString(new File(dest), "utf-8").startsWith("#patch");
         } catch (IOException e) {
