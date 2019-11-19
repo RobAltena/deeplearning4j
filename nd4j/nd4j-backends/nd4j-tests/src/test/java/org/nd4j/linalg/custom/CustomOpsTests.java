@@ -22,6 +22,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nd4j.linalg.BaseNd4jTest;
 import org.nd4j.linalg.api.blas.params.MMulTranspose;
+import org.nd4j.linalg.api.buffer.DataBuffer;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.CustomOp;
@@ -986,12 +987,112 @@ public class CustomOpsTests extends BaseNd4jTest {
 
     @Test
     public void testBetaInc() {
-        INDArray a = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 10).reshape(1,10);
-        INDArray b = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 10).reshape(1,10);
-        INDArray x = Nd4j.linspace(DataType.FLOAT, 0.1, 0.1, 10).reshape(1,10);
-        INDArray out = Nd4j.createUninitialized(a.shape());
-        BetaInc op = new BetaInc(a,b,x,out);
+        Nd4j.getRandom().setSeed(10);
+        INDArray a = Nd4j.linspace(DataType.BFLOAT16, 0.1, 0.1, 9).reshape(3,3);
+        INDArray b = Nd4j.linspace(DataType.BFLOAT16, 0.1, 0.1, 9).reshape(3,3);
+        INDArray x = Nd4j.linspace(DataType.BFLOAT16, 0.1, 0.1, 9).reshape(3,3);
+        INDArray expected = Nd4j.createFromArray(new float[]{0.4121f, 0.3926f, 0.4082f,
+                0.4414f, 0.5000f, 0.5703f,
+                0.6562f, 0.7656f, 0.8828f}).reshape(3,3);
+
+        BetaInc op = new BetaInc(a,b,x);
+        INDArray[] out = Nd4j.exec(op);
+        assertArrayEquals(expected.shape(), out[0].shape());
+        for (int i = 0; i < 3; ++i)
+            assertArrayEquals(expected.toDoubleMatrix()[i], out[0].toDoubleMatrix()[i], 1e-4);
+    }
+
+    @Test
+    public void testFusedBatchNorm() {
+        INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 2*2*3*4).reshape(2,2,3,4);
+        INDArray scale = Nd4j.create(DataType.DOUBLE, 4);
+        scale.assign(0.5);
+        INDArray offset = Nd4j.create(DataType.DOUBLE, 4);
+        offset.assign(2.0);
+
+        INDArray y = Nd4j.createUninitialized(DataType.DOUBLE, x.shape());
+        INDArray batchMean = Nd4j.create(4);
+        INDArray batchVar = Nd4j.create(4);
+
+        FusedBatchNorm op = new FusedBatchNorm(x,scale,offset,0,1,
+                                                y, batchMean, batchVar);
+
+        INDArray expectedY = Nd4j.createFromArray(new double[]{1.20337462,  1.20337462,  1.20337462,
+                1.20337462, 1.34821558,  1.34821558,  1.34821558,  1.34821558, 1.49305654,  1.49305654,
+                1.49305654,  1.49305654, 1.63789749,  1.63789749,  1.63789749,  1.63789749, 1.78273857,
+                1.78273857,  1.78273857,  1.78273857, 1.92757952,  1.92757952,  1.92757952,  1.92757952,
+                2.0724206 ,  2.0724206 ,  2.0724206 ,  2.0724206 , 2.21726155,  2.21726155,  2.21726155,
+                2.21726155, 2.36210251,  2.36210251,  2.36210251,  2.36210251, 2.50694346,  2.50694346,
+                2.50694346,  2.50694346, 2.65178442,  2.65178442,  2.65178442,  2.65178442, 2.79662538,
+                2.79662538,  2.79662538,  2.79662538}).reshape(x.shape());
+        INDArray expectedBatchMean = Nd4j.createFromArray(new double[]{23.,  24.,  25.,  26.});
+        INDArray expectedBatchVar = Nd4j.createFromArray(new double[]{208.00001526,  208.00001526,  208.00001526,  208.00001526});
         Nd4j.exec(op);
-        System.out.println(out);
+        assertArrayEquals(expectedY.shape(), y.shape());
+        assertArrayEquals(expectedBatchMean.shape(), batchMean.shape());
+        assertArrayEquals(expectedBatchVar.shape(), batchVar.shape());
+    }
+
+    @Test
+    public void testMatrixBandPart() {
+        INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 2*3*3).reshape(2,3,3);
+        val op = new MatrixBandPart(x,1,1);
+        INDArray expected = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 2*3*3).reshape(2,3,3);
+        /*expected.putScalar(0, 0, 2, 0.);
+        expected.putScalar(1, 0, 2, 0.);
+        expected.putScalar(0, 2, 0, 0.);
+        expected.putScalar(1, 2, 0, 0.);*/
+
+        INDArray[] out = Nd4j.exec(op);
+        assertEquals(expected, x);
+    }
+
+    @Test
+    public void testMaxPoolWithArgmax() {
+        INDArray x = Nd4j.createFromArray(new double[]{5.5, 0.,   0.3,  5.5,1.5, 0.,   1.3,  6.5,8.6, 0.,    0.,  0.4,2.5, 1.,   0.3,  4.5,
+                1.5, 1.,   1.3,  1.5, 3.5, 0.,   1.3,  2.5, 2.6, 2.,    3.,  1.4, 4.5, 1.,   0.3,  0.5}).reshape(2,2,2,4);
+        INDArray expected = Nd4j.createFromArray(new long[]{0,  1,  2,  3,4,  5,  6,  7,8,  9, 10, 11,12, 13, 14, 15,
+                0,  1,  2,  3,4,  5,  6,  7,8,  9, 10, 11,12, 13, 14, 15}).reshape(2,2,2,4);
+        val op = new MaxPoolWithArgmax(x);
+        INDArray[] res = Nd4j.exec(op);
+
+        assertEquals(x, res[0]);
+        assertEquals(expected, res[1]);
+    }
+
+    @Test
+    public void testPolygamma() {
+        INDArray n = Nd4j.linspace(DataType.FLOAT, 1.0, 1.0, 9).reshape(3,3);
+        INDArray x = Nd4j.create(DataType.FLOAT, 3,3);
+        x.assign(0.5);
+        INDArray expected = Nd4j.createFromArray(new float[]{4.934802f, -16.828796f, 97.409088f, -771.474243f,
+                7691.113770f, -92203.460938f, 1290440.250000f, -20644900.000000f, 3.71595e+08f}).reshape(3,3);
+        INDArray output = Nd4j.create(DataType.FLOAT, expected.shape());
+        val op = new Polygamma(x,n,output);
+        Nd4j.exec(op);
+        assertEquals(expected, output);
+    }
+
+    @Test
+    public void testRandomCrop() {
+        INDArray x = Nd4j.createFromArray(new double[]{1.8, 2.5,  4.,  9., 2.1, 2.4,  3.,  9.,2.1, 2.1, 0.7, 0.1,3., 4.2, 2.2, 1. }).reshape(2,2,4);
+        INDArray shape = Nd4j.createFromArray(new int[] {1,2,3});
+        val op = new RandomCrop(x, shape);
+        INDArray[] res = Nd4j.exec(op);
+    }
+
+    @Test
+    public void testRoll() {
+        INDArray x = Nd4j.createFromArray(new double[]{    11.11, 11.12, 11.21, 11.22, 11.31, 11.32, 11.41, 11.42,     12.11, 12.12, 12.21, 12.22, 12.31, 12.32, 12.41, 12.42,
+                21.11, 21.12, 21.21, 21.22, 21.31, 21.32, 21.41, 21.42,     22.11, 22.12, 22.21, 22.22, 22.31, 22.32, 22.41, 22.42}).
+                reshape(2,2,4,2);
+
+        INDArray expected = Nd4j.createFromArray(new double[]{    22.21, 22.22, 22.31, 22.32, 22.41, 22.42, 11.11, 11.12, 11.21, 11.22, 11.31, 11.32, 11.41, 11.42,
+                12.11, 12.12, 12.21, 12.22, 12.31, 12.32, 12.41, 12.42, 21.11, 21.12, 21.21, 21.22, 21.31, 21.32,
+                21.41, 21.42, 22.11, 22.12
+        }).reshape(x.shape());
+        val op = new Roll(x, 6);
+        INDArray[] res = Nd4j.exec(op);
+        assertEquals(expected, res[0]);
     }
 }

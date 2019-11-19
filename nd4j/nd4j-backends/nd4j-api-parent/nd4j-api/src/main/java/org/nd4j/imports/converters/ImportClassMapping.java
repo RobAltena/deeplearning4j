@@ -587,7 +587,14 @@ public class ImportClassMapping {
             org.nd4j.linalg.api.ops.custom.DrawBoundingBoxes.class,
             org.nd4j.linalg.api.ops.custom.FakeQuantWithMinMaxVarsPerChannel.class,
             org.nd4j.linalg.api.ops.custom.AdjustSaturation.class,
-            org.nd4j.linalg.api.ops.custom.AdjustHue.class
+            org.nd4j.linalg.api.ops.custom.AdjustHue.class,
+            org.nd4j.linalg.api.ops.custom.FusedBatchNorm.class,
+            org.nd4j.linalg.api.ops.custom.BetaInc.class,
+            org.nd4j.linalg.api.ops.custom.MatrixBandPart.class,
+            org.nd4j.linalg.api.ops.custom.MaxPoolWithArgmax.class,
+            org.nd4j.linalg.api.ops.custom.Polygamma.class,
+            org.nd4j.linalg.api.ops.custom.RandomCrop.class,
+            org.nd4j.linalg.api.ops.custom.Roll.class
     );
 
     static {

@@ -8,12 +8,16 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 public class AdjustHue extends DynamicCustomOp {
     public AdjustHue(INDArray in, double delta, INDArray out) {
+        this(in, delta);
+        outputArguments.add(out);
+    }
+
+    public AdjustHue(INDArray in, double delta) {
         Preconditions.checkArgument(in.rank() >= 3,
                 String.format("AdjustSaturation: op expects rank of input array to be >= 3, but got %d instead", in.rank()));
         Preconditions.checkArgument(-1.0 <= delta && delta <= 1.0, "AdjustHue: parameter delta must be within [-1, 1] interval," +
-                                    " but got %f instead", delta);
+                " but got %f instead", delta);
         inputArguments.add(in);
-        outputArguments.add(out);
 
         addTArgument(delta);
     }
