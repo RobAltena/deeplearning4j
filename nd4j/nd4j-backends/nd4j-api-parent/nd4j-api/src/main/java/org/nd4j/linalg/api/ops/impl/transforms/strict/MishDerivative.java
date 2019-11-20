@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2019 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -14,61 +14,66 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.nd4j.linalg.api.ops.impl.reduce.bool;
+package org.nd4j.linalg.api.ops.impl.transforms.strict;
 
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.imports.NoOpNameFoundException;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.api.ops.BaseReduceBoolOp;
+import org.nd4j.linalg.api.ops.BaseTransformStrictOp;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
- * IsInf function
+ * Mish derivative
  *
  * @author raver119@gmail.com
-  */
-public class IsNaN extends BaseReduceBoolOp {
-    public IsNaN(SameDiff sameDiff, SDVariable i_v, int[] dims) {
-        super(sameDiff, i_v, dims);
+ */
+public class MishDerivative extends BaseTransformStrictOp {
+    public MishDerivative(SameDiff sameDiff, SDVariable i_v1, SDVariable i_v2) {
+        super(sameDiff, i_v1, i_v2);
     }
 
-    public IsNaN(SameDiff sameDiff, SDVariable i_v, int[] dims, boolean keepDims) {
-        super(sameDiff, i_v, dims, keepDims);
+    public MishDerivative(SameDiff sameDiff, SDVariable i_v1, SDVariable i_v2, boolean inPlace) {
+        super(sameDiff, i_v1, i_v2, inPlace);
     }
 
-
-    public IsNaN() {}
-
-    public IsNaN(INDArray x, INDArray z) {
-        super(x, z, false, null);
+    public MishDerivative(SameDiff sameDiff, SDVariable i_v, boolean inPlace) {
+        super(sameDiff, i_v, inPlace);
     }
 
-    public IsNaN(INDArray x) {
+    public MishDerivative() {}
+
+    public MishDerivative(INDArray x, INDArray z) {
+        super(x, z);
+    }
+
+    public MishDerivative(INDArray x) {
         super(x);
     }
 
     @Override
     public int opNum() {
-        return 4;
+        return 58;
     }
 
     @Override
     public String opName() {
-        return "hasnan";
+        return "_mishderivative";
     }
 
     @Override
     public String onnxName() {
-        return "hasNaNs";
+        throw new NoOpNameFoundException("No onnx op opName found for " +  opName());
     }
-
 
     @Override
-    public List<SDVariable> doDiff(List<SDVariable> i_v) {
-        return Collections.singletonList(f().zerosLike(arg()));
+    public String tensorflowName() {
+        throw new NoOpNameFoundException("No tensorflow op opName found for " +  opName());
     }
 
+       @Override
+    public List<SDVariable> doDiff(List<SDVariable> f1) {
+       throw new UnsupportedOperationException();
+    }
 }

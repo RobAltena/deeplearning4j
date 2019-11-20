@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2019 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -14,59 +14,64 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-package org.nd4j.linalg.api.ops.impl.transforms.custom;
+package org.nd4j.linalg.api.ops.impl.transforms.strict;
 
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
-import org.nd4j.base.Preconditions;
 import org.nd4j.imports.NoOpNameFoundException;
-import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.api.ops.impl.transforms.BaseDynamicTransformOp;
+import org.nd4j.linalg.api.ops.BaseTransformStrictOp;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- * Element-wise shift operation, shift bits to the left, <<
+ * Mish activation function
  *
  * @author raver119@gmail.com
  */
-public class ShiftBits extends BaseDynamicTransformOp {
-
-    public ShiftBits(SameDiff sameDiff, SDVariable x, SDVariable y) {
-        super(sameDiff, new SDVariable[] {x, y} ,false);
+public class Mish extends BaseTransformStrictOp {
+    public Mish(SameDiff sameDiff, SDVariable i_v, boolean inPlace) {
+        super(sameDiff, i_v, inPlace);
     }
 
-    public ShiftBits(INDArray x, INDArray y,  INDArray output) {
-        super(new INDArray[]{x, y}, new INDArray[]{output});
+    public Mish() {
     }
 
-    public ShiftBits(INDArray x, INDArray y) {
-        this(x, y,x.ulike());
+    public Mish(INDArray x, INDArray z) {
+        super(x, z);
     }
 
-    public ShiftBits() {}
+    public Mish(INDArray ndArray) {
+        super(ndArray);
+    }
+
+    @Override
+    public int opNum() {
+        return 57;
+    }
 
     @Override
     public String opName() {
-        return "shift_bits";
+        return "mish";
+    }
+
+    @Override
+    public String onnxName() {
+        throw new NoOpNameFoundException("No onnx op opName found for " + opName());
     }
 
     @Override
     public String tensorflowName() {
-        return "LeftShift";
+        return "Mish";
     }
 
 
     @Override
     public List<SDVariable> doDiff(List<SDVariable> i_v) {
-        throw new UnsupportedOperationException("Not yet implemented: " + opName());
+        SDVariable ret = f().mishDerivative(arg()).mul(i_v.get(0));
+        return Arrays.asList(ret);
     }
 
-    @Override
-    public List<DataType> calculateOutputDataTypes(List<DataType> dataTypes){
-        Preconditions.checkState(dataTypes.get(0).isIntType(), "Input 0 datatype must be a integer type, got %s", dataTypes.get(0));
-        return Collections.singletonList(dataTypes.get(0));
-    }
+
 }
