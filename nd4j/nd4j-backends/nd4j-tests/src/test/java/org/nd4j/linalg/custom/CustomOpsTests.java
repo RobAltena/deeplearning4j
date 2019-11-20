@@ -1095,4 +1095,13 @@ public class CustomOpsTests extends BaseNd4jTest {
         INDArray[] res = Nd4j.exec(op);
         assertEquals(expected, res[0]);
     }
+
+    @Test
+    public void testToggleBits() {
+        INDArray input = Nd4j.createFromArray(new int[]{2,2});
+        INDArray expected = Nd4j.createFromArray(new int[]{-3,-3});
+        ToggleBits op = new ToggleBits(input);
+        val result = Nd4j.exec(op);
+        assertEquals(expected, result[0]);
+    }
 }
