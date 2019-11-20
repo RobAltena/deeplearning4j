@@ -7,6 +7,10 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 public class AdjustHue extends DynamicCustomOp {
+    public AdjustHue() {
+        super();
+    }
+
     public AdjustHue(INDArray in, double delta, INDArray out) {
         this(in, delta);
         outputArguments.add(out);

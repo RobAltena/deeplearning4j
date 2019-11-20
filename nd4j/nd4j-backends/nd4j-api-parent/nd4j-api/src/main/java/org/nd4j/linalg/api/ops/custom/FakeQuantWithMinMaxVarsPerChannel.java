@@ -9,14 +9,18 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 public class FakeQuantWithMinMaxVarsPerChannel extends DynamicCustomOp {
     public FakeQuantWithMinMaxVarsPerChannel() {}
 
-    public FakeQuantWithMinMaxVarsPerChannel(INDArray x, INDArray min, INDArray max,
-                                             INDArray output) {
+    public FakeQuantWithMinMaxVarsPerChannel(INDArray x, INDArray min, INDArray max) {
         Preconditions.checkArgument(min.isVector() && max.isVector() &&
                         min.length() == max.length(),
                 "FakeQuantWithMinMaxVarsPerChannel: min and max should be 1D tensors with the same length");
         inputArguments.add(x);
         inputArguments.add(min);
         inputArguments.add(max);
+    }
+
+    public FakeQuantWithMinMaxVarsPerChannel(INDArray x, INDArray min, INDArray max,
+                                             INDArray output) {
+        this(x,min,max);
         outputArguments.add(output);
     }
 

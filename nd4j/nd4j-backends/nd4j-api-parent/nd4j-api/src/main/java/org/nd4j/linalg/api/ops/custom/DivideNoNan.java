@@ -10,9 +10,13 @@ public class DivideNoNan extends DynamicCustomOp {
     public DivideNoNan() {
     }
 
-    public DivideNoNan(INDArray in1, INDArray in2, INDArray out) {
+    public DivideNoNan(INDArray in1, INDArray in2) {
         inputArguments.add(in1);
         inputArguments.add(in2);
+    }
+
+    public DivideNoNan(INDArray in1, INDArray in2, INDArray out) {
+        this(in1,in2);
         outputArguments.add(out);
     }
 

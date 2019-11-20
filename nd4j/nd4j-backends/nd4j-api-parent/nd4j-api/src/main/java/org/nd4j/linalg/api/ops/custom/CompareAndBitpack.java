@@ -9,9 +9,13 @@ import org.nd4j.linalg.factory.Nd4j;
 public class CompareAndBitpack extends DynamicCustomOp {
     public CompareAndBitpack() {}
 
-    public CompareAndBitpack(INDArray in, double threshold, INDArray out) {
+    public CompareAndBitpack(INDArray in, double threshold) {
         inputArguments.add(in);
         inputArguments.add(Nd4j.scalar(threshold));
+    }
+
+    public CompareAndBitpack(INDArray in, double threshold, INDArray out) {
+        this(in, threshold);
         outputArguments.add(out);
     }
 

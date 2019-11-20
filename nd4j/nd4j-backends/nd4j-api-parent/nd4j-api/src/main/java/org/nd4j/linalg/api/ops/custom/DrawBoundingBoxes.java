@@ -8,11 +8,15 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 public class DrawBoundingBoxes extends DynamicCustomOp {
     public DrawBoundingBoxes() {}
 
-    public DrawBoundingBoxes(INDArray images, INDArray boxes, INDArray colors,
-                             INDArray output) {
+    public DrawBoundingBoxes(INDArray images, INDArray boxes, INDArray colors) {
         inputArguments.add(images);
         inputArguments.add(boxes);
         inputArguments.add(colors);
+    }
+
+    public DrawBoundingBoxes(INDArray images, INDArray boxes, INDArray colors,
+                             INDArray output) {
+        this(images, boxes, colors);
         outputArguments.add(output);
     }
 

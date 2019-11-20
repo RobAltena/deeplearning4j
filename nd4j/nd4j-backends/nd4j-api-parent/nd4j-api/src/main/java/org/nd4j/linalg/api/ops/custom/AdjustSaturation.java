@@ -8,6 +8,10 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 public class AdjustSaturation extends DynamicCustomOp {
 
+    public AdjustSaturation() {
+        super();
+    }
+
     public AdjustSaturation(INDArray in, double factor, INDArray out) {
         this(in, factor);
         outputArguments.add(out);
@@ -22,7 +26,7 @@ public class AdjustSaturation extends DynamicCustomOp {
     }
 
     public AdjustSaturation(SameDiff sameDiff, SDVariable in, SDVariable factor) {
-        super(sameDiff,new SDVariable[]{in,factor});
+        super(sameDiff, new SDVariable[]{in, factor});
     }
 
     @Override

@@ -1,10 +1,16 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import org.nd4j.autodiff.samediff.SDVariable;
+import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 public class MatrixBandPart extends DynamicCustomOp {
+
+    public MatrixBandPart() {
+        super();
+    }
 
     public MatrixBandPart(INDArray input, int minLower, int maxUpper) {
         Preconditions.checkArgument(input.rank() >= 2, "MatrixBandPart: Input rank should be 2 or higher");
@@ -16,6 +22,10 @@ public class MatrixBandPart extends DynamicCustomOp {
                 maxUpper, M);
         addInputArgument(input);
         addIArgument(minLower, maxUpper);
+    }
+
+    public MatrixBandPart(SameDiff sameDiff, SDVariable input, SDVariable minLower, SDVariable maxUpper) {
+        super("", sameDiff, new SDVariable[]{input, minLower, maxUpper});
     }
 
     @Override
