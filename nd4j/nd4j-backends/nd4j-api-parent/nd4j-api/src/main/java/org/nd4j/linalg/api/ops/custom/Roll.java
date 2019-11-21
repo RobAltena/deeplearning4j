@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
@@ -12,18 +13,18 @@ public class Roll extends DynamicCustomOp {
         super();
     }
 
-    public Roll(INDArray input, INDArray axes, INDArray shifts) {
+    public Roll(@NonNull INDArray input, @NonNull INDArray axes, @NonNull INDArray shifts) {
         Preconditions.checkArgument(axes.rank() == shifts.rank(), "Roll: shifts and axes should be the same rank");
         Preconditions.checkArgument(axes.length() == shifts.length(), "Roll: shifts and axes should be the same length");
         addInputArgument(input, axes, shifts);
     }
 
-    public Roll(INDArray input, int shift) {
+    public Roll(@NonNull INDArray input, int shift) {
         addInputArgument(input);
         addIArgument(shift);
     }
 
-    public Roll(SameDiff sameDiff, SDVariable input, SDVariable shift) {
+    public Roll(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable shift) {
         super("", sameDiff, new SDVariable[]{input,shift});
     }
 

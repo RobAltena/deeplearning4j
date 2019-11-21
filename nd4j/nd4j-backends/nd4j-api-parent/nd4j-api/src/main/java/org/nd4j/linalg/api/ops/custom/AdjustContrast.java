@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
@@ -14,11 +15,11 @@ public class AdjustContrast extends BaseAdjustContrast {
 
     public AdjustContrast() {super();}
 
-    public AdjustContrast(INDArray in, double factor, INDArray out) {
+    public AdjustContrast(@NonNull INDArray in, double factor, @NonNull INDArray out) {
         super(in, factor, out);
     }
 
-    public AdjustContrast(SameDiff sameDiff, SDVariable in, SDVariable factor) {
+    public AdjustContrast(@NonNull SameDiff sameDiff, @NonNull SDVariable in, @NonNull SDVariable factor) {
         super(sameDiff,new SDVariable[]{in,factor});
     }
 

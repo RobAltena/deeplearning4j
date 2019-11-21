@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
@@ -12,12 +13,12 @@ public class AdjustSaturation extends DynamicCustomOp {
         super();
     }
 
-    public AdjustSaturation(INDArray in, double factor, INDArray out) {
+    public AdjustSaturation(@NonNull INDArray in, double factor, @NonNull INDArray out) {
         this(in, factor);
         outputArguments.add(out);
     }
 
-    public AdjustSaturation(INDArray in, double factor) {
+    public AdjustSaturation(@NonNull INDArray in, double factor) {
         Preconditions.checkArgument(in.rank() >= 3,
                 String.format("AdjustSaturation: op expects rank of input array to be >= 3, but got %d instead", in.rank()));
         inputArguments.add(in);
@@ -25,7 +26,7 @@ public class AdjustSaturation extends DynamicCustomOp {
         addTArgument(factor);
     }
 
-    public AdjustSaturation(SameDiff sameDiff, SDVariable in, SDVariable factor) {
+    public AdjustSaturation(@NonNull SameDiff sameDiff, @NonNull SDVariable in, @NonNull SDVariable factor) {
         super(sameDiff, new SDVariable[]{in, factor});
     }
 

@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
@@ -14,7 +15,7 @@ public abstract class BaseAdjustContrast extends DynamicCustomOp {
     public BaseAdjustContrast() {
     }
 
-    public BaseAdjustContrast(INDArray in, double factor, INDArray out) {
+    public BaseAdjustContrast(@NonNull INDArray in, double factor, @NonNull INDArray out) {
         Preconditions.checkArgument(in.rank() >= 3,
                 String.format("AdjustContrast: op expects rank of input array to be >= 3, but got %d instead", in.rank()));
         inputArguments.add(in);
@@ -23,7 +24,7 @@ public abstract class BaseAdjustContrast extends DynamicCustomOp {
         addTArgument(factor);
     }
 
-    public BaseAdjustContrast(SameDiff sameDiff, SDVariable[] vars) {
+    public BaseAdjustContrast(@NonNull SameDiff sameDiff, @NonNull SDVariable[] vars) {
         super("", sameDiff, vars);
     }
 

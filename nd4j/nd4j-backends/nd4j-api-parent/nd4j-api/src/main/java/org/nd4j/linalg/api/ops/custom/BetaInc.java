@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -11,20 +12,21 @@ public class BetaInc extends DynamicCustomOp {
         super();
     }
 
-    public BetaInc(INDArray a_input, INDArray b_input, INDArray x_input, INDArray output) {
+    public BetaInc(@NonNull INDArray a_input, @NonNull INDArray b_input, @NonNull INDArray x_input,
+                   @NonNull INDArray output) {
         inputArguments.add(a_input);
         inputArguments.add(b_input);
         inputArguments.add(x_input);
         outputArguments.add(output);
     }
 
-    public BetaInc(INDArray a_input, INDArray b_input, INDArray x_input) {
+    public BetaInc(@NonNull INDArray a_input, @NonNull INDArray b_input, @NonNull INDArray x_input) {
         inputArguments.add(a_input);
         inputArguments.add(b_input);
         inputArguments.add(x_input);
     }
 
-    public BetaInc(SameDiff sameDiff, SDVariable a, SDVariable b, SDVariable x) {
+    public BetaInc(@NonNull SameDiff sameDiff, @NonNull SDVariable a, @NonNull SDVariable b, @NonNull SDVariable x) {
         super(sameDiff, new SDVariable[]{a,b,x});
     }
 

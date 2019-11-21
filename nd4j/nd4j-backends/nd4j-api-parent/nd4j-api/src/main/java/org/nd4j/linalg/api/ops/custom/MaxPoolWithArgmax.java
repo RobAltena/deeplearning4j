@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
@@ -12,12 +13,12 @@ public class MaxPoolWithArgmax extends DynamicCustomOp {
         super();
     }
 
-    public MaxPoolWithArgmax(INDArray x) {
-        Preconditions.checkArgument(x.rank() == 4, "MaxPoolWithArgmax: Input should have rank of 4, but got %i instead", x.rank());
+    public MaxPoolWithArgmax(@NonNull INDArray x) {
+        Preconditions.checkArgument(x.rank() == 4, "MaxPoolWithArgmax: Input should have rank of 4, but got %s instead", x.rank());
         addInputArgument(x);
     }
 
-    public MaxPoolWithArgmax(SameDiff sameDiff, SDVariable x) {
+    public MaxPoolWithArgmax(@NonNull SameDiff sameDiff, @NonNull SDVariable x) {
         super("", sameDiff, new SDVariable[]{x});
     }
 

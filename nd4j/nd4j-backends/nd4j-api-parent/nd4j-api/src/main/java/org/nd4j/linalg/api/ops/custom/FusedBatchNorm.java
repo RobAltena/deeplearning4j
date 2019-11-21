@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -11,16 +12,16 @@ public class FusedBatchNorm extends DynamicCustomOp {
         super();
     }
 
-    public FusedBatchNorm(INDArray x, INDArray scale, INDArray offset,
+    public FusedBatchNorm(@NonNull INDArray x, @NonNull INDArray scale, @NonNull INDArray offset,
                           int dataFormat, int isTraining,
-                          INDArray yOut, INDArray batchMeanOut, INDArray batchMeanVar) {
+                          @NonNull INDArray yOut, @NonNull INDArray batchMeanOut, @NonNull INDArray batchMeanVar) {
         addInputArgument(x, scale, offset);
         addIArgument(dataFormat, isTraining);
         addOutputArgument(yOut, batchMeanOut, batchMeanVar);
     }
 
-    public FusedBatchNorm(SameDiff sameDiff, SDVariable x, SDVariable scale, SDVariable offset,
-                          SDVariable dataFormat, SDVariable isTraining) {
+    public FusedBatchNorm(@NonNull SameDiff sameDiff, @NonNull SDVariable x, @NonNull SDVariable scale, @NonNull SDVariable offset,
+                          @NonNull SDVariable dataFormat, @NonNull SDVariable isTraining) {
         super("", sameDiff, new SDVariable[]{x, scale, offset, dataFormat, isTraining});
     }
 

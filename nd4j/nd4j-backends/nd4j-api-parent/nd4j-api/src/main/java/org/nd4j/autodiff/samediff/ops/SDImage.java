@@ -3,6 +3,9 @@ package org.nd4j.autodiff.samediff.ops;
 import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.linalg.api.ops.custom.AdjustContrast;
+import org.nd4j.linalg.api.ops.custom.AdjustHue;
+import org.nd4j.linalg.api.ops.custom.AdjustSaturation;
 import org.nd4j.linalg.api.ops.impl.image.CropAndResize;
 import org.nd4j.linalg.api.ops.impl.image.ExtractImagePatches;
 import org.nd4j.linalg.api.ops.impl.image.NonMaxSuppression;
@@ -56,6 +59,21 @@ public class SDImage extends SDOps {
     public SDVariable nonMaxSuppression(String name, @NonNull SDVariable boxes, @NonNull SDVariable scores, @NonNull SDVariable maxOutSize,
                                         @NonNull SDVariable iouThreshold, @NonNull SDVariable scoreThreshold){
         SDVariable out = new NonMaxSuppression(sd, boxes, scores, maxOutSize, iouThreshold, scoreThreshold).outputVariable();
+        return updateVariableNameAndReference(out, name);
+    }
+
+    public SDVariable adjustContrast(String name, @NonNull SDVariable in, @NonNull SDVariable factor) {
+        SDVariable out = new AdjustContrast(sd, in, factor).outputVariable();
+        return updateVariableNameAndReference(out, name);
+    }
+
+    public SDVariable adjustSaturation(String name, @NonNull SDVariable in, @NonNull SDVariable factor) {
+        SDVariable out = new AdjustSaturation(sd, in, factor).outputVariable();
+        return updateVariableNameAndReference(out, name);
+    }
+
+    public SDVariable adjustHue(String name, @NonNull SDVariable in, @NonNull SDVariable factor) {
+        SDVariable out = new AdjustHue(sd, in, factor).outputVariable();
         return updateVariableNameAndReference(out, name);
     }
 }

@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -9,16 +10,16 @@ public class ToggleBits extends DynamicCustomOp {
 
     public ToggleBits() {super();}
 
-    public ToggleBits(INDArray input, INDArray output) {
-        addInputArgument(input);
+    public ToggleBits(@NonNull INDArray input, @NonNull INDArray output) {
+        this(input);
         addOutputArgument(input);
     }
 
-    public ToggleBits(INDArray input) {
+    public ToggleBits(@NonNull INDArray input) {
         addInputArgument(input);
     }
 
-    public ToggleBits(SameDiff sameDiff, SDVariable input) {
+    public ToggleBits(@NonNull SameDiff sameDiff, @NonNull SDVariable input) {
         super("", sameDiff, new SDVariable[]{input});
     }
 

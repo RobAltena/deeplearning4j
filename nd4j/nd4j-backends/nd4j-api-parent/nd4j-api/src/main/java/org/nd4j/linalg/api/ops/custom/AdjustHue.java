@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
@@ -16,17 +17,17 @@ public class AdjustHue extends DynamicCustomOp {
         outputArguments.add(out);
     }
 
-    public AdjustHue(INDArray in, double delta) {
+    public AdjustHue(@NonNull INDArray in, double delta) {
         Preconditions.checkArgument(in.rank() >= 3,
-                String.format("AdjustSaturation: op expects rank of input array to be >= 3, but got %d instead", in.rank()));
+                "AdjustSaturation: op expects rank of input array to be >= 3, but got %s instead", in.rank());
         Preconditions.checkArgument(-1.0 <= delta && delta <= 1.0, "AdjustHue: parameter delta must be within [-1, 1] interval," +
-                " but got %f instead", delta);
+                " but got %s instead", delta);
         inputArguments.add(in);
 
         addTArgument(delta);
     }
 
-    public AdjustHue(SameDiff sameDiff, SDVariable in, SDVariable factor) {
+    public AdjustHue(@NonNull SameDiff sameDiff, @NonNull SDVariable in, @NonNull SDVariable factor) {
         super(sameDiff,new SDVariable[]{in,factor});
     }
 

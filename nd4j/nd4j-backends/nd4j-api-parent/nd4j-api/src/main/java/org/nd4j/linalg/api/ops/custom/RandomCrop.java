@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
@@ -13,13 +14,13 @@ public class RandomCrop extends DynamicCustomOp {
         super();
     }
 
-    public RandomCrop(INDArray input, INDArray shape) {
+    public RandomCrop(@NonNull INDArray input, @NonNull INDArray shape) {
         Preconditions.checkArgument(shape.isVector(),"RandomCrop:Shape tensor should be a vector");
         Preconditions.checkArgument(input.rank() == shape.length(), "RandomCrop:The length of the shape vector is not match input rank");
         addInputArgument(input, shape);
     }
 
-    public RandomCrop(SameDiff sameDiff, SDVariable input, SDVariable shape) {
+    public RandomCrop(@NonNull SameDiff sameDiff, @NonNull SDVariable input, @NonNull SDVariable shape) {
             super("", sameDiff, new SDVariable[]{input, shape});
     }
 
