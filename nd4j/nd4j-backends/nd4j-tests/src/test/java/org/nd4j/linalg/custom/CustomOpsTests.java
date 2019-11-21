@@ -33,6 +33,7 @@ import org.nd4j.linalg.api.ops.executioner.OpExecutioner;
 import org.nd4j.linalg.api.ops.executioner.OpStatus;
 import org.nd4j.linalg.api.ops.impl.controlflow.Where;
 import org.nd4j.linalg.api.ops.impl.image.CropAndResize;
+import org.nd4j.linalg.api.ops.impl.image.NonMaxSuppression;
 import org.nd4j.linalg.api.ops.impl.image.ResizeBilinear;
 import org.nd4j.linalg.api.ops.impl.reduce.MmulBp;
 import org.nd4j.linalg.api.ops.impl.transforms.any.IsMax;
@@ -1225,5 +1226,16 @@ public class CustomOpsTests extends BaseNd4jTest {
         ToggleBits op = new ToggleBits(input);
         val result = Nd4j.exec(op);
         assertEquals(expected, result[0]);
+    }
+
+    @Test
+    public void testNonMaxSuppression() {
+        INDArray boxes = Nd4j.createFromArray(new float[] {0.8115f,    0.4121f,    0.0771f,    0.4863f,
+                            0.7412f,    0.7607f,    0.1543f,    0.5479f,
+                            0.8223f,    0.2246f,    0.0049f,    0.6465f}).reshape(3,4);
+        INDArray scores = Nd4j.createFromArray(new float[]{0.0029f,    0.8135f,    0.4873f});
+        val op = new NonMaxSuppression(boxes,scores,2,0.5,0.5);
+        val res = Nd4j.exec(op);
+        assertEquals(new long[]{1}, res[0].shape());
     }
 }
