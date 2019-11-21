@@ -999,7 +999,7 @@ public class Transforms {
      * @return
      */
     public static INDArray copy(INDArray ndArray) {
-        return Nd4j.getExecutioner().exec(new Copy(ndArray, ndArray.ulike()))[0];
+        return Nd4j.getExecutioner().exec(new Identity(ndArray, ndArray.ulike()))[0];
     }
 
     /**
@@ -1008,7 +1008,7 @@ public class Transforms {
      * @return
      */
     public static INDArray copyHost(INDArray ndArray) {
-        return Nd4j.getExecutioner().exec(new CopyHost(ndArray, ndArray.ulike()))[0];
+        return Nd4j.getExecutioner().exec(new Identity(ndArray, ndArray.ulike()))[0];
     }
 
     /**
@@ -1017,7 +1017,7 @@ public class Transforms {
      * @return
      */
     public static INDArray copyDeep(INDArray ndArray) {
-        return Nd4j.getExecutioner().exec(new DeepCopy(ndArray, ndArray.ulike()))[0];
+        return Nd4j.getExecutioner().exec(new Identity(ndArray, ndArray.ulike()))[0];
     }
 
     public static INDArray isMax(INDArray input, DataType dataType) {
