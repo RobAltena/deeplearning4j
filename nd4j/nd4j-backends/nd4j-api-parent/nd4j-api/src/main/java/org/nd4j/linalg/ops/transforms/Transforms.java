@@ -993,6 +993,33 @@ public class Transforms {
         return Nd4j.getExecutioner().exec(dup ? new Identity(ndArray, ndArray.ulike()) : new Identity(ndArray, ndArray))[0];
     }
 
+    /**
+     * Copy
+     * @param ndArray
+     * @return
+     */
+    public static INDArray copy(INDArray ndArray) {
+        return Nd4j.getExecutioner().exec(new Copy(ndArray, ndArray.ulike()))[0];
+    }
+
+    /**
+     * CopyHost
+     * @param ndArray
+     * @return
+     */
+    public static INDArray copyHost(INDArray ndArray) {
+        return Nd4j.getExecutioner().exec(new CopyHost(ndArray, ndArray.ulike()))[0];
+    }
+
+    /**
+     * DeepCopy
+     * @param ndArray
+     * @return
+     */
+    public static INDArray copyDeep(INDArray ndArray) {
+        return Nd4j.getExecutioner().exec(new DeepCopy(ndArray, ndArray.ulike()))[0];
+    }
+
     public static INDArray isMax(INDArray input, DataType dataType) {
         return isMax(input, Nd4j.createUninitialized(dataType, input.shape(), input.ordering()));
     }
