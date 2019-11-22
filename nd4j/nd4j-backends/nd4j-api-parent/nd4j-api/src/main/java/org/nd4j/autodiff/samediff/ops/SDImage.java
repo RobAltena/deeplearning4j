@@ -6,6 +6,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.ops.custom.AdjustContrast;
 import org.nd4j.linalg.api.ops.custom.AdjustHue;
 import org.nd4j.linalg.api.ops.custom.AdjustSaturation;
+import org.nd4j.linalg.api.ops.custom.RandomCrop;
 import org.nd4j.linalg.api.ops.impl.image.CropAndResize;
 import org.nd4j.linalg.api.ops.impl.image.ExtractImagePatches;
 import org.nd4j.linalg.api.ops.impl.image.NonMaxSuppression;
@@ -74,6 +75,11 @@ public class SDImage extends SDOps {
 
     public SDVariable adjustHue(String name, @NonNull SDVariable in, @NonNull SDVariable factor) {
         SDVariable out = new AdjustHue(sd, in, factor).outputVariable();
+        return updateVariableNameAndReference(out, name);
+    }
+
+    public SDVariable randomCrop(String name,  @NonNull SDVariable input, @NonNull SDVariable shape) {
+        SDVariable out = new RandomCrop(sd, input, shape).outputVariable();
         return updateVariableNameAndReference(out, name);
     }
 }

@@ -1,5 +1,6 @@
 package org.nd4j.linalg.api.ops.custom;
 
+import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
@@ -12,7 +13,7 @@ public class MatrixBandPart extends DynamicCustomOp {
         super();
     }
 
-    public MatrixBandPart(INDArray input, int minLower, int maxUpper) {
+    public MatrixBandPart(@NonNull INDArray input, int minLower, int maxUpper) {
         Preconditions.checkArgument(input.rank() >= 2, "MatrixBandPart: Input rank should be 2 or higher");
         long N = input.size(-2);
         long M = input.size(-1);
@@ -24,7 +25,7 @@ public class MatrixBandPart extends DynamicCustomOp {
         addIArgument(minLower, maxUpper);
     }
 
-    public MatrixBandPart(SameDiff sameDiff, SDVariable input, SDVariable minLower, SDVariable maxUpper) {
+    public MatrixBandPart(@NonNull SameDiff sameDiff, @NonNull SDVariable input, SDVariable minLower, SDVariable maxUpper) {
         super("", sameDiff, new SDVariable[]{input, minLower, maxUpper});
     }
 

@@ -2496,5 +2496,57 @@ public class SDMath extends SDOps {
         return updateVariableNameAndReference(res, name);
     }
 
+    /**
+     * Compute the regularized incomplete beta integral
+     *
+     * @param name  Name of the output variable
+     * @param a
+     * @param b
+     * @param x
+     * @return INDArray
+     */
+    public SDVariable betainc(String name,SDVariable a,SDVariable b,SDVariable x) {
+        SDVariable res = f().betainc(a,b,x);
+        return updateVariableNameAndReference(res, name);
+    }
 
+    /**
+     * Copy a tensor setting everything outside a central band in each innermost matrix.
+     *
+     * @param name  Name of the output variable
+     * @param input
+     * @param minLower
+     * @param maxUpper
+     * @return Rank k array of the same shape as input.
+     */
+    public SDVariable matrixBandPart(String name, SDVariable input, SDVariable minLower, SDVariable maxUpper) {
+        SDVariable res = f().matrixBandPart(input,minLower,maxUpper);
+        return updateVariableNameAndReference(res, name);
+    }
+
+    /**
+     * Polygamma function
+     *
+     * @param name  Name of the output variable
+     * @param n
+     * @param x
+     * @return array
+     */
+    public SDVariable polygamma(String name, SDVariable n, SDVariable x) {
+        SDVariable res = f().polygamma(n,x);
+        return updateVariableNameAndReference(res, name);
+    }
+
+    /**
+     * Rolls the elements of input
+     *
+     * @param name  Name of the output variable
+     * @param input
+     * @param shift
+     * @return array
+     */
+    public SDVariable roll(String name, SDVariable input, SDVariable shift) {
+        SDVariable res = f().roll(input,shift);
+        return updateVariableNameAndReference(res, name);
+    }
 }

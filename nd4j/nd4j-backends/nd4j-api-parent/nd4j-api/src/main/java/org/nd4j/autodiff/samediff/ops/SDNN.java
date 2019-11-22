@@ -1032,4 +1032,35 @@ public class SDNN extends SDOps {
             );
         }
     }
+
+    /**
+     * Max pooling on the input and outputs both max values and indices
+     *
+     * @param name  Name of the output variable
+     * @param x
+     * @return output array and argmax array
+     */
+    public SDVariable[] maxPoolWithArgmaxs(String name, SDVariable x) {
+        SDVariable[] res = f().maxPoolWithArgmaxs(x);
+        return res;
+    }
+
+    /**
+     * Batch normalization
+     *
+     * @param name  Name of the output variable
+     * @param x
+     * @param scale
+     * @param offset
+     * @param dataFormat
+     * @param isTraining
+     * @return y: 4D array
+     *         batch_mean: vector
+     *         batch_var: vector
+     */
+    public SDVariable[] fusedBatchNorm(String name, SDVariable x, SDVariable scale, SDVariable offset,
+                                       SDVariable dataFormat, SDVariable isTraining) {
+        SDVariable[] res = f().fusedBatchNorm(x,scale,offset,dataFormat,isTraining);
+        return res;
+    }
 }
