@@ -120,12 +120,6 @@ public class MaxPoolWithArgmax extends DynamicCustomOp {
     }
 
     @Override
-    public String opName() {
-        return getPoolingPrefix() + "pool2d";
-    }
-
-
-    @Override
     public List<SDVariable> doDiff(List<SDVariable> f1) {
         List<SDVariable> ret = new ArrayList<>();
         List<SDVariable> inputs = new ArrayList<>();
@@ -280,10 +274,14 @@ public class MaxPoolWithArgmax extends DynamicCustomOp {
         return ret;
     }
 
+    @Override
+    public String opName() {
+        return "max_pool_with_argmax";
+    }
 
     @Override
     public String onnxName() {
-        return "MaxPool";
+        return "MaxPoolWithArgmax";
     }
 
     @Override

@@ -768,8 +768,8 @@ public class LayerOpValidation extends BaseOpValidation {
                 .build();
 
         SDVariable[] results = sd.nn().maxPoolWithArgmax("", in, pooling2DConfig);
-        System.out.println(results[0].eval());
-        System.out.println(results[1].eval());
+        assertArrayEquals(inArr.shape(), results[0].eval().shape());
+        assertArrayEquals(inArr.shape(), results[1].eval().shape());
     }
 
     @Test
