@@ -8,16 +8,12 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 public class BetaInc extends DynamicCustomOp {
 
-    public BetaInc() {
-        super();
-    }
+    public BetaInc() {}
 
     public BetaInc(@NonNull INDArray a_input, @NonNull INDArray b_input, @NonNull INDArray x_input,
-                   @NonNull INDArray output) {
-        inputArguments.add(a_input);
-        inputArguments.add(b_input);
-        inputArguments.add(x_input);
-        outputArguments.add(output);
+                   INDArray output) {
+        addInputArgument(a_input, b_input, x_input);
+        addOutputArgument(output);
     }
 
     public BetaInc(@NonNull INDArray a_input, @NonNull INDArray b_input, @NonNull INDArray x_input) {

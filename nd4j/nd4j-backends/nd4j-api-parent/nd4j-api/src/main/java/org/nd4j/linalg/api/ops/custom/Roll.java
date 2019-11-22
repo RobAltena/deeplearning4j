@@ -9,9 +9,7 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 public class Roll extends DynamicCustomOp {
 
-    public Roll() {
-        super();
-    }
+    public Roll() {}
 
     public Roll(@NonNull INDArray input, @NonNull INDArray axes, @NonNull INDArray shifts) {
         Preconditions.checkArgument(axes.rank() == shifts.rank(), "Roll: shifts and axes should be the same rank");

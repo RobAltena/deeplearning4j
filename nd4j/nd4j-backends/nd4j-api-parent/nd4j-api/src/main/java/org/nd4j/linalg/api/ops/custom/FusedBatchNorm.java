@@ -8,13 +8,11 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 public class FusedBatchNorm extends DynamicCustomOp {
 
-    public FusedBatchNorm() {
-        super();
-    }
+    public FusedBatchNorm() {}
 
     public FusedBatchNorm(@NonNull INDArray x, @NonNull INDArray scale, @NonNull INDArray offset,
                           int dataFormat, int isTraining,
-                          @NonNull INDArray yOut, @NonNull INDArray batchMeanOut, @NonNull INDArray batchMeanVar) {
+                          INDArray yOut, INDArray batchMeanOut, INDArray batchMeanVar) {
         addInputArgument(x, scale, offset);
         addIArgument(dataFormat, isTraining);
         addOutputArgument(yOut, batchMeanOut, batchMeanVar);

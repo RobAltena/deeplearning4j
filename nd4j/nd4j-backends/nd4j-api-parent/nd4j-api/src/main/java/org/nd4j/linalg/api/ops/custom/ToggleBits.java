@@ -8,9 +8,9 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 public class ToggleBits extends DynamicCustomOp {
 
-    public ToggleBits() {super();}
+    public ToggleBits() {}
 
-    public ToggleBits(@NonNull INDArray input, @NonNull INDArray output) {
+    public ToggleBits(@NonNull INDArray input, INDArray output) {
         this(input);
         addOutputArgument(input);
     }

@@ -19,6 +19,7 @@ package org.nd4j.autodiff.samediff.ops;
 import lombok.NonNull;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Pooling2DConfig;
 import org.nd4j.linalg.api.ops.impl.transforms.Pad;
 import org.nd4j.linalg.factory.Nd4j;
 
@@ -1037,11 +1038,11 @@ public class SDNN extends SDOps {
      * Max pooling on the input and outputs both max values and indices
      *
      * @param name  Name of the output variable
-     * @param x
+     * @param x input array
      * @return output array and argmax array
      */
-    public SDVariable[] maxPoolWithArgmaxs(String name, SDVariable x) {
-        SDVariable[] res = f().maxPoolWithArgmaxs(x);
+    public SDVariable[] maxPoolWithArgmax(String name, SDVariable x, Pooling2DConfig pooling2DConfig) {
+        SDVariable[] res = f().maxPoolWithArgmaxs(x, pooling2DConfig);
         return res;
     }
 
@@ -1049,11 +1050,11 @@ public class SDNN extends SDOps {
      * Batch normalization
      *
      * @param name  Name of the output variable
-     * @param x
-     * @param scale
-     * @param offset
-     * @param dataFormat
-     * @param isTraining
+     * @param x 4D array
+     * @param scale vector for scaling factor of normalized x
+     * @param offset vector to shift to the normalized x
+     * @param dataFormat integer scalar - data format
+     * @param isTraining boolean scalar - is training mode
      * @return y: 4D array
      *         batch_mean: vector
      *         batch_var: vector

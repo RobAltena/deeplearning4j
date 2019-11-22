@@ -744,6 +744,35 @@ public class LayerOpValidation extends BaseOpValidation {
     }
 
     @Test
+    public void testMaxPoolingArgMax() {
+        Nd4j.getRandom().setSeed(12345);
+        int nIn = 3;
+        int kH = 2;
+        int kW = 2;
+
+        int mb = 3;
+        int imgH = 8;
+        int imgW = 8;
+
+        SameDiff sd = SameDiff.create();
+        INDArray inArr = Nd4j.rand(new int[]{mb, nIn, imgH, imgW});
+
+        SDVariable in = sd.var("in", inArr);
+
+        Pooling2DConfig pooling2DConfig = Pooling2DConfig.builder()
+                .kH(kH).kW(kW)
+                .pH(0).pW(0)
+                .sH(1).sW(1)
+                .dH(1).dW(1)
+                .isSameMode(false)
+                .build();
+
+        SDVariable[] results = sd.nn().maxPoolWithArgmax("", in, pooling2DConfig);
+        System.out.println(results[0].eval());
+        System.out.println(results[1].eval());
+    }
+
+    @Test
     public void testMaxPooling2dBasic() {
         Nd4j.getRandom().setSeed(12345);
         int nIn = 3;

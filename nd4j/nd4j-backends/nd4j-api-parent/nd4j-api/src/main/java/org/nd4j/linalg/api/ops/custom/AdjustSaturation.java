@@ -9,18 +9,16 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 public class AdjustSaturation extends DynamicCustomOp {
 
-    public AdjustSaturation() {
-        super();
-    }
+    public AdjustSaturation() {}
 
-    public AdjustSaturation(@NonNull INDArray in, double factor, @NonNull INDArray out) {
+    public AdjustSaturation(@NonNull INDArray in, double factor, INDArray out) {
         this(in, factor);
         outputArguments.add(out);
     }
 
     public AdjustSaturation(@NonNull INDArray in, double factor) {
         Preconditions.checkArgument(in.rank() >= 3,
-                String.format("AdjustSaturation: op expects rank of input array to be >= 3, but got %d instead", in.rank()));
+                "AdjustSaturation: op expects rank of input array to be >= 3, but got %s instead", in.rank());
         inputArguments.add(in);
 
         addTArgument(factor);

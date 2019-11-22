@@ -9,9 +9,7 @@ import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 public class Polygamma extends DynamicCustomOp {
 
-    public Polygamma() {
-        super();
-    }
+    public Polygamma() {}
 
     public Polygamma(@NonNull INDArray n, @NonNull INDArray x) {
         Preconditions.checkArgument(n.shape() != x.shape(),
@@ -19,7 +17,7 @@ public class Polygamma extends DynamicCustomOp {
         addInputArgument(n,x);
     }
 
-    public Polygamma(@NonNull INDArray n, @NonNull INDArray x, @NonNull INDArray output) {
+    public Polygamma(@NonNull INDArray n, @NonNull INDArray x, INDArray output) {
         this(n,x);
         addOutputArgument(output);
     }

@@ -2649,8 +2649,8 @@ public class DifferentialFunctionFactory {
         return new MatrixBandPart(sameDiff,input,minLower,maxUpper).outputVariable();
     }
 
-    public SDVariable[] maxPoolWithArgmaxs(SDVariable x) {
-        return new MaxPoolWithArgmax(sameDiff, x).outputVariables();
+    public SDVariable[] maxPoolWithArgmaxs(SDVariable x, Pooling2DConfig pooling2DConfig) {
+        return new MaxPoolWithArgmax(sameDiff, x, pooling2DConfig).outputVariables();
     }
 
     public SDVariable polygamma(SDVariable n, SDVariable x) {

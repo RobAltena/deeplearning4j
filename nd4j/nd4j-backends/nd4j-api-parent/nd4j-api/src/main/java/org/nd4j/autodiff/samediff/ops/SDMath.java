@@ -2500,10 +2500,10 @@ public class SDMath extends SDOps {
      * Compute the regularized incomplete beta integral
      *
      * @param name  Name of the output variable
-     * @param a
-     * @param b
-     * @param x
-     * @return INDArray
+     * @param a input array
+     * @param b input array
+     * @param x input array
+     * @return array
      */
     public SDVariable betainc(String name,SDVariable a,SDVariable b,SDVariable x) {
         SDVariable res = f().betainc(a,b,x);
@@ -2514,9 +2514,9 @@ public class SDMath extends SDOps {
      * Copy a tensor setting everything outside a central band in each innermost matrix.
      *
      * @param name  Name of the output variable
-     * @param input
-     * @param minLower
-     * @param maxUpper
+     * @param input Rank k array
+     * @param minLower Number of subdiagonals to keep.
+     * @param maxUpper Number of superdiagonals to keep.
      * @return Rank k array of the same shape as input.
      */
     public SDVariable matrixBandPart(String name, SDVariable input, SDVariable minLower, SDVariable maxUpper) {
@@ -2528,8 +2528,8 @@ public class SDMath extends SDOps {
      * Polygamma function
      *
      * @param name  Name of the output variable
-     * @param n
-     * @param x
+     * @param n array
+     * @param x array
      * @return array
      */
     public SDVariable polygamma(String name, SDVariable n, SDVariable x) {
@@ -2541,8 +2541,8 @@ public class SDMath extends SDOps {
      * Rolls the elements of input
      *
      * @param name  Name of the output variable
-     * @param input
-     * @param shift
+     * @param input array
+     * @param shift number of places to shift elements
      * @return array
      */
     public SDVariable roll(String name, SDVariable input, SDVariable shift) {

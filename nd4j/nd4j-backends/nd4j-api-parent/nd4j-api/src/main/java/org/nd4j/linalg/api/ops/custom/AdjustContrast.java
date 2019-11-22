@@ -15,7 +15,7 @@ public class AdjustContrast extends BaseAdjustContrast {
 
     public AdjustContrast() {super();}
 
-    public AdjustContrast(@NonNull INDArray in, double factor, @NonNull INDArray out) {
+    public AdjustContrast(@NonNull INDArray in, double factor, INDArray out) {
         super(in, factor, out);
     }
 

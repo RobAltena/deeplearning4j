@@ -15,9 +15,9 @@ public abstract class BaseAdjustContrast extends DynamicCustomOp {
     public BaseAdjustContrast() {
     }
 
-    public BaseAdjustContrast(@NonNull INDArray in, double factor, @NonNull INDArray out) {
+    public BaseAdjustContrast(@NonNull INDArray in, double factor, INDArray out) {
         Preconditions.checkArgument(in.rank() >= 3,
-                String.format("AdjustContrast: op expects rank of input array to be >= 3, but got %d instead", in.rank()));
+                "AdjustContrast: op expects rank of input array to be >= 3, but got %s instead", in.rank());
         inputArguments.add(in);
         outputArguments.add(out);
 

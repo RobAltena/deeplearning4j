@@ -10,9 +10,7 @@ import org.nd4j.linalg.api.rng.Random;
 
 public class RandomCrop extends DynamicCustomOp {
 
-    public RandomCrop() {
-        super();
-    }
+    public RandomCrop() {}
 
     public RandomCrop(@NonNull INDArray input, @NonNull INDArray shape) {
         Preconditions.checkArgument(shape.isVector(),"RandomCrop:Shape tensor should be a vector");
