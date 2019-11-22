@@ -34,6 +34,7 @@ import org.nd4j.linalg.api.ops.impl.controlflow.Where;
 import org.nd4j.linalg.api.ops.impl.image.CropAndResize;
 import org.nd4j.linalg.api.ops.impl.image.NonMaxSuppression;
 import org.nd4j.linalg.api.ops.impl.image.ResizeBilinear;
+import org.nd4j.linalg.api.ops.impl.layers.convolution.MaxPoolWithArgmax;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Pooling2DConfig;
 import org.nd4j.linalg.api.ops.impl.reduce.MmulBp;
 import org.nd4j.linalg.api.ops.impl.transforms.any.IsMax;
@@ -1168,21 +1169,6 @@ public class CustomOpsTests extends BaseNd4jTest {
 
         INDArray[] out = Nd4j.exec(op);
         assertEquals(expected, x);
-    }
-
-    @Test
-    public void testMaxPoolWithArgmax() {
-        INDArray x = Nd4j.createFromArray(new double[]{5.5, 0.,   0.3,  5.5,1.5, 0.,   1.3,  6.5,8.6, 0.,    0.,  0.4,2.5, 1.,   0.3,  4.5,
-                1.5, 1.,   1.3,  1.5, 3.5, 0.,   1.3,  2.5, 2.6, 2.,    3.,  1.4, 4.5, 1.,   0.3,  0.5}).reshape(2,2,2,4);
-        INDArray expected = Nd4j.createFromArray(new long[]{0,  1,  2,  3,4,  5,  6,  7,8,  9, 10, 11,12, 13, 14, 15,
-                0,  1,  2,  3,4,  5,  6,  7,8,  9, 10, 11,12, 13, 14, 15}).reshape(2,2,2,4);
-
-        val config = Pooling2DConfig.builder().build();
-        val op = new MaxPoolWithArgmax(x,config);
-        INDArray[] res = Nd4j.exec(op);
-
-        assertEquals(x, res[0]);
-        assertEquals(expected, res[1]);
     }
 
     @Test
