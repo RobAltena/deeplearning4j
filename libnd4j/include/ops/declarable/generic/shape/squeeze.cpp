@@ -28,7 +28,6 @@ namespace nd4j {
 
 
 
-
         CUSTOM_OP_IMPL(squeeze, 1, 1, true, 0, -2) {
             auto input = INPUT_VARIABLE(0);
             auto output = OUTPUT_VARIABLE(0);
