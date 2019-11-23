@@ -402,9 +402,8 @@ public class PythonVariables implements java.io.Serializable {
                 listVariables.put(name,  copyArr);
 
             }
-            else {
                 listVariables.put(name,  (Object[]) value);
-            }
+
         }
         else if(type == PythonVariables.Type.DICT) {
             dictVariables.put(name,(java.util.Map<?,?>) value);

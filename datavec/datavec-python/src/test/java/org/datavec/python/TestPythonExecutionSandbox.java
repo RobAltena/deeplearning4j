@@ -64,7 +64,7 @@ public class TestPythonExecutionSandbox {
         // PythonExecutioner.exec("a = np.zeros(5)");
 
         PythonExecutioner.setInterpreter("main");
-        Assert.assertEquals(25, PythonExecutioner.evalNDARRAY("a").getNd4jArray().sum().getDouble(), 1e-5);
+        Assert.assertEquals(25, PythonExecutioner.evalNdArray("a").getNd4jArray().sum().getDouble(), 1e-5);
     }
 
     @Test

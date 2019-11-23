@@ -216,7 +216,8 @@ public class PythonUtils {
     public static long[] jsonArrayToLongArray(JSONArray jsonArray){
         long[] longs = new long[jsonArray.length()];
         for (int i=0; i<longs.length; i++){
-            longs[i] = (Long)jsonArray.get(i);
+
+            longs[i] = jsonArray.getLong(i);
         }
         return longs;
     }
