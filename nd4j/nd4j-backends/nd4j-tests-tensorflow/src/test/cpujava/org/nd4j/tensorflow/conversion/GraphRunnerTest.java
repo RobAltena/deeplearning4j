@@ -44,7 +44,7 @@ public class GraphRunnerTest {
         List<String> inputs = Arrays.asList("input_0","input_1");
         byte[] content = IOUtils.toByteArray(new ClassPathResource("/tf_graphs/nd4j_convert/simple_graph/frozen_model.pb").getInputStream());
 
-        try(GraphRunner graphRunner = new GraphRunner(content,inputs)) {
+        try(GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).build()) {
             runGraphRunnerTest(graphRunner);
         }
     }
@@ -52,8 +52,8 @@ public class GraphRunnerTest {
     @Test
     public void testGraphRunnerFilePath() throws Exception {
         List<String> inputs = Arrays.asList("input_0","input_1");
-        File file = new ClassPathResource("/tf_graphs/nd4j_convert/simple_graph/frozen_model.pb").getFile();
-        try(GraphRunner graphRunner = new GraphRunner(file.getAbsolutePath(),inputs)) {
+        byte[] content = IOUtils.toByteArray(new ClassPathResource("/tf_graphs/nd4j_convert/simple_graph/frozen_model.pb").getInputStream());
+        try(GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).build()) {
             runGraphRunnerTest(graphRunner);
         }
     }
@@ -62,7 +62,8 @@ public class GraphRunnerTest {
     public void testInputOutputResolution() throws Exception {
         ClassPathResource lenetPb = new ClassPathResource("tf_graphs/lenet_frozen.pb");
         byte[] content = IOUtils.toByteArray(lenetPb.getInputStream());
-        GraphRunner graphRunner = new GraphRunner(content,Arrays.asList("Reshape/tensor"));
+        List<String> inputs = Arrays.asList("Reshape/tensor";
+        GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).build();
         assertEquals(1,graphRunner.getInputOrder().size());
         assertEquals(1,graphRunner.getOutputOrder().size());
     }
@@ -70,8 +71,9 @@ public class GraphRunnerTest {
 
     @Test @Ignore   //Ignored 2019/02/05: ssd_inception_v2_coco_2019_01_28 does not exist in test resources
     public void testMultiOutputGraph() throws Exception {
-        ClassPathResource classPathResource = new ClassPathResource("/tf_graphs/examples/ssd_inception_v2_coco_2018_01_28/frozen_inference_graph.pb");
-        GraphRunner graphRunner = new GraphRunner(classPathResource.getFile().getAbsolutePath(),Arrays.asList("image_tensor"));
+        List<String> inputs = Arrays.asList("image_tensor");
+        byte[] content = IOUtils.toByteArray(new ClassPathResource("/tf_graphs/examples/ssd_inception_v2_coco_2018_01_28/frozen_inference_graph.pb").getInputStream());
+        GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).build();
         String[] outputs = new String[] { "detection_boxes", "detection_scores", "detection_classes", "num_detections"};
 
         assertEquals(1,graphRunner.getInputOrder().size());
@@ -125,7 +127,7 @@ public class GraphRunnerTest {
                 .signatureKey("incr_counter_by")
                 .modelTag("serve")
                 .build();
-        try(GraphRunner graphRunner = new GraphRunner(savedModelConfig)) {
+        try(GraphRunner graphRunner = GraphRunner.builder().savedModelConfig(savedModelConfig).build()) {
             INDArray delta = Nd4j.create(new float[] { 42 }, new long[0]);
             Map<String,INDArray> inputs = new LinkedHashMap<>();
             inputs.put("delta",delta);
