@@ -26,6 +26,7 @@
 #include <indexing/IndicesList.h>
 #include <graph/Intervals.h>
 #include <array/DataType.h>
+#include <array/DataTypeUtils.h>
 #include <stdint.h>
 #include <array/ArrayOptions.h>
 #include <array/ArrayType.h>
@@ -1286,6 +1287,11 @@ namespace nd4j {
         Nd4jLong sizeAt(const int dim) const;
 
         /**
+        *  returns stride of "dim" dimension
+        */
+        Nd4jLong strideAt(const int dim) const;
+
+        /**
         *  returns order of array
         */
         FORCEINLINE char ordering() const;
@@ -1678,7 +1684,6 @@ namespace nd4j {
     //////////////////////////////////////////////////////////////////////////
 
     size_t NDArray::sizeOfT() const {
-
         return DataTypeUtils::sizeOfElement(_dataType);
     }
 

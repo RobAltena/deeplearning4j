@@ -25,6 +25,7 @@
 #include <loops/transform_any.h>
 #include <loops/reduce_bool.h>
 #include <loops/reduce_long.h>
+#include <loops/scalar.h>
 #include <helpers/threshold.h>
 #include <ops/specials_cuda.h>
 #include <helpers/DebugHelper.h>
@@ -33,8 +34,8 @@
 #include <exceptions/datatype_exception.h>
 #include <exceptions/cuda_exception.h>
 #include <helpers/CudaLaunchHelper.h>
-// FIXME: we need cuda-specific implementations
 #include <GraphExecutioner.h>
+#include <helpers/BlasHelper.h>
 #include <graph/GraphHolder.h>
 #include <ops/declarable/CustomOperations.h>
 #include <PointersManager.h>
@@ -293,6 +294,7 @@ void execBroadcastBool(Nd4jPointer *extraPointers,
         						void *dY, Nd4jLong *dYShapeInfo,
         						void *hZ, Nd4jLong *hZShapeInfo,
         						void *dZ, Nd4jLong *dZShapeInfo,
+        						void *extraParams,
         						void *hDimension, Nd4jLong *hDimensionShape,
 		void *dDimension, Nd4jLong *dDimensionShape) {
     try {
@@ -312,7 +314,7 @@ void execBroadcastBool(Nd4jPointer *extraPointers,
 
         LaunchContext lc(extraPointers[1], extraPointers[4], extraPointers[5], extraPointers[3]);
         NativeOpExecutioner::execBroadcastBool(&lc, opNum, hX, hXShapeInfo, dX, dXShapeInfo, hY, hYShapeInfo, dY,
-                                               dYShapeInfo, hZ, hZShapeInfo, dZ, dZShapeInfo, dimension,
+                                               dYShapeInfo, hZ, hZShapeInfo, dZ, dZShapeInfo, extraParams, dimension,
                                                dimensionLength, tadOnlyShapeInfo, tadOffsets, tadOnlyShapeInfoZ,
                                                tadOffsetsZ);
     } catch (std::exception &e) {
@@ -1723,11 +1725,7 @@ void execScalarTad(Nd4jPointer *extraPointers,
 #ifdef __ND4J_EXPERIMENTAL__
         BUILD_PAIRWISE_SELECTOR(xType, yType, zType, functions::scalar::ScalarTransform, ::executeCudaAlongDimension(launchDims, stream, opNum, dX, dXShapeInfo, dZ, dZShapeInfo, dScalars, extraParams, dimension, dimensionLength, tadShapeInfo, tadOffsets, tadShapeInfoZ, tadOffsetsZ), LIBND4J_TYPES, LIBND4J_TYPES);
 #else
-        BUILD_SINGLE_SELECTOR_THRICE(xType, functions::scalar::ScalarTransform,
-                                     ::executeCudaAlongDimension(launchDims, stream, opNum, dX, dXShapeInfo, dZ,
-                                                                 dZShapeInfo, dScalars, extraParams, dimension,
-                                                                 dimensionLength, tadShapeInfo, tadOffsets,
-                                                                 tadShapeInfoZ, tadOffsetsZ), LIBND4J_TYPES);
+        BUILD_SINGLE_SELECTOR_THRICE(xType, functions::scalar::ScalarTransform, ::executeCudaAlongDimension(launchDims, stream, opNum, dX, dXShapeInfo, dZ, dZShapeInfo, dScalars, extraParams, dimension, dimensionLength, tadShapeInfo, tadOffsets, tadShapeInfoZ, tadOffsetsZ), LIBND4J_TYPES);
 #endif
 
         DEBUG_KERNEL(stream, opNum);
@@ -1750,23 +1748,7 @@ void execAggregate(Nd4jPointer *extraPointers,
                                    void *realArguments,
                                    int numRealArguments,
                                    nd4j::DataType dtype) {
-    try {
-        cudaStream_t *stream = reinterpret_cast<cudaStream_t *>(extraPointers[1]);
-        int numBlocks = getDeviceId(extraPointers[2]);
-        int numThreads = getDeviceId(extraPointers[3]);
-        int shmem = getDeviceId(extraPointers[4]);
 
-        dim3 launchDims = dim3(numBlocks, numThreads, shmem);
-
-        BUILD_SINGLE_SELECTOR(dtype, functions::aggregate::AggregatedFunction,
-                              ::aggregateKernelGeneric(launchDims, stream, opNum, arguments, numArguments, shapes,
-                                                       numShapes, indexArguments, numIndexArguments, intArrays,
-                                                       numIntArrays, realArguments, numRealArguments), FLOAT_TYPES);
-        nd4j::DebugHelper::checkErrorCode(stream, "execAggregateFloat(...) failed");
-    } catch (std::exception &e) {
-        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
-        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
-    }
 }
 
 void batchExecutor(Nd4jPointer *extraPointers,
@@ -1788,25 +1770,7 @@ void execAggregateBatch(Nd4jPointer *extraPointers,
 									int maxIntArrays, int maxIntArraySize,
 									int maxIdx, int maxReals,
 									void *ptrToArguments, nd4j::DataType dtype) {
-    try {
-        // not implemented yet
-        cudaStream_t *stream = reinterpret_cast<cudaStream_t *>(extraPointers[1]);
-        int numBlocks = getDeviceId(extraPointers[2]);
-        int numThreads = getDeviceId(extraPointers[3]);
-        int shmem = getDeviceId(extraPointers[4]);
 
-        dim3 launchDims = dim3(numAggregates, numThreads, shmem);
-
-        BUILD_SINGLE_SELECTOR(dtype, functions::aggregate::AggregatedFunction,
-                              ::aggregateBatchKernelGeneric(launchDims, stream, opNum, numAggregates, maxArgs,
-                                                            maxShapes, maxIntArrays, maxIntArraySize, maxIdx, maxReals,
-                                                            ptrToArguments), FLOAT_TYPES);
-
-        DEBUG_KERNEL(stream, opNum);
-    } catch (std::exception &e) {
-        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorCode(1);
-        nd4j::LaunchContext::defaultContext()->errorReference()->setErrorMessage(e.what());
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -3595,4 +3559,8 @@ bool isMinimalRequirementsMet() {
 
 bool isOptimalRequirementsMet() {
     return true;
+}
+
+void ctxAllowHelpers(OpaqueContext* ptr, bool reallyAllow) {
+    ptr->allowHelpers(reallyAllow);
 }
