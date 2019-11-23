@@ -26,10 +26,12 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.shape.Shape;
 import org.nd4j.linalg.compression.CompressedDataBuffer;
 import org.nd4j.linalg.compression.CompressionDescriptor;
+import org.nd4j.linalg.exception.ND4JArraySizeException;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.primitives.Pair;
 
 import java.io.*;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
@@ -91,7 +93,8 @@ public class BinarySerde {
         if (type != DataType.COMPRESSED) {
             ByteBuffer slice = byteBuffer.slice();
             //wrap the data buffer for the last bit
-            // FIXME: int cast
+            if (Shape.length(shapeBuff) > Integer.MAX_VALUE)
+                throw new ND4JArraySizeException();
             DataBuffer buff = Nd4j.createBuffer(slice, type, (int) Shape.length(shapeBuff));
             //advance past the data
             int position = byteBuffer.position() + (buff.getElementSize() * (int) buff.length());
@@ -213,7 +216,7 @@ public class BinarySerde {
         allocated.put(shapeBuffer);
         allocated.put(buffer);
         if (rewind)
-            allocated.rewind();
+            ((Buffer) allocated).rewind();
     }
 
     /**
@@ -245,7 +248,7 @@ public class BinarySerde {
         //finally put the data
         allocated.put(buffer);
         if (rewind)
-            allocated.rewind();
+            ((Buffer) allocated).rewind();
     }
 
 
@@ -312,7 +315,7 @@ public class BinarySerde {
 
             ByteBuffer byteBuffer = buffer.order(ByteOrder.nativeOrder());
 
-            buffer.position(0);
+            ((Buffer) buffer).position(0);
             int rank = byteBuffer.getInt();
 
             val result = new long[Shape.shapeInfoLength(rank)];
@@ -322,7 +325,7 @@ public class BinarySerde {
 
             // skipping two next values (dtype and rank again)
             // please , that this time rank has dtype of LONG, so takes 8 bytes.
-            byteBuffer.position(16);
+            ((Buffer) byteBuffer).position(16);
 
             // filling shape information
             for (int e = 1; e < Shape.shapeInfoLength(rank); e++) {

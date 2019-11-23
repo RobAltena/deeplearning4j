@@ -26,7 +26,7 @@ pydl4j.validate_datavec_jars()
 # -------------JVM starts here-------------
 from jnius import autoclass
 
-
+JString = autoclass("java.lang.String")
 JSchema = autoclass('org.datavec.api.transform.schema.Schema')
 SchemaBuilder = autoclass('org/datavec/api/transform/schema/Schema$Builder')
 
@@ -43,7 +43,6 @@ CategoricalColumnCondition = autoclass(
     'org.datavec.api.transform.condition.column.CategoricalColumnCondition')
 DoubleColumnCondition = autoclass(
     'org.datavec.api.transform.condition.column.DoubleColumnCondition')
-#FloatColumnCondition = autoclass('org.datavec.api.transform.condition.column.FloatColumnCondition')
 StringColumnCondition = autoclass(
     'org.datavec.api.transform.condition.column.StringColumnCondition')
 
@@ -75,17 +74,23 @@ try:
     SparkConf = autoclass('org.apache.spark.SparkConf')
     SparkContext = autoclass('org.apache.spark.api.java.JavaSparkContext')
     JavaRDD = autoclass('org.apache.spark.api.java.JavaRDD')
-    SparkTransformExecutor = autoclass('org.datavec.spark.transform.SparkTransformExecutor')
-    StringToWritablesFunction = autoclass('org.datavec.spark.transform.misc.StringToWritablesFunction')
-    WritablesToStringFunction = autoclass('org.datavec.spark.transform.misc.WritablesToStringFunction')
+    SparkTransformExecutor = autoclass(
+        'org.datavec.spark.transform.SparkTransformExecutor')
+    StringToWritablesFunction = autoclass(
+        'org.datavec.spark.transform.misc.StringToWritablesFunction')
+    WritablesToStringFunction = autoclass(
+        'org.datavec.spark.transform.misc.WritablesToStringFunction')
     spark_available = True
 except:
     spark_available = False
 
-CSVRecordReader = autoclass('org.datavec.api.records.reader.impl.csv.CSVRecordReader')
-CSVRecordWriter = autoclass('org.datavec.api.records.writer.impl.csv.CSVRecordWriter')
+CSVRecordReader = autoclass(
+    'org.datavec.api.records.reader.impl.csv.CSVRecordReader')
+CSVRecordWriter = autoclass(
+    'org.datavec.api.records.writer.impl.csv.CSVRecordWriter')
 
-LocalTransformExecutor = autoclass('org.datavec.local.transforms.LocalTransformExecutor')
+LocalTransformExecutor = autoclass(
+    'org.datavec.local.transforms.LocalTransformExecutor')
 
 ChangeCaseStringTransform = autoclass(
     'org.datavec.api.transform.transform.string.ChangeCaseStringTransform')
@@ -112,4 +117,5 @@ FileSplit = autoclass('org.datavec.api.split.FileSplit')
 JFile = autoclass('java.io.File')
 ArrayList = autoclass('java.util.ArrayList')
 
-NumberOfRecordsPartitioner = autoclass('org.datavec.api.split.partition.NumberOfRecordsPartitioner')
+NumberOfRecordsPartitioner = autoclass(
+    'org.datavec.api.split.partition.NumberOfRecordsPartitioner')

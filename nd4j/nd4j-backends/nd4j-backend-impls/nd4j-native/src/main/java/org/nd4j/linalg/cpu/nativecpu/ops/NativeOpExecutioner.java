@@ -967,6 +967,7 @@ public class NativeOpExecutioner extends DefaultOpExecutioner {
                         null, null,
                         op.z().data().addressPointer(), (LongPointer) op.z().shapeInfoDataBuffer().addressPointer(),
                         null, null,
+                        null,
                         op.dimensions().data().addressPointer(),
                         (LongPointer) op.dimensions().shapeInfoDataBuffer().addressPointer(),
                         null,
@@ -1661,7 +1662,7 @@ public class NativeOpExecutioner extends DefaultOpExecutioner {
      * This method executes given CustomOp
      *
      * PLEASE NOTE: You're responsible for input/output validation
-     * @param op
+     * @param op Operation to execute
      */
     @Override
     public INDArray[] exec(@NonNull CustomOp op) {
@@ -1670,11 +1671,12 @@ public class NativeOpExecutioner extends DefaultOpExecutioner {
             try {
                 val list = this.calculateOutputShape(op);
                 if (list.isEmpty())
-                    throw new ND4JIllegalStateException("Op name " + op.opName() + " failed to execute. You can't execute non-inplace CustomOp without outputs being specified");
+                    throw new ND4JIllegalStateException("Op name " + op.opName() + " failed to calculate output datatypes");
 
                 for (LongShapeDescriptor shape : list)
                     op.addOutputArgument(Nd4j.create(shape, false));
-
+            } catch (ND4JIllegalStateException e){
+                throw e;
             } catch (Exception e) {
                 throw new ND4JIllegalStateException("Op name " + op.opName() + " failed to execute. You can't execute non-inplace CustomOp without outputs being specified");
             }
@@ -1974,7 +1976,7 @@ public class NativeOpExecutioner extends DefaultOpExecutioner {
         loop.scatterUpdate(null, op.ordinal(), (int) indices.length(),
                 array.data().addressPointer(), (LongPointer) tadX.getFirst().addressPointer(), (LongPointer) tadX.getSecond().addressPointer(), null, null, null,
                 updates.data().addressPointer(), (LongPointer) tadY.getFirst().addressPointer(), (LongPointer) tadY.getSecond().addressPointer(), null, null, null,
-                (IntPointer) indices.data().addressPointer(), null);
+                indices.data().addressPointer(), (LongPointer) indices.shapeInfoDataBuffer().addressPointer(), null, null);
 
         if (loop.lastErrorCode() != 0)
             throw new RuntimeException(loop.lastErrorMessage());

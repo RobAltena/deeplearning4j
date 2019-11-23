@@ -21,6 +21,7 @@ import org.nd4j.autodiff.functions.DifferentialFunction;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
+import org.nd4j.imports.NoOpNameFoundException;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.BaseBroadcastOp;
@@ -31,9 +32,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class BiasAddGrad extends DynamicCustomOp {
+    protected boolean nchw = true;
 
-    public BiasAddGrad(SameDiff sameDiff, SDVariable input, SDVariable bias, SDVariable gradient) {
+    public BiasAddGrad(SameDiff sameDiff, SDVariable input, SDVariable bias, SDVariable gradient, boolean nchw) {
         super(null, sameDiff, new SDVariable[]{input, bias, gradient});
+        this.nchw = nchw;
+        addBArgument(nchw);
     }
 
     public BiasAddGrad(@NonNull INDArray input, @NonNull INDArray bias, @NonNull INDArray gradient, INDArray output){
@@ -52,8 +56,6 @@ public class BiasAddGrad extends DynamicCustomOp {
         return "biasadd_bp";
     }
 
-
-
     @Override
     public List<SDVariable> doDiff(List<SDVariable> f1) {
         throw new UnsupportedOperationException("Differentiation not supported for op " + getClass().getSimpleName());
@@ -61,11 +63,6 @@ public class BiasAddGrad extends DynamicCustomOp {
 
     @Override
     public String onnxName() {
-        return "BiasAddGrad";
-    }
-
-    @Override
-    public String tensorflowName() {
         return "BiasAddGrad";
     }
 

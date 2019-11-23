@@ -133,16 +133,9 @@ public class LegacyOpMapper {
 
     public static Class<? extends Aggregate> aggregateOpClass(int opNum) {
         switch (opNum) {
-            case 0:
-                return HierarchicSoftmax.class;
-            case 1:
-                return AggregateDot.class;
+
             case 2:
                 return AggregateAxpy.class;
-            case 3:
-                return AggregateSkipGram.class;
-            case 4:
-                return AggregateCBOW.class;
             case 5:
                 return AggregateGEMM.class;
             default:
@@ -424,7 +417,7 @@ public class LegacyOpMapper {
             case 4:
                 return ScalarGreaterThanOrEqual.class;
             case 5:
-                return ScalarLessThanOrEqual.class;
+                return MatchCondition.class;
             case 6:
                 return ScalarNotEquals.class;
             case 7:
@@ -435,6 +428,8 @@ public class LegacyOpMapper {
                 return ScalarXor.class;
             case 10:
                 return ScalarNot.class;
+            case 11:
+                return ScalarLessThanOrEqual.class;
             default:
                 throw new UnsupportedOperationException("No known scalar bool op for op number: " + opNum);
         }
