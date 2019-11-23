@@ -55,7 +55,6 @@
 #define ND4J_EXPORT
 #endif
 #include <dll.h>
-#include <helpers/BlasHelper.h>
 
 /*
 int tad_threshold = 1;
@@ -180,6 +179,7 @@ ND4J_EXPORT void   execBroadcastBool(
         void *dY, Nd4jLong *dYShapeInfo,
         void *hZ, Nd4jLong *hZShapeInfo,
         void *dZ, Nd4jLong *dZShapeInfo,
+        void *extraParams,
         void *hDimension, Nd4jLong *hDimensionShape,
         void *dDimension, Nd4jLong *dDimensionShape);
 
@@ -1430,7 +1430,11 @@ static const char* getNpyArrayNameFromMap(void *map, int index){
     for(; it != end; ++it, ++cnt){
         if (cnt == index){
             // FIXME: @fariz, this is a leak!
+#ifdef _MSC_VER
+            return const_cast<const char *>(_strdup(it->first.c_str()));
+#else
             return const_cast<const char *>(strdup(it->first.c_str()));
+#endif
         }
     }
     throw std::runtime_error("No array at index.");
@@ -1704,7 +1708,7 @@ ND4J_EXPORT void scatterUpdate(Nd4jPointer *extraPointers, int opCode, int numOf
                   void* dX, Nd4jLong* dXShapeInfo, Nd4jLong* dXOffsets,
                   void* hY, Nd4jLong* hYShapeInfo, Nd4jLong* hYOffsets,
                   void* dY, Nd4jLong* dYShapeInfo, Nd4jLong* dYOffsets,
-                  int* hIindexes, int* dIindexes);
+                  void* hIindexes, Nd4jLong* hIndicesShapeInfo, void* dIindexes, Nd4jLong* dIndicesShapeInfo);
 
 ND4J_EXPORT void inspectArray(Nd4jPointer *extraPointers, Nd4jPointer buffer, Nd4jLong *shapeInfo, Nd4jPointer specialBuffer, Nd4jLong *specialShapeInfo, Nd4jPointer debugInfo);
 
@@ -1729,6 +1733,7 @@ typedef nd4j::graph::RandomGenerator OpaqueRandomGenerator;
 
 ND4J_EXPORT OpaqueContext* createGraphContext(int nodeId);
 ND4J_EXPORT OpaqueRandomGenerator* getGraphContextRandomGenerator(OpaqueContext* ptr);
+ND4J_EXPORT void ctxAllowHelpers(OpaqueContext* ptr, bool reallyAllow);
 ND4J_EXPORT void markGraphContextInplace(OpaqueContext* ptr, bool reallyInplace);
 ND4J_EXPORT void setGraphContextCudaContext(OpaqueContext* ptr, void *stream, void *reductionPointer, void *allocationPointer);
 ND4J_EXPORT void setGraphContextInputArray(OpaqueContext* ptr, int index, void *buffer, void *shapeInfo, void *specialBuffer, void *specialShapeInfo);

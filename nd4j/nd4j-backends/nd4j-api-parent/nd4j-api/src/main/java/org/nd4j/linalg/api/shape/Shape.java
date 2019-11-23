@@ -923,15 +923,13 @@ public class Shape {
      * @param indices             Indices array to get the offset for (must be same length as array rank)
      * @return                    Buffer offset fo the specified indices
      */
-    public static long getOffset(IntBuffer shapeInformation, int[] indices) {
-        // FIXME: int cast
+    /*public static long getOffset(IntBuffer shapeInformation, int[] indices) {
         return getOffset(shapeInformation, ArrayUtil.toLongArray(indices));
     }
 
     public static long getOffset(LongBuffer shapeInformation, int[] indices) {
-        // FIXME: int cast
         return getOffset(shapeInformation, ArrayUtil.toLongArray(indices));
-    }
+    }*/
 
     public static long getOffset(LongBuffer shapeInformation, long... indices) {
         int rank = rank(shapeInformation);
@@ -968,8 +966,8 @@ public class Shape {
      * @param indices             Indices array to get the offset for (must be same length as array rank)
      * @return                    Buffer offset fo the specified indices
      */
+    @Deprecated
     public static long getOffset(DataBuffer shapeInformation, int[] indices) {
-        // FIXME: int cast
         return getOffset(shapeInformation, ArrayUtil.toLongArray(indices));
     }
     public static long getOffset(DataBuffer shapeInformation, long... indices) {
@@ -3603,6 +3601,13 @@ public class Shape {
      * @return
      */
     public static long lengthOf(long[] shape) {
+        if (shape.length == 0)
+            return 1L;
+        else
+            return ArrayUtil.prodLong(shape);
+    }
+
+    public static long lengthOf(int[] shape) {
         if (shape.length == 0)
             return 1L;
         else

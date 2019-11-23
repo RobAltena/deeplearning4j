@@ -129,6 +129,7 @@ public interface NativeOps {
                                            @Cast("Nd4jLong *") LongPointer resultShapeInfo,
                                            Pointer dresult,
                                            @Cast("Nd4jLong *") LongPointer dresultShapeInfo,
+                                           Pointer extraParams,
                                            Pointer hDimension, @Cast("Nd4jLong *") LongPointer hDimensionShape,
                                            Pointer dDimension, @Cast("Nd4jLong *") LongPointer dDimensionShape);
 
@@ -1075,7 +1076,7 @@ public interface NativeOps {
                                        Pointer dX, @Cast("Nd4jLong *") LongPointer dXShapeInfo, @Cast("Nd4jLong *") LongPointer dxOffsets,
                                        Pointer hY, @Cast("Nd4jLong *") LongPointer hYShapeInfo, @Cast("Nd4jLong *") LongPointer hyOffsets,
                                        Pointer dY, @Cast("Nd4jLong *") LongPointer dYShapeInfo, @Cast("Nd4jLong *") LongPointer dyOffsets,
-                                       IntPointer hIndices, IntPointer dIndices);
+                                       Pointer hIndices, @Cast("Nd4jLong *") LongPointer hIndicesShapeInfo, Pointer dIndices, @Cast("Nd4jLong *") LongPointer dIndicesShapeInfo);
 
     //void fillUtf8String(PointerPointer extraPointers, String[] string, int numStrings, Pointer buffer);
     Pointer createUtf8String(PointerPointer extraPointers, String string, int length);
@@ -1123,6 +1124,7 @@ public interface NativeOps {
     void setGraphContextTArguments(OpaqueContext ptr, DoublePointer arguments, int numberOfArguments);
     void setGraphContextIArguments(OpaqueContext ptr, LongPointer arguments, int numberOfArguments);
     void setGraphContextBArguments(OpaqueContext ptr, BooleanPointer arguments, int numberOfArguments);
+    void ctxAllowHelpers(OpaqueContext ptr, boolean reallyAllow);
     void deleteGraphContext(OpaqueContext ptr);
 
     OpaqueRandomGenerator createRandomGenerator(long rootSeed, long nodeSeed);
