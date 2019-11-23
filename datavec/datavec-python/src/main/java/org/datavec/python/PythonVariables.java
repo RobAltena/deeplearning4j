@@ -390,6 +390,7 @@ public class PythonVariables implements java.io.Serializable {
         else if (type == PythonVariables.Type.LIST) {
             if (value instanceof java.util.List) {
                 value = ((java.util.List) value).toArray();
+                listVariables.put(name,  (Object[]) value);
             }
             else if(value instanceof org.json.JSONArray) {
                 org.json.JSONArray jsonArray = (org.json.JSONArray) value;
@@ -397,13 +398,12 @@ public class PythonVariables implements java.io.Serializable {
                 for(int i = 0; i < copyArr.length; i++) {
                     copyArr[i] = jsonArray.get(i);
                 }
-
-                value = copyArr;
                 listVariables.put(name,  copyArr);
 
             }
+            else {
                 listVariables.put(name,  (Object[]) value);
-
+            }
         }
         else if(type == PythonVariables.Type.DICT) {
             dictVariables.put(name,(java.util.Map<?,?>) value);
