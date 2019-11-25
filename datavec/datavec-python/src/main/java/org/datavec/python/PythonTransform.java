@@ -57,6 +57,7 @@ public class PythonTransform implements Transform {
     private Schema outputSchema;
     private String outputDict;
     private boolean returnAllVariables;
+    private boolean setupAndRun = false;
 
 
     @Builder
@@ -67,10 +68,12 @@ public class PythonTransform implements Transform {
                            Schema inputSchema,
                            Schema outputSchema,
                            String outputDict,
-                           boolean returnAllInputs) {
+                           boolean returnAllInputs,
+                           boolean setupAndRun) {
         Preconditions.checkNotNull(code,"No code found to run!");
         this.code = code;
         this.returnAllVariables = returnAllInputs;
+        this.setupAndRun = setupAndRun;
         if(inputs != null)
             this.inputs = inputs;
         if(outputs != null)
@@ -165,16 +168,28 @@ public class PythonTransform implements Transform {
 
         try{
             if (returnAllVariables) {
+                if (setupAndRun){
+                    return getWritablesFromPyOutputs(PythonExecutioner.execWithSetupRunAndReturnAllVariables(code, pyInputs));
+                }
                 return getWritablesFromPyOutputs(PythonExecutioner.execAndReturnAllVariables(code, pyInputs));
             }
 
             if (outputDict != null) {
-                PythonExecutioner.exec(this, pyInputs);
+                if (setupAndRun) {
+                    PythonExecutioner.execWithSetupAndRun(this, pyInputs);
+                }else{
+                    PythonExecutioner.exec(this, pyInputs);
+                }
                 PythonVariables out = PythonUtils.expandInnerDict(outputs, outputDict);
                 return getWritablesFromPyOutputs(out);
             }
             else {
-                PythonExecutioner.execWithSetupAndRun(code,pyInputs,outputs);
+                if (setupAndRun) {
+                    PythonExecutioner.execWithSetupAndRun(code, pyInputs, outputs);
+                }else{
+                    PythonExecutioner.exec(code, pyInputs, outputs);
+                }
+
                 return getWritablesFromPyOutputs(outputs);
             }
 
@@ -298,8 +313,15 @@ public class PythonTransform implements Transform {
                     break;
                 case DICT:
                     Map<?, ?> dictValue = pyOuts.getDictValue(name);
+                    Map noNullValues = new java.util.HashMap<>();
+                    for(Map.Entry entry : dictValue.entrySet()) {
+                        if(entry.getValue() != org.json.JSONObject.NULL) {
+                            noNullValues.put(entry.getKey(), entry.getValue());
+                        }
+                    }
+
                     try {
-                        out.add(new Text(ObjectMapperHolder.getJsonMapper().writeValueAsString(dictValue)));
+                        out.add(new Text(ObjectMapperHolder.getJsonMapper().writeValueAsString(noNullValues)));
                     } catch (JsonProcessingException e) {
                         throw new IllegalStateException("Unable to serialize dictionary " + name + " to json!");
                     }
@@ -312,20 +334,14 @@ public class PythonTransform implements Transform {
                         throw new IllegalStateException("Unable to serialize list vlaue " + name + " to json!");
                     }
                     break;
-                    /*
-                    case DICT:
-                    Map<?,?> outMap = pyOuts.getDictValue(name);
-                    for(val entry : outMap.entrySet()) {
-                    addPrimitiveWritable(out,entry.getValue());
-                    }
-                    break;
-                    */
                 default:
                     throw new IllegalStateException("Unable to support type " + pyType.name());
             }
         }
         return out;
     }
+
+
 
 
 }
