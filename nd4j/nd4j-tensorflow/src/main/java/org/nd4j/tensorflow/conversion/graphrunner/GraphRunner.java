@@ -80,7 +80,6 @@ public class GraphRunner implements Closeable {
     private Map<String,TensorDataType> inputDataTypes,outputDataTypes;
     private static Map<Pair<TensorDataType,TensorDataType>,GraphRunner> recastGraphDefs;
 
-
     static {
         recastGraphDefs = new ConcurrentHashMap<>();
     }
@@ -212,10 +211,11 @@ public class GraphRunner implements Closeable {
      */
     public Map<String, TF_Tensor> recastInputs(Map<String, TF_Tensor> inputs, List<String> inputOrder, Map<String,TensorDataType> inputDataTypes) {
         if(inputDataTypes == null || inputDataTypes.isEmpty()) {
+
             inputDataTypes = new LinkedHashMap<>();
             for(int i = 0; i < inputOrder.size(); i++) {
-                TensorDataType tensorDataType = TensorDataType.values()[inputs.get(inputOrder.get(i)).dtype()];
-                Preconditions.checkNotNull(tensorDataType,"Data type of " + inputs.get(inputOrder.get(i)).dtype() + " was null!");
+                TensorDataType tensorDataType = TensorDataType.values()[TF_TensorType(inputs.get(inputOrder.get(i)))];
+                Preconditions.checkNotNull(tensorDataType,"Data type of " + TF_TensorType(inputs.get(inputOrder.get(i))) + " was null!");
                 inputDataTypes.put(inputOrder.get(i),tensorDataType);
             }
         }
@@ -223,7 +223,7 @@ public class GraphRunner implements Closeable {
         Map<String, TF_Tensor> ret = new HashMap<>();
         for(int i = 0; i < inputOrder.size(); i++) {
             TF_Tensor currInput = inputs.get(inputOrder.get(i));
-            TensorDataType fromDType = TensorDataType.values()[currInput.dtype()];
+            TensorDataType fromDType = TensorDataType.values()[TF_TensorType(currInput)];
             if(fromDType != inputDataTypes.get(inputOrder.get(i))) {
                 TF_Tensor oldTensor = currInput;
                 currInput = castTensor(currInput, fromDType, inputDataTypes.get(inputOrder.get(i)));
@@ -255,7 +255,7 @@ public class GraphRunner implements Closeable {
         if(inputDataTypes == null) {
             inputDataTypes = new LinkedHashMap<>();
             for(int i = 0; i < inputOrder.size(); i++) {
-                inputDataTypes.put(inputOrder.get(i),TensorDataType.values()[inputs.get(inputOrder.get(i)).dtype()]);
+                inputDataTypes.put(inputOrder.get(i),TensorDataType.values()[TF_TensorType(inputs.get(inputOrder.get(i)))]);
             }
         }
 

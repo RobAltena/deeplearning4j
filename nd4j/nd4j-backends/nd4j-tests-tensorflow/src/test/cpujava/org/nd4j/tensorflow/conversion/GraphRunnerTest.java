@@ -65,7 +65,7 @@ public class GraphRunnerTest {
     public void testInputOutputResolution() throws Exception {
         ClassPathResource lenetPb = new ClassPathResource("tf_graphs/lenet_frozen.pb");
         byte[] content = IOUtils.toByteArray(lenetPb.getInputStream());
-        List<String> inputs = Arrays.asList("Reshape/tensor";
+        List<String> inputs = Arrays.asList("Reshape/tensor");
         GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).build();
         assertEquals(1,graphRunner.getInputOrder().size());
         assertEquals(1,graphRunner.getOutputOrder().size());
