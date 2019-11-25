@@ -56,14 +56,14 @@ public class GpuGraphRunnerTest {
             String json = graphRunner.sessionOptionsToJson();
             JsonFormat.parser().merge(json,builder);
             org.tensorflow.framework.ConfigProto build = builder.build();
-            assertEquals(build,graphRunner.getProtoBufConfigProto());
+            assertEquals(build,graphRunner.getSessionOptionsConfigProto());
             assertNotNull(graphRunner.getInputOrder());
             assertNotNull(graphRunner.getOutputOrder());
 
 
             org.tensorflow.framework.ConfigProto configProto1 = GraphRunner.fromJson(json);
 
-            assertEquals(graphRunner.getProtoBufConfigProto(),configProto1);
+            assertEquals(graphRunner.getSessionOptionsConfigProto(),configProto1);
             assertEquals(2,graphRunner.getInputOrder().size());
             assertEquals(1,graphRunner.getOutputOrder().size());
 

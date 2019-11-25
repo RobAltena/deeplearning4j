@@ -16,6 +16,9 @@
 
 package org.nd4j.tensorflow.conversion;
 
+import junit.framework.TestCase;
+import org.bytedeco.tensorflow.TF_Tensor;
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.shade.protobuf.util.JsonFormat;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
@@ -87,14 +90,14 @@ public class GraphRunnerTest {
         String json = graphRunner.sessionOptionsToJson();
         JsonFormat.parser().merge(json,builder);
         org.tensorflow.framework.ConfigProto build = builder.build();
-        assertEquals(build,graphRunner.getProtoBufConfigProto());
+        assertEquals(build,graphRunner.getSessionOptionsConfigProto());
         assertNotNull(graphRunner.getInputOrder());
         assertNotNull(graphRunner.getOutputOrder());
 
 
         org.tensorflow.framework.ConfigProto configProto1 = GraphRunner.fromJson(json);
 
-        assertEquals(graphRunner.getProtoBufConfigProto(),configProto1);
+        assertEquals(graphRunner.getSessionOptionsConfigProto(),configProto1);
         assertEquals(2,graphRunner.getInputOrder().size());
         assertEquals(1,graphRunner.getOutputOrder().size());
 
@@ -136,5 +139,21 @@ public class GraphRunnerTest {
             INDArray output = outputs.get("output");
             assertEquals(42.0, output.getDouble(0), 0.0);
         }
+    }
+
+    @Test()
+    public void testGraphRunnerCast() {
+        INDArray arr = Nd4j.linspace(1,4,4).castTo(DataType.FLOAT);
+        TF_Tensor tensor = TensorflowConversion.getInstance().tensorFromNDArray(arr);
+        TF_Tensor tf_tensor = GraphRunner.castTensor(tensor, TensorDataType.FLOAT,TensorDataType.DOUBLE);
+        INDArray doubleNDArray = TensorflowConversion.getInstance().ndArrayFromTensor(tf_tensor);
+        TestCase.assertEquals(DataType.DOUBLE,doubleNDArray.dataType());
+
+        arr = arr.castTo(DataType.INT);
+        tensor = TensorflowConversion.getInstance().tensorFromNDArray(arr);
+        tf_tensor = GraphRunner.castTensor(tensor, TensorDataType.fromNd4jType(DataType.INT),TensorDataType.DOUBLE);
+        doubleNDArray = TensorflowConversion.getInstance().ndArrayFromTensor(tf_tensor);
+        TestCase.assertEquals(DataType.DOUBLE,doubleNDArray.dataType());
+
     }
 }
