@@ -41,7 +41,7 @@ public class GpuGraphRunnerTest {
 
     @Test
     public void testGraphRunner() throws Exception {
-        File f = new ClassPathResource("/tf_graphs/nd4j_convert/simple_graph/frozen_model.pb").getFile();
+        byte[] content = IOUtils.toByteArray(new ClassPathResource("/tf_graphs/nd4j_convert/simple_graph/frozen_model.pb").getInputStream());
         List<String> inputNames = Arrays.asList("input_0","input_1");
 
         ConfigProto configProto = ConfigProto.newBuilder()
@@ -51,7 +51,7 @@ public class GpuGraphRunnerTest {
                         .build())
                 .build();
 
-        try(GraphRunner graphRunner = new GraphRunner(f.getAbsolutePath(), inputNames, configProto)) {
+        try(GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputNames).sessionOptionsConfigProto(configProto).build()) {
             org.tensorflow.framework.ConfigProto.Builder builder = org.tensorflow.framework.ConfigProto.newBuilder();
             String json = graphRunner.sessionOptionsToJson();
             JsonFormat.parser().merge(json,builder);
@@ -83,9 +83,4 @@ public class GpuGraphRunnerTest {
 
         }
     }
-
-
-
-
-
 }

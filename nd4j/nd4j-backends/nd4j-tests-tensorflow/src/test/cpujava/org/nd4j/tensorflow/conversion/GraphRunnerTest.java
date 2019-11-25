@@ -137,5 +137,4 @@ public class GraphRunnerTest {
             assertEquals(42.0, output.getDouble(0), 0.0);
         }
     }
-
 }
