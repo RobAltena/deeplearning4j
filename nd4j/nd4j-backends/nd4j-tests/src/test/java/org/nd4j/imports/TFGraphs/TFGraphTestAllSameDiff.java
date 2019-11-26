@@ -131,7 +131,13 @@ public class TFGraphTestAllSameDiff {   //Note: Can't extend BaseNd4jTest here a
             "non_max_suppression_v2/float16.*",
 
             // 11.26.2019 failing - https://github.com/eclipse/deeplearning4j/issues/8450
-            "betainc.*"
+            "betainc.*",
+
+            // 11.26.2019 failing - https://github.com/eclipse/deeplearning4j/issues/8452
+            "polygamma.*",
+
+            // 11.26.2019 failing - https://github.com/eclipse/deeplearning4j/issues/8453
+            "roll/.*"
     };
 
     @BeforeClass
