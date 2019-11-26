@@ -1226,4 +1226,25 @@ public class CustomOpsTests extends BaseNd4jTest {
         val res = Nd4j.exec(op);
         assertEquals(new long[]{1}, res[0].shape());
     }
+
+    @Test
+    public void testMatrixBand() {
+        INDArray input = Nd4j.createFromArray(new float[]{0.7788f,0.8012f,0.7244f,0.2309f,
+                                               0.7271f,0.1804f,0.5056f,0.8925f,
+                                               0.5461f,0.9234f,0.0856f,0.7938f}).reshape(3,4);
+        MatrixBandPart op = new MatrixBandPart(input,1,-1);
+        List<LongShapeDescriptor> lsd = op.calculateOutputShape();
+        assertEquals(1, lsd.size());
+    }
+
+    @Test
+    public void testBetaInc1() {
+        INDArray a = Nd4j.createFromArray(new float[]{0.7788f,    0.8012f,    0.7244f,    0.2309f});
+        INDArray b = Nd4j.createFromArray(new float[]{0.7717f,    0.9281f,    0.9846f,    0.4838f});
+        INDArray c = Nd4j.createFromArray(new float[]{0.9441f,    0.5957f,    0.8669f,    0.3502f});
+        BetaInc op = new BetaInc(a,b,c);
+        INDArray[] ret = Nd4j.exec(op);
+        INDArray expected = Nd4j.createFromArray(new float[]{0.9122f,    0.6344f,    0.8983f,    0.6245f});
+        assertEquals(expected, ret[0]);
+    }
 }
