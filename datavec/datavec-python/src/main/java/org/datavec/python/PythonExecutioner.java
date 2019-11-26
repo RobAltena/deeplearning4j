@@ -645,6 +645,11 @@ public class PythonExecutioner {
         return hasVar;
     }
 
+    /**
+     * Executes python code and looks for methods setup() and run()
+     * If both setup() and run() are found, both are executed for the first
+     * time and for subsequent calls only run() is executed.
+     */
     public static void execWithSetupAndRun(String code) {
         code = getWrappedCode(code);
         if(code.contains("import numpy") && !getInterpreter().equals("main")) { // FIXME
@@ -667,6 +672,11 @@ public class PythonExecutioner {
         releaseGIL();
     }
 
+    /**
+     * Executes python code and looks for methods setup() and run()
+     * If both setup() and run() are found, both are executed for the first
+     * time and for subsequent calls only run() is executed.
+     */
     public static void execWithSetupAndRun(String code, PythonVariables pyOutputs) {
         code = getWrappedCode(code);
         if(code.contains("import numpy") && !getInterpreter().equals("main")) { // FIXME
