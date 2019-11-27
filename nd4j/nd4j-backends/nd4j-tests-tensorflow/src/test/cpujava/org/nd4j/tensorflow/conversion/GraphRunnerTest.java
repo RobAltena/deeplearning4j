@@ -18,8 +18,10 @@
 package org.nd4j.tensorflow.conversion;
 
 import junit.framework.TestCase;
+import org.apache.commons.io.FileUtils;
 import org.bytedeco.tensorflow.TF_Tensor;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.resources.Resources;
 import org.nd4j.shade.protobuf.Descriptors;
 import org.nd4j.shade.protobuf.util.JsonFormat;
 import org.apache.commons.io.IOUtils;
@@ -58,7 +60,7 @@ public class GraphRunnerTest {
     @Test
     public void testGraphRunnerFilePath() throws Exception {
         List<String> inputs = Arrays.asList("input_0","input_1");
-        byte[] content = IOUtils.toByteArray(new ClassPathResource("/tf_graphs/nd4j_convert/simple_graph/frozen_model.pb").getInputStream());
+        byte[] content = FileUtils.readFileToByteArray(Resources.asFile("/tf_graphs/nd4j_convert/simple_graph/frozen_model.pb"));
         try(GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).build()) {
             runGraphRunnerTest(graphRunner);
         }

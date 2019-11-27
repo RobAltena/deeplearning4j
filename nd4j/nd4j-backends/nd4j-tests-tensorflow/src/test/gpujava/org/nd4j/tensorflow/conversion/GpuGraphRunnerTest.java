@@ -1,4 +1,4 @@
-/*******************************************************************************
+/* ******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
  * Copyright (c) 2019 Konduit K.K.
  *
@@ -19,7 +19,6 @@ package org.nd4j.tensorflow.conversion;
 
 import org.nd4j.shade.protobuf.util.JsonFormat;
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -28,7 +27,6 @@ import org.nd4j.tensorflow.conversion.graphrunner.GraphRunner;
 import org.tensorflow.framework.ConfigProto;
 import org.tensorflow.framework.GPUOptions;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,7 +35,6 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-//@Ignore("AB 2019/05/24 - Failing on CI - no jnitensorflow in java.library.path - see issue #7657")
 public class GpuGraphRunnerTest {
 
     @Test
@@ -47,7 +44,7 @@ public class GpuGraphRunnerTest {
 
         ConfigProto configProto = ConfigProto.newBuilder()
                 .setGpuOptions(GPUOptions.newBuilder()
-                        .setPerProcessGpuMemoryFraction(0.01)
+                        .setPerProcessGpuMemoryFraction(0.1)
                         .setAllowGrowth(false)
                         .build())
                 .build();
