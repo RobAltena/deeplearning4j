@@ -28,6 +28,7 @@ import org.nd4j.linalg.api.concurrency.AffinityManager;
 import org.nd4j.linalg.api.concurrency.BasicAffinityManager;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.jcublas.buffer.BaseCudaDataBuffer;
 import org.nd4j.linalg.jcublas.context.CudaContext;
 import org.nd4j.nativeblas.NativeOpsHolder;
 import org.slf4j.Logger;
@@ -300,6 +301,9 @@ public class CudaAffinityManager extends BasicAffinityManager {
         // to location to ensure for empty array
         if (array.isEmpty())
             return;
+
+        // let's make sure host pointer actually exists
+        ((BaseCudaDataBuffer) array.data()).lazyAllocateHostPointer();
 
         val point = AtomicAllocator.getInstance().getAllocationPoint(array);
         switch (location) {
