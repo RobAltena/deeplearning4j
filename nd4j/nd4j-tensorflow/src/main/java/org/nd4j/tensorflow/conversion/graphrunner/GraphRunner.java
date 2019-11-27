@@ -321,7 +321,7 @@ public class GraphRunner implements Closeable {
                     null,
                     status);        long end = System.nanoTime();
             long diff = TimeUnit.NANOSECONDS.toMillis((end - start));
-            log.info("Session run  timing in ms " + diff);
+            log.debug("Session runtime: {} ms", diff);
 
 
 
@@ -398,7 +398,7 @@ public class GraphRunner implements Closeable {
                     status);
             long end = System.nanoTime();
             long diff = TimeUnit.NANOSECONDS.toMillis((end - start));
-            log.info("Session run  timing in ms " + diff);
+            log.debug("Session runtime: {} ms", diff);
 
 
 
@@ -411,13 +411,10 @@ public class GraphRunner implements Closeable {
                 for(int i = 0; i < outputOrder.size(); i++) {
                     outputArrays.put(outputOrder.get(i),new TF_Tensor(outputTensorsPointer.get(i)));
                 }
-
             }
 
             return outputArrays;
-
         }
-
     }
 
 
