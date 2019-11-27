@@ -125,19 +125,21 @@ public class GraphRunnerTest {
     @Test
     public void testGraphRunnerSavedModel() throws Exception {
         File f = testDir.newFolder("test");
-        new ClassPathResource("/tf_saved_models/saved_model_counter/00000123/").copyDirectory(f);
+        String path = "C:\\Users\\fariz\\code\\dl4j-test-resources\\src\\main\\resources\\tf_saved_models\\saved_model_counter\\00000123";
+        //new ClassPathResource("/tf_saved_models/saved_model_counter/00000123/").copyDirectory(f);
         SavedModelConfig savedModelConfig = SavedModelConfig.builder()
-                .savedModelPath(f.getAbsolutePath())
+                .savedModelPath(path)
                 .signatureKey("incr_counter_by")
                 .modelTag("serve")
                 .build();
         try(GraphRunner graphRunner = GraphRunner.builder().savedModelConfig(savedModelConfig).build()) {
             INDArray delta = Nd4j.create(new float[] { 42 }, new long[0]);
             Map<String,INDArray> inputs = new LinkedHashMap<>();
-            inputs.put("delta",delta);
+            inputs.put("delta:0",delta);
             Map<String,INDArray> outputs = graphRunner.run(inputs);
             assertEquals(1, outputs.size());
-            INDArray output = outputs.get("output");
+            System.out.println(Arrays.toString(outputs.keySet().toArray(new String[0])));
+            INDArray output = outputs.values().toArray(new INDArray[0])[0];
             assertEquals(42.0, output.getDouble(0), 0.0);
         }
     }
