@@ -1059,9 +1059,9 @@ public class SDNN extends SDOps {
      *         batch_mean: vector
      *         batch_var: vector
      */
-    public SDVariable[] fusedBatchNorm(String name, SDVariable x, SDVariable scale, SDVariable offset,
+    public SDVariable[] fusedBatchNorm(String[] names, SDVariable x, SDVariable scale, SDVariable offset,
                                        SDVariable dataFormat, SDVariable isTraining) {
         SDVariable[] res = f().fusedBatchNorm(x,scale,offset,dataFormat,isTraining);
-        return res;
+        return sd.updateVariableNamesAndReferences(res, names);
     }
 }
