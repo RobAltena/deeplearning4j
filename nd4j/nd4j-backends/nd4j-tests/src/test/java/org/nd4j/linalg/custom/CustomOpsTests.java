@@ -37,6 +37,7 @@ import org.nd4j.linalg.api.ops.impl.image.ResizeBilinear;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.MaxPoolWithArgmax;
 import org.nd4j.linalg.api.ops.impl.layers.convolution.config.Pooling2DConfig;
 import org.nd4j.linalg.api.ops.impl.reduce.MmulBp;
+import org.nd4j.linalg.api.ops.impl.shape.Create;
 import org.nd4j.linalg.api.ops.impl.transforms.any.IsMax;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.AddOp;
 import org.nd4j.linalg.api.ops.impl.transforms.pairwise.arithmetic.ModOp;
@@ -48,6 +49,7 @@ import org.nd4j.linalg.exception.ND4JIllegalStateException;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.factory.Nd4jBackend;
 import org.nd4j.linalg.indexing.NDArrayIndex;
+import org.nd4j.linalg.indexing.conditions.Conditions;
 import org.nd4j.nativeblas.NativeOpsHolder;
 
 import java.util.ArrayList;
@@ -1312,5 +1314,44 @@ public class CustomOpsTests extends BaseNd4jTest {
         List<LongShapeDescriptor> lsd = op.calculateOutputShape();
         assertEquals(1, lsd.size());
         assertArrayEquals(new long[]{8, 8, 3}, lsd.get(0).getShape());
+    }
+
+    @Test
+    public void testBitCastShape_3(){
+        val x = Nd4j.createFromArray(new int[]{1, 2, 3, 4, 5, 6, 7, 8}).reshape(1, 4, 2);
+        val e = Nd4j.createFromArray(new long[]{8589934593L, 17179869187L, 25769803781L, 34359738375L}).reshape(1, 4);
+        val z = Nd4j.exec(new BitCast(x, DataType.LONG.toInt()))[0];
+
+        assertEquals(e, z);
+    }
+
+
+    @Test
+    public void testMatch_1() {
+        INDArray x = Nd4j.ones(DataType.FLOAT, 3,3);
+        INDArray y = Nd4j.linspace(DataType.FLOAT, -5, 9, 1).reshape(3, 3);
+        val c =  Conditions.equals(0.0);
+
+        System.out.println("Y:\n" + y);
+
+        INDArray z = x.match(y, c);
+        INDArray exp = Nd4j.createFromArray(new boolean[][]{
+                {false, false, false},
+                {false, false, false},
+                {true,  false, false}
+        });
+
+        assertEquals(exp, z);
+    }
+
+
+    @Test
+    public void testCreateOp_1() {
+        val shape = Nd4j.createFromArray(new int[] {3, 4, 5});
+        val exp = Nd4j.create(DataType.INT, 3, 4, 5);
+
+        val result = Nd4j.exec(new Create(shape, 'c', true, DataType.INT))[0];
+
+        assertEquals(exp, result);
     }
 }
