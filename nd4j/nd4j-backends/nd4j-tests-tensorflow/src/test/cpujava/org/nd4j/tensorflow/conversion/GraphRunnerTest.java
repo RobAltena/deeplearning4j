@@ -20,6 +20,7 @@ package org.nd4j.tensorflow.conversion;
 import junit.framework.TestCase;
 import org.bytedeco.tensorflow.TF_Tensor;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.shade.protobuf.Descriptors;
 import org.nd4j.shade.protobuf.util.JsonFormat;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
@@ -31,6 +32,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.tensorflow.conversion.graphrunner.GraphRunner;
 import org.nd4j.tensorflow.conversion.graphrunner.SavedModelConfig;
+import org.tensorflow.framework.ConfigProto;
 
 import java.io.File;
 import java.util.Arrays;
@@ -86,17 +88,18 @@ public class GraphRunnerTest {
     }
 
     private void runGraphRunnerTest(GraphRunner graphRunner) throws Exception {
-
-        org.tensorflow.framework.ConfigProto.Builder builder = org.tensorflow.framework.ConfigProto.newBuilder();
         String json = graphRunner.sessionOptionsToJson();
-        JsonFormat.parser().merge(json,builder);
-        org.tensorflow.framework.ConfigProto build = builder.build();
-        assertEquals(build,graphRunner.getSessionOptionsConfigProto());
+        if( json != null ) {
+            org.tensorflow.framework.ConfigProto.Builder builder = org.tensorflow.framework.ConfigProto.newBuilder();
+            JsonFormat.parser().merge(json, builder);
+            org.tensorflow.framework.ConfigProto build = builder.build();
+            assertEquals(build,graphRunner.getSessionOptionsConfigProto());
+        }
         assertNotNull(graphRunner.getInputOrder());
         assertNotNull(graphRunner.getOutputOrder());
 
 
-        org.tensorflow.framework.ConfigProto configProto1 = GraphRunner.fromJson(json);
+        org.tensorflow.framework.ConfigProto configProto1 = json == null ? null : GraphRunner.fromJson(json);
 
         assertEquals(graphRunner.getSessionOptionsConfigProto(),configProto1);
         assertEquals(2,graphRunner.getInputOrder().size());
