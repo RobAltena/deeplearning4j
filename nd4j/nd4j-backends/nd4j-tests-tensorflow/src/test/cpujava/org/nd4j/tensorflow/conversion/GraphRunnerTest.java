@@ -125,10 +125,9 @@ public class GraphRunnerTest {
     @Test
     public void testGraphRunnerSavedModel() throws Exception {
         File f = testDir.newFolder("test");
-        String path = "C:\\Users\\fariz\\code\\dl4j-test-resources\\src\\main\\resources\\tf_saved_models\\saved_model_counter\\00000123";
-        //new ClassPathResource("/tf_saved_models/saved_model_counter/00000123/").copyDirectory(f);
+        new ClassPathResource("/tf_saved_models/saved_model_counter/00000123/").copyDirectory(f);
         SavedModelConfig savedModelConfig = SavedModelConfig.builder()
-                .savedModelPath(path)
+                .savedModelPath(f.getAbsolutePath())
                 .signatureKey("incr_counter_by")
                 .modelTag("serve")
                 .build();
