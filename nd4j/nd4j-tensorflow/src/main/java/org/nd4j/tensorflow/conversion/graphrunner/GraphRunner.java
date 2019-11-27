@@ -624,7 +624,9 @@ public class GraphRunner implements Closeable {
      * {@link org.nd4j.shade.protobuf.util.JsonFormat}
      * @return the session options as json (mainly for debugging)
      */
-    public  String sessionOptionsToJson() {
+    public String sessionOptionsToJson() {
+        if(sessionOptionsConfigProto == null)
+            return null;
         try {
             return org.nd4j.shade.protobuf.util.JsonFormat.printer().print(sessionOptionsConfigProto);
         } catch (Exception e) {
