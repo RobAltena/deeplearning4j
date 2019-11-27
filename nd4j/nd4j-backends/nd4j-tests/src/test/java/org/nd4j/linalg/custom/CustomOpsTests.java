@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.lang.Float.NaN;
 import static org.junit.Assert.*;
 
 /**
@@ -1246,5 +1247,70 @@ public class CustomOpsTests extends BaseNd4jTest {
         INDArray[] ret = Nd4j.exec(op);
         INDArray expected = Nd4j.createFromArray(new float[]{0.9122f,    0.6344f,    0.8983f,    0.6245f});
         assertEquals(expected, ret[0]);
+    }
+
+    @Test
+    public void testPolygamma1() {
+        INDArray a = Nd4j.createFromArray(new float[]{0.7788f,    0.8012f,    0.7244f,    0.2309f,
+                                        0.7271f,    0.1804f,    0.5056f,    0.8925f,
+                                        0.5461f,    0.9234f,    0.0856f,    0.7938f}).reshape(3,4);
+        INDArray b = Nd4j.createFromArray(new float[]{0.7717f,    0.9281f,    0.9846f,    0.4838f,
+                                        0.6433f,    0.6041f,    0.6501f,    0.7612f,
+                                        0.7605f,    0.3948f,    0.9493f,    0.8600f}).reshape(3,4);
+        INDArray expected = Nd4j.createFromArray(new float[]{NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, }).reshape(3,4);
+        Polygamma op = new Polygamma(a,b);
+        INDArray[] ret = Nd4j.exec(op);
+        assertEquals(expected, ret[0]);
+    }
+
+    @Test
+    public void testRoll1() {
+        INDArray a = Nd4j.createFromArray(new float[]{0.7788f,    0.8012f,    0.7244f,    0.2309f});
+        Roll op = new Roll(a,Nd4j.scalar(2),Nd4j.scalar(0));
+        INDArray[] ret = Nd4j.exec(op);
+        INDArray expected = Nd4j.createFromArray(new float[]{0.7244f,    0.2309f,    0.7788f,    0.8012f});
+        assertEquals(expected, ret[0]);
+    }
+
+    @Test
+    public void testAdjustHueShape(){
+        INDArray image = Nd4j.createFromArray(new float[]{0.7788f,    0.8012f,    0.7244f,
+            0.2309f,    0.7271f,    0.1804f, 0.5056f,    0.8925f,    0.5461f,
+            0.9234f,    0.0856f,    0.7938f, 0.6591f,    0.5555f,    0.1596f,
+            0.3087f,    0.1548f,    0.4695f, 0.9939f,    0.6113f,    0.6765f,
+            0.1800f,    0.6750f,    0.2246f, 0.0509f,    0.4601f,    0.8284f,
+            0.2354f,    0.9752f,    0.8361f, 0.2585f,    0.4189f,    0.7028f,
+            0.7679f,    0.5373f,    0.7234f,  0.2690f,    0.0062f,    0.0327f,
+            0.0644f,    0.8428f,    0.7494f,  0.0755f,    0.6245f,    0.3491f,
+            0.5793f,    0.5730f,    0.1822f,  0.6420f,    0.9143f,    0.3019f,
+            0.3574f,    0.1704f,    0.8395f, 0.5468f,    0.0744f,    0.9011f,
+            0.6574f,    0.4124f,    0.2445f, 0.4248f,    0.5219f,    0.6952f,
+            0.4900f,    0.2158f,    0.9549f, 0.1386f,    0.1544f,    0.5365f,
+            0.0134f,    0.4163f,    0.1456f, 0.4109f,    0.2484f,    0.3330f,
+            0.2974f,    0.6636f,    0.3808f, 0.8664f,    0.1896f,    0.7530f,
+            0.7215f,    0.6612f,    0.7270f, 0.5704f,    0.2666f,    0.7453f,
+            0.0444f,    0.3024f,    0.4850f, 0.7982f,    0.0965f,    0.7843f,
+            0.5075f,    0.0844f,    0.8370f, 0.6103f,    0.4604f,    0.6087f,
+            0.8594f,    0.4599f,    0.6714f, 0.2744f,    0.1981f,    0.4143f,
+            0.7821f,    0.3505f,    0.5040f, 0.1180f,    0.8307f,    0.1817f,
+            0.8442f,    0.5074f,    0.4471f, 0.5105f,    0.6666f,    0.2576f,
+            0.2341f,    0.6801f,    0.2652f, 0.5394f,    0.4690f,    0.6146f,
+            0.1210f,    0.2576f,    0.0769f, 0.4643f,    0.1628f,    0.2026f,
+            0.3774f,    0.0506f,    0.3462f, 0.5720f,    0.0838f,    0.4228f,
+            0.0588f,    0.5362f,    0.4756f, 0.2530f,    0.1778f,    0.0751f,
+            0.8977f,    0.3648f,    0.3065f, 0.4739f,    0.7014f,    0.4473f,
+            0.5171f,    0.1744f,    0.3487f, 0.7759f,    0.9491f,    0.2072f,
+            0.2182f,    0.6520f,    0.3092f, 0.9545f,    0.1881f,    0.9579f,
+            0.1785f,    0.9636f,    0.4830f, 0.6569f,    0.3353f,    0.9997f,
+            0.5869f,    0.5747f,    0.0238f, 0.2943f,    0.5248f,    0.5879f,
+            0.7266f,    0.1965f,    0.9167f, 0.9726f,    0.9206f,    0.0519f,
+            0.2997f,    0.0039f,    0.7652f, 0.5498f,    0.3794f,    0.3791f,
+            0.3528f,    0.2873f,    0.8082f,  0.4732f,    0.4399f,    0.6606f,
+            0.5991f,    0.0034f,    0.4874f}).reshape(8,8,3);
+
+        AdjustHue op = new AdjustHue(image, 0.2f);
+        List<LongShapeDescriptor> lsd = op.calculateOutputShape();
+        assertEquals(1, lsd.size());
+        assertArrayEquals(new long[]{8, 8, 3}, lsd.get(0).getShape());
     }
 }

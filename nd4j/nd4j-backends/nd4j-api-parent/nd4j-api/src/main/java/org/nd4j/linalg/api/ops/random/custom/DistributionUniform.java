@@ -92,8 +92,8 @@ public class DistributionUniform extends DynamicCustomOp {
     }
 
     @Override
-    public String tensorflowName() {
-        return "RandomUniform";
+    public String[] tensorflowNames() {
+        return new String[]{"RandomUniform","RandomUniformInt"};
     }
 
     @Override

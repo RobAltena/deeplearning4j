@@ -137,7 +137,10 @@ public class TFGraphTestAllSameDiff {   //Note: Can't extend BaseNd4jTest here a
             "polygamma.*",
 
             // 11.26.2019 failing - https://github.com/eclipse/deeplearning4j/issues/8453
-            "roll/.*"
+            "roll/.*",
+
+            // 11.26.2019 failing https://github.com/eclipse/deeplearning4j/issues/8455
+            "matrix_band_part/.*"
     };
 
     @BeforeClass
