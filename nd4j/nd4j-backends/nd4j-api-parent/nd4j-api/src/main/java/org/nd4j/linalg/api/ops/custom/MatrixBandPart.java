@@ -34,9 +34,9 @@ public class MatrixBandPart extends DynamicCustomOp {
         Preconditions.checkArgument(input.rank() >= 2, "MatrixBandPart: Input rank should be 2 or higher");
         long N = input.size(-2);
         long M = input.size(-1);
-        Preconditions.checkArgument(minLower > -N && minLower < N, "MatrixBandPart: lower diagonal count %s should be less than %i",
+        Preconditions.checkArgument(minLower > -N && minLower < N, "MatrixBandPart: lower diagonal count %s should be less than %s",
                 minLower, N);
-        Preconditions.checkArgument(maxUpper > -M && maxUpper < M, "MatrixBandPart: upper diagonal count %s should be less than %i.",
+        Preconditions.checkArgument(maxUpper > -M && maxUpper < M, "MatrixBandPart: upper diagonal count %s should be less than %s.",
                 maxUpper, M);
         addInputArgument(input);
         addIArgument(minLower, maxUpper);

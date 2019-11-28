@@ -32,7 +32,9 @@ public class ToggleBits extends DynamicCustomOp {
 
     public ToggleBits(@NonNull INDArray input, INDArray output) {
         this(input);
-        addOutputArgument(input);
+        if (output != null) {
+            addOutputArgument(output);
+        }
     }
 
     public ToggleBits(@NonNull INDArray input) {

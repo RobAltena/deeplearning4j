@@ -35,7 +35,9 @@ public class FusedBatchNorm extends DynamicCustomOp {
                           INDArray yOut, INDArray batchMeanOut, INDArray batchMeanVar) {
         addInputArgument(x, scale, offset);
         addIArgument(dataFormat, isTraining);
-        addOutputArgument(yOut, batchMeanOut, batchMeanVar);
+        if (yOut != null && batchMeanOut != null && batchMeanVar != null) {
+            addOutputArgument(yOut, batchMeanOut, batchMeanVar);
+        }
     }
 
     public FusedBatchNorm(@NonNull SameDiff sameDiff, @NonNull SDVariable x, @NonNull SDVariable scale, @NonNull SDVariable offset,
