@@ -32,7 +32,9 @@ public class AdjustSaturation extends DynamicCustomOp {
 
     public AdjustSaturation(@NonNull INDArray in, double factor, INDArray out) {
         this(in, factor);
-        outputArguments.add(out);
+        if (out != null) {
+            outputArguments.add(out);
+        }
     }
 
     public AdjustSaturation(@NonNull INDArray in, double factor) {

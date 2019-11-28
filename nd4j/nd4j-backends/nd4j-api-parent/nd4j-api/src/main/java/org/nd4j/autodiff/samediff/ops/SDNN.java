@@ -1041,9 +1041,9 @@ public class SDNN extends SDOps {
      * @param x input array
      * @return output array and argmax array
      */
-    public SDVariable[] maxPoolWithArgmax(String name, SDVariable x, Pooling2DConfig pooling2DConfig) {
+    public SDVariable[] maxPoolWithArgmax(String[] names, SDVariable x, Pooling2DConfig pooling2DConfig) {
         SDVariable[] res = f().maxPoolWithArgmaxs(x, pooling2DConfig);
-        return res;
+        return sd.updateVariableNamesAndReferences(res, names);
     }
 
     /**

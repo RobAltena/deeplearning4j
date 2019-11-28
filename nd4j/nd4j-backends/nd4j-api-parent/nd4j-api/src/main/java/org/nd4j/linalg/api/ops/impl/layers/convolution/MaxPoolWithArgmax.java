@@ -26,6 +26,7 @@ import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
 import org.nd4j.imports.descriptors.properties.PropertyMapping;
+import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
@@ -43,6 +44,7 @@ import java.util.*;
 public class MaxPoolWithArgmax extends DynamicCustomOp {
 
     protected Pooling2DConfig config;
+    protected DataType outputType;
 
     public MaxPoolWithArgmax() {
     }
@@ -199,6 +201,11 @@ public class MaxPoolWithArgmax extends DynamicCustomOp {
                 .build();
         this.config = pooling2DConfig;
         addArgs();
+        if(attributesForNode.containsKey("argmax")) {
+            outputType = TFGraphMapper.convertType(attributesForNode.get("argmax").getType());
+        } else {
+            outputType = DataType.UINT32;
+        }
     }
 
     @Override
@@ -271,7 +278,7 @@ public class MaxPoolWithArgmax extends DynamicCustomOp {
         Preconditions.checkState(inputDataTypes != null && inputDataTypes.size() == 1, "Expected 1 input data type for %s, got %s", getClass(), inputDataTypes);
         List<DataType> result = new ArrayList<>();
         result.add(inputDataTypes.get(0));
-        result.add(DataType.LONG);
+        result.add(outputType == null ? DataType.UINT32 : outputType);
         return result;
     }
 }

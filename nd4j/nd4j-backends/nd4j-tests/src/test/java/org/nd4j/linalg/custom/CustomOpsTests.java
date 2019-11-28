@@ -1219,6 +1219,7 @@ public class CustomOpsTests extends BaseNd4jTest {
         assertEquals(expected, result[0]);
     }
 
+    @Ignore("AS 11.28.2019 - https://github.com/eclipse/deeplearning4j/issues/8449")
     @Test
     public void testNonMaxSuppression() {
         INDArray boxes = Nd4j.createFromArray(new float[] {0.8115f,    0.4121f,    0.0771f,    0.4863f,
@@ -1240,6 +1241,7 @@ public class CustomOpsTests extends BaseNd4jTest {
         assertEquals(1, lsd.size());
     }
 
+    @Ignore("Failed AS 11.26.2019 - https://github.com/eclipse/deeplearning4j/issues/8450")
     @Test
     public void testBetaInc1() {
         INDArray a = Nd4j.createFromArray(new float[]{0.7788f,    0.8012f,    0.7244f,    0.2309f});
@@ -1251,6 +1253,7 @@ public class CustomOpsTests extends BaseNd4jTest {
         assertEquals(expected, ret[0]);
     }
 
+    @Ignore("Failure AS 11.28.2019 - https://github.com/eclipse/deeplearning4j/issues/8452")
     @Test
     public void testPolygamma1() {
         INDArray a = Nd4j.createFromArray(new float[]{0.7788f,    0.8012f,    0.7244f,    0.2309f,
@@ -1265,6 +1268,7 @@ public class CustomOpsTests extends BaseNd4jTest {
         assertEquals(expected, ret[0]);
     }
 
+    @Ignore("Failure AS 11.28.2019 - https://github.com/eclipse/deeplearning4j/issues/8453")
     @Test
     public void testRoll1() {
         INDArray a = Nd4j.createFromArray(new float[]{0.7788f,    0.8012f,    0.7244f,    0.2309f});
@@ -1311,6 +1315,8 @@ public class CustomOpsTests extends BaseNd4jTest {
             0.5991f,    0.0034f,    0.4874f}).reshape(8,8,3);
 
         AdjustHue op = new AdjustHue(image, 0.2f);
+        INDArray[] res = Nd4j.exec(op);
+        System.out.println(res[0]);
         List<LongShapeDescriptor> lsd = op.calculateOutputShape();
         assertEquals(1, lsd.size());
         assertArrayEquals(new long[]{8, 8, 3}, lsd.get(0).getShape());

@@ -31,7 +31,9 @@ public class AdjustHue extends DynamicCustomOp {
 
     public AdjustHue(@NonNull INDArray in, double delta, INDArray out) {
         this(in, delta);
-        outputArguments.add(out);
+        if (out != null) {
+            outputArguments.add(out);
+        }
     }
 
     public AdjustHue(@NonNull INDArray in, double delta) {

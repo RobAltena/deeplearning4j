@@ -38,7 +38,9 @@ public class Polygamma extends DynamicCustomOp {
 
     public Polygamma(@NonNull INDArray n, @NonNull INDArray x, INDArray output) {
         this(n,x);
-        addOutputArgument(output);
+        if (output != null) {
+            addOutputArgument(output);
+        }
     }
 
     public Polygamma(@NonNull SameDiff sameDiff, @NonNull SDVariable n, @NonNull SDVariable x) {

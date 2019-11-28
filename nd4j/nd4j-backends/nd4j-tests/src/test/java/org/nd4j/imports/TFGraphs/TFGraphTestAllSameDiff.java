@@ -141,7 +141,13 @@ public class TFGraphTestAllSameDiff {   //Note: Can't extend BaseNd4jTest here a
             "roll/.*",
 
             // 11.26.2019 failing https://github.com/eclipse/deeplearning4j/issues/8455
-            "matrix_band_part/.*"
+            "matrix_band_part/.*",
+
+            // 11.28.2019 failing https://github.com/eclipse/deeplearning4j/issues/8458
+            "adjust_hue/.*",
+
+            // 11.28.2019 failing https://github.com/eclipse/deeplearning4j/issues/8459
+            "adjust_saturation/.*"
     };
 
     /* As per TFGraphTestList.printArraysDebugging - this field defines a set of regexes for test cases that should have

@@ -767,7 +767,7 @@ public class LayerOpValidation extends BaseOpValidation {
                 .isSameMode(true)
                 .build();
 
-        SDVariable[] results = sd.nn().maxPoolWithArgmax("", in, pooling2DConfig);
+        SDVariable[] results = sd.nn().maxPoolWithArgmax(new String[]{"",""}, in, pooling2DConfig);
         assertArrayEquals(inArr.shape(), results[0].eval().shape());
         assertArrayEquals(inArr.shape(), results[1].eval().shape());
     }

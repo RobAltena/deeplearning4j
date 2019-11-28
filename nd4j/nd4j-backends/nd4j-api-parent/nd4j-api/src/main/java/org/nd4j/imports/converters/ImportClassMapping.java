@@ -597,7 +597,8 @@ public class ImportClassMapping {
             org.nd4j.linalg.api.ops.custom.MatrixBandPart.class,
             org.nd4j.linalg.api.ops.custom.Polygamma.class,
             org.nd4j.linalg.api.ops.custom.RandomCrop.class,
-            org.nd4j.linalg.api.ops.custom.Roll.class
+            org.nd4j.linalg.api.ops.custom.Roll.class,
+            org.nd4j.linalg.api.ops.custom.ToggleBits.class
     );
 
     static {
