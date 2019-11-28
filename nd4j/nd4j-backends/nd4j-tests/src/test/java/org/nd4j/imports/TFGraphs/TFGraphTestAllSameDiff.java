@@ -116,12 +116,6 @@ public class TFGraphTestAllSameDiff {   //Note: Can't extend BaseNd4jTest here a
             // 2019/11/15 - missing dtype argument in nd4j, tests are useless https://github.com/eclipse/deeplearning4j/issues/8398
             "zeros_like/rank2_float32_dtype_int.*",
 
-            // 2019/11/15 - failure https://github.com/eclipse/deeplearning4j/issues/8399
-            "crop_and_resize.*",
-
-            // 2019/11/15 - failure https://github.com/eclipse/deeplearning4j/issues/8401
-            "draw_bounding_boxes.*",
-
             // 2019/11/15 - failure https://github.com/eclipse/deeplearning4j/issues/8402
             "fake_quant/min_max_args_per_channel.*",
 
