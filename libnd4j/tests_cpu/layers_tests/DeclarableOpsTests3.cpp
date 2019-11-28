@@ -1782,7 +1782,6 @@ TEST_F(DeclarableOpsTests3, betainc_test11) {
     NDArray x('c', {4}, {0.9441f, 0.5957f, 0.8669f, 0.3502f}, nd4j::DataType::FLOAT32);
 
     NDArray expected('c', {4}, {0.912156, 0.634443, 0.898314, 0.624544}, nd4j::DataType::FLOAT32);
-                                // 0.9122f, 0.6344f, 0.8983f, 0.6245f
 
     nd4j::ops::betainc op;
     auto results = op.execute({&a, &b, &x}, {}, {});
@@ -1796,7 +1795,6 @@ TEST_F(DeclarableOpsTests3, betainc_test11) {
 
     delete results;
 }
-
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests3, zeta_test1) {
