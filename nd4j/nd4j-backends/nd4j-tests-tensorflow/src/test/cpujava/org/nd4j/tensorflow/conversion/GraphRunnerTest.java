@@ -35,6 +35,7 @@ import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.tensorflow.conversion.graphrunner.GraphRunner;
 import org.nd4j.tensorflow.conversion.graphrunner.SavedModelConfig;
 import org.tensorflow.framework.ConfigProto;
+import org.tensorflow.framework.GPUOptions;
 
 import java.io.File;
 import java.util.Arrays;
@@ -47,12 +48,25 @@ import static org.junit.Assert.assertNotNull;
 
 public class GraphRunnerTest {
 
+    public static ConfigProto getConfig(){
+        String backend = Nd4j.getExecutioner().getEnvironmentInformation().getProperty("backend");
+        if("CUDA".equalsIgnoreCase(backend)) {
+            org.tensorflow.framework.ConfigProto configProto = org.tensorflow.framework.ConfigProto.getDefaultInstance();
+            ConfigProto.Builder b = configProto.toBuilder().addDeviceFilters(TensorflowConversion.defaultDeviceForThread());
+            return b.setGpuOptions(GPUOptions.newBuilder()
+                    .setAllowGrowth(true)
+                    .setPerProcessGpuMemoryFraction(0.5)
+                    .build()).build();
+        }
+        return null;
+    }
+
     @Test
     public void testGraphRunner() throws Exception {
         List<String> inputs = Arrays.asList("input_0","input_1");
         byte[] content = IOUtils.toByteArray(new ClassPathResource("/tf_graphs/nd4j_convert/simple_graph/frozen_model.pb").getInputStream());
 
-        try(GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).build()) {
+        try(GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).sessionOptionsConfigProto(getConfig()).build()) {
             runGraphRunnerTest(graphRunner);
         }
     }
@@ -61,7 +75,8 @@ public class GraphRunnerTest {
     public void testGraphRunnerFilePath() throws Exception {
         List<String> inputs = Arrays.asList("input_0","input_1");
         byte[] content = FileUtils.readFileToByteArray(Resources.asFile("/tf_graphs/nd4j_convert/simple_graph/frozen_model.pb"));
-        try(GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).build()) {
+
+        try(GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).sessionOptionsConfigProto(getConfig()).build()) {
             runGraphRunnerTest(graphRunner);
         }
     }
@@ -71,9 +86,10 @@ public class GraphRunnerTest {
         ClassPathResource lenetPb = new ClassPathResource("tf_graphs/lenet_frozen.pb");
         byte[] content = IOUtils.toByteArray(lenetPb.getInputStream());
         List<String> inputs = Arrays.asList("Reshape/tensor");
-        GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).build();
-        assertEquals(1,graphRunner.getInputOrder().size());
-        assertEquals(1,graphRunner.getOutputOrder().size());
+        try(GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).sessionOptionsConfigProto(getConfig()).build()) {
+            assertEquals(1, graphRunner.getInputOrder().size());
+            assertEquals(1, graphRunner.getOutputOrder().size());
+        }
     }
 
 
@@ -81,12 +97,13 @@ public class GraphRunnerTest {
     public void testMultiOutputGraph() throws Exception {
         List<String> inputs = Arrays.asList("image_tensor");
         byte[] content = IOUtils.toByteArray(new ClassPathResource("/tf_graphs/examples/ssd_inception_v2_coco_2018_01_28/frozen_inference_graph.pb").getInputStream());
-        GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).build();
-        String[] outputs = new String[] { "detection_boxes", "detection_scores", "detection_classes", "num_detections"};
+        try(GraphRunner graphRunner = GraphRunner.builder().graphBytes(content).inputNames(inputs).sessionOptionsConfigProto(getConfig()).build()) {
+            String[] outputs = new String[]{"detection_boxes", "detection_scores", "detection_classes", "num_detections"};
 
-        assertEquals(1,graphRunner.getInputOrder().size());
-        System.out.println(graphRunner.getOutputOrder());
-        assertEquals(4,graphRunner.getOutputOrder().size());
+            assertEquals(1, graphRunner.getInputOrder().size());
+            System.out.println(graphRunner.getOutputOrder());
+            assertEquals(4, graphRunner.getOutputOrder().size());
+        }
     }
 
     private void runGraphRunnerTest(GraphRunner graphRunner) throws Exception {
@@ -136,7 +153,7 @@ public class GraphRunnerTest {
                 .signatureKey("incr_counter_by")
                 .modelTag("serve")
                 .build();
-        try(GraphRunner graphRunner = GraphRunner.builder().savedModelConfig(savedModelConfig).build()) {
+        try(GraphRunner graphRunner = GraphRunner.builder().savedModelConfig(savedModelConfig).sessionOptionsConfigProto(getConfig()).build()) {
             INDArray delta = Nd4j.create(new float[] { 42 }, new long[0]);
             Map<String,INDArray> inputs = new LinkedHashMap<>();
             inputs.put("delta:0",delta);
@@ -148,7 +165,7 @@ public class GraphRunnerTest {
         }
     }
 
-    @Test()
+    @Test
     public void testGraphRunnerCast() {
         INDArray arr = Nd4j.linspace(1,4,4).castTo(DataType.FLOAT);
         TF_Tensor tensor = TensorflowConversion.getInstance().tensorFromNDArray(arr);
