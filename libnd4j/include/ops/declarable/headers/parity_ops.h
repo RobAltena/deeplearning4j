@@ -575,44 +575,47 @@ namespace nd4j {
          * This operation adjusts image hue by delta
          * Input arrays:
          * 0 - input array with rank >= 3, must have at least one dimension equal 3, that is dimension containing channels.
+         * 1 - optional argument, input scalar-array containing delta
          *
          * T arguments:
-         * 0 - delta value
+         * 0 - optional argument, delta value
          *
          * Int arguments:
          * 0 - optional argument, corresponds to dimension with 3 channels
          */
         #if NOT_EXCLUDED(OP_adjust_hue)
-        DECLARE_CONFIGURABLE_OP(adjust_hue, 1, 1, true, 1, -2);
+        DECLARE_CONFIGURABLE_OP(adjust_hue, 1, 1, true, 0, 0);
         #endif
 
         /**
          * This operation adjusts image saturation by delta
          * Input arrays:
          * 0 - input array with rank >= 3, must have at least one dimension equal 3, that is dimension containing channels.
+         * 1 - optional argument, input scalar-array containing saturation factor
          *
          * T arguments:
-         * 0 - saturation factor
+         * 0 - optional argument, saturation factor
          *
          * Int arguments:
          * 0 - optional argument, corresponds to dimension with 3 channels
          */
         #if NOT_EXCLUDED(OP_adjust_saturation)
-        DECLARE_CONFIGURABLE_OP(adjust_saturation, 1, 1, true, 1, -2);
+        DECLARE_CONFIGURABLE_OP(adjust_saturation, 1, 1, true, 0, 0);
         #endif
 
         /**
          * This operation adjusts image contrast by given factor ( z = (x - mean) * factor + mean )
          * Input arrays:
          * 0 - input array with rank >= 3, must have last one dimension equal 3, that is dimension containing channels.
+         * 1 - optional argument, input scalar-array containing saturation contrast factor
          *
          * T arguments:
-         * 0 - contrast factor
+         * 0 - optional argument, contrast factor
          *
          */
         #if NOT_EXCLUDED(OP_adjust_contrast)
-        DECLARE_CONFIGURABLE_OP(adjust_contrast, 1, 1, true, -2, 0);
-        DECLARE_CONFIGURABLE_OP(adjust_contrast_v2, 1, 1, true, -2, 0);
+        DECLARE_CONFIGURABLE_OP(adjust_contrast, 1, 1, true, 0, 0);
+        DECLARE_CONFIGURABLE_OP(adjust_contrast_v2, 1, 1, true, 0, 0);
         #endif
 
 
@@ -1829,7 +1832,7 @@ namespace nd4j {
         #endif
 
         /**
-         * compare_and_bitpack - compare with greater and pack result with uint8 
+         * compare_and_bitpack - compare with greater and pack result with uint8
          *
          * input params:
          *    0 - NDArray (input)

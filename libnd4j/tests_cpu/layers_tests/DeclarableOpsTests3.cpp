@@ -1775,6 +1775,30 @@ TEST_F(DeclarableOpsTests3, betainc_test10) {
 }
 
 ///////////////////////////////////////////////////////////////////
+TEST_F(DeclarableOpsTests3, betainc_test11) {
+
+    NDArray a('c', {4}, {0.7788f, 0.8012f, 0.7244f, 0.2309f}, nd4j::DataType::FLOAT32);
+    NDArray b('c', {4}, {0.7717f, 0.9281f, 0.9846f, 0.4838f}, nd4j::DataType::FLOAT32);
+    NDArray x('c', {4}, {0.9441f, 0.5957f, 0.8669f, 0.3502f}, nd4j::DataType::FLOAT32);
+
+    NDArray expected('c', {4}, {0.912156, 0.634443, 0.898314, 0.624544}, nd4j::DataType::FLOAT32);
+                                // 0.9122f, 0.6344f, 0.8983f, 0.6245f
+
+    nd4j::ops::betainc op;
+    auto results = op.execute({&a, &b, &x}, {}, {});
+
+    ASSERT_EQ(ND4J_STATUS_OK, results->status());
+
+    auto *output = results->at(0);
+
+    ASSERT_TRUE(expected.isSameShape(output));
+    ASSERT_TRUE(expected.equalsTo(output));
+
+    delete results;
+}
+
+
+///////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests3, zeta_test1) {
 
     auto x= NDArrayFactory::create<float>('c', {3,3});
