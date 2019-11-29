@@ -1,5 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2019 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -16,6 +17,7 @@
 
 //
 // Created by Yurii Shyrma on 12.12.2017
+// @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
 #include<ops/declarable/helpers/polyGamma.h>
@@ -29,27 +31,20 @@ namespace helpers {
 
 
 //////////////////////////////////////////////////////////////////////////
-// calculate factorial
-template <typename T>
-static FORCEINLINE T getFactorial(const int n) {
-	if (n < 0)
-		throw std::runtime_error("factorial is not defined for negative number !");
-
-	if(n==0 || n==1)
-		return (T)1.f;
-
-	T result = (T)1.f;
-
-	for(int i = 2; i <= n; ++i)
-		result *= i;
-
-	return result;
-}
-
-//////////////////////////////////////////////////////////////////////////
 // implementation is based on serial representation written in terms of the Hurwitz zeta function as polygamma = (-1)^{n+1} * n! * zeta(n+1, x)
 template <typename T>
-static FORCEINLINE T polyGammaScalar(nd4j::LaunchContext * context, const int n, const T x) {
+static FORCEINLINE T polyGamma(T x) {
+
+	const int xInt = static_cast<int>(x);
+
+	if(x == xInt && x <= 0)
+		return std::numeric_limits<T>::quiet_NaN();
+
+	if(x - xInt == 0.5 && xInt <= 10) {		// psi(n+0.5) = -Euler_Mascheroni_const + -2*ln(2) + sum_from_k=1_to_n( 2/(2*k-1) )	, for n = 1,2,3,...inf, we use this formula only for n <= 10 to avoid time consuming sum calculation for bigger n
+		for (uint i = 1; i < count; ++i) {
+			/* code */
+		}
+	}
 
 	// if (n < 0)
 	// 	throw("polyGamma function: n must be >= 0 !");

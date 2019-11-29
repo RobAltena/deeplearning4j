@@ -2130,6 +2130,28 @@ TEST_F(DeclarableOpsTests3, polygamma_test3) {
     delete results;
 }
 
+TEST_F(DeclarableOpsTests3, polygamma_test4) {
+
+    NDArray n('c', {3,4}, {0.7788, 0,1,2,3,4,5,6,7,8,9,10}, nd4j::DataType::FLOAT32);
+    NDArray x('c', {3,4}, {0.7717,0.9281,0.9846,0.4838,0.6433,0.6041,0.6501,0.7612,0.7605,0.3948,0.9493,0.8600}, nd4j::DataType::FLOAT32);
+
+    NDArray expected('c', {3,4}, {std::numeric_limits<float>::quiet_NaN(), -7.021327e-01,  1.682743e+00, -1.851378e+01, 3.604167e+01, -3.008293e+02,
+                                1.596005e+03, -4.876665e+03, 4.510025e+04, -1.730340e+08,  6.110257e+05, -1.907087e+07}, nd4j::DataType::FLOAT32);
+
+    nd4j::ops::polygamma op;
+    auto results = op.execute({&n, &x}, {}, {});
+
+    ASSERT_EQ(ND4J_STATUS_OK, results->status());
+
+    auto output = results->at(0);
+    output->printBuffer();
+
+    ASSERT_TRUE(expected.isSameShape(output));
+    ASSERT_TRUE(expected.equalsTo(output));
+
+    delete results;
+}
+
 ///////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests3, svd_test1) {
 
