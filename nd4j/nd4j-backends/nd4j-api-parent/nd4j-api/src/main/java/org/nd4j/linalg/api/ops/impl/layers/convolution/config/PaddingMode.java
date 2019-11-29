@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015-2018 Skymind, Inc.
+ * Copyright (c) 2019 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -14,33 +14,11 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
-//
-// @author raver119@gmail.com
-//
+package org.nd4j.linalg.api.ops.impl.layers.convolution.config;
 
-#include <op_boilerplate.h>
-#if NOT_EXCLUDED(OP_Assert)
 
-#include <ops/declarable/CustomOperations.h>
-#include <ops/declarable/helpers/axis.h>
-
-namespace nd4j {
-    namespace ops {
-        OP_IMPL(Assert, 1, 1, false) {
-            auto x = INPUT_VARIABLE(0);
-
-            if (!x->e<bool>(0)) {
-                REQUIRE_TRUE(false, 0, "Assertion failed for node [%i]\n", block.getNodeId());
-            }
-
-            return Status::OK();
-        }
-        DECLARE_TYPES(Assert) {
-            getOpDescriptor()
-                    ->setAllowedInputTypes(DataType::ANY)
-                    ->setSameMode(true);
-        }
-    }
+public enum PaddingMode {
+    VALID,
+    SAME,
+    CAUSAL
 }
-
-#endif
