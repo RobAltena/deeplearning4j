@@ -35,6 +35,8 @@ import java.util.Map;
 public class BitCast extends DynamicCustomOp {
     public BitCast() {}
 
+    private DataType dtype;
+
     public BitCast(INDArray in, DataType dataType, INDArray out) {
         this(in, dataType.toInt(), out);
     }
@@ -43,6 +45,8 @@ public class BitCast extends DynamicCustomOp {
         inputArguments.add(in);
         outputArguments.add(out);
         iArguments.add(Long.valueOf(dataType));
+
+        dtype = DataType.fromInt(dataType);
     }
 
     public BitCast(INDArray in, DataType dataType) {
@@ -52,6 +56,7 @@ public class BitCast extends DynamicCustomOp {
     public BitCast(INDArray in, int dataType) {
         inputArguments.add(in);
         iArguments.add(Long.valueOf(dataType));
+        dtype = DataType.fromInt(dataType);
     }
 
     public BitCast(SameDiff sameDiff, SDVariable in, SDVariable dataType) {
@@ -64,6 +69,8 @@ public class BitCast extends DynamicCustomOp {
         val t = nodeDef.getAttrOrDefault("type", null);
         val type = ArrayOptionsHelper.convertToDataType(t.getType());
         addIArgument(type.toInt());
+
+        dtype = type;
     }
 
     @Override
@@ -80,6 +87,6 @@ public class BitCast extends DynamicCustomOp {
     public List<DataType> calculateOutputDataTypes(List<DataType> inputDataTypes){
         int n = args().length;
         Preconditions.checkState(inputDataTypes != null && inputDataTypes.size() == n, "Expected %s input data types for %s, got %s", n, getClass(), inputDataTypes);
-        return Collections.singletonList(inputDataTypes.get(0));
+        return Collections.singletonList(dtype);
     }
 }

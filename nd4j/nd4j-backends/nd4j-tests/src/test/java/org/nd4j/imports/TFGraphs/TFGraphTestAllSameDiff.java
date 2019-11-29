@@ -77,7 +77,7 @@ public class TFGraphTestAllSameDiff {   //Note: Can't extend BaseNd4jTest here a
             //Failing 2019/09/11 - https://github.com/eclipse/deeplearning4j/issues/7965
             "bincount/.*",
             // Failing 2019/11/15 https://github.com/eclipse/deeplearning4j/issues/8400
-            "bitcast/.*",
+            //"bitcast/.*",
             // Failing 2019/11/14 https://github.com/eclipse/deeplearning4j/issues/8393
             "is_strictly_increasing/emptyArrayTest/.*",
 
