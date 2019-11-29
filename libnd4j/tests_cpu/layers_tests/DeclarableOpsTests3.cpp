@@ -2144,6 +2144,27 @@ TEST_F(DeclarableOpsTests3, polygamma_test4) {
     ASSERT_EQ(ND4J_STATUS_OK, results->status());
 
     auto output = results->at(0);
+
+    ASSERT_TRUE(expected.isSameShape(output));
+    ASSERT_TRUE(expected.equalsTo(output));
+
+    delete results;
+}
+
+TEST_F(DeclarableOpsTests3, digamma_1) {
+
+    NDArray x('c', {18}, {-25, -24.99999, -21.5, -21.2, -19.2, -5.5, -4.1, -0.5, -0.3, 0., 0.2, 1, 1.5, 2.2, 5.2, 19., 21, 22.2}, nd4j::DataType::FLOAT32);
+
+    NDArray expected('c', {18}, {std::numeric_limits<float>::quiet_NaN(),-99996.761229, 3.091129,7.401432,7.304757,1.792911, 11.196838, 0.03649,2.11331,
+                                 std::numeric_limits<float>::quiet_NaN(), -5.28904, -0.577216,0.03649, 0.544293,1.549434,2.917892,3.020524,3.077401}, nd4j::DataType::FLOAT32);
+    // [nan, -108151.257812, 3.113513, 7.424085, 7.329699, 1.792913, 11.298084, 0.036490, 2.210606, nan, -5.189816, -0.577216, 0.036490, 0.643518, 1.648659, 2.917892, 3.044523, 3.100092]
+
+    nd4j::ops::digamma op;
+    auto results = op.execute({&x}, {}, {});
+
+    ASSERT_EQ(ND4J_STATUS_OK, results->status());
+
+    auto output = results->at(0);
     output->printBuffer();
 
     ASSERT_TRUE(expected.isSameShape(output));
@@ -2151,6 +2172,7 @@ TEST_F(DeclarableOpsTests3, polygamma_test4) {
 
     delete results;
 }
+
 
 ///////////////////////////////////////////////////////////////////
 TEST_F(DeclarableOpsTests3, svd_test1) {

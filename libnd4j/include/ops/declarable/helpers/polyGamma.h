@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 //
-// Created by Yurii Shyrma on 13.12.2017.
+// @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
 #ifndef LIBND4J_POLYGAMMA_H
@@ -30,8 +30,11 @@ namespace helpers {
 
 
 	// calculate the polygamma function
-    void polyGamma(nd4j::LaunchContext * context, const NDArray& n, const NDArray& x, NDArray& output);
-    
+    void polyGamma(nd4j::LaunchContext* context, const NDArray& n, const NDArray& x, NDArray& z);
+
+    // calculate the digamma function
+    void diGamma(nd4j::LaunchContext* context, const NDArray& x, NDArray& z);
+
 
 }
 }

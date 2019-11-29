@@ -71,17 +71,13 @@ static FORCEINLINE T polyGammaScalar(nd4j::LaunchContext * context, const int n,
 template <typename T>
 static void polyGamma_(nd4j::LaunchContext * context, const NDArray& n, const NDArray& x, NDArray& output) {
 
-	NDArray& result = output;
-
-	int xLen = x.lengthOf();
-
 	auto func = PRAGMA_THREADS_FOR {
         for (auto i = start; i < stop; i += increment) {
         	const T order = n.e<T>(i);
         	if(order != static_cast<int>(order))		// if order has fractional part then do not perform calculations and return NAN
-        		result.p(i, std::numeric_limits<T>::quiet_NaN());
+        		output.p(i, std::numeric_limits<T>::quiet_NaN());
         	else
-            	result.p(i, polyGammaScalar<T>(context, order, x.e<T>(i)));
+            	output.p(i, polyGammaScalar<T>(context, order, x.e<T>(i)));
         }
     };
 	samediff::Threads::parallel_for(func, 0, x.lengthOf());

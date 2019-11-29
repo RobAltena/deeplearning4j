@@ -513,7 +513,6 @@ namespace nd4j {
         /**
         * This op calculates polygamma function psi^(n)(x). Implementation is based on serial representation written in
         * terms of the Hurwitz zeta function: polygamma = (-1)^{n+1} * n! * zeta(n+1, x).
-        * Currently the case n = 0 is not supported.
         *
         * Input arrays:
         *    0: n - define derivative order (n+1), type integer (however currently is implemented as float casted to integer)
@@ -526,6 +525,20 @@ namespace nd4j {
         */
         #if NOT_EXCLUDED(OP_polygamma)
         DECLARE_CONFIGURABLE_OP(polygamma, 2, 1, false, 0, 0);
+        #endif
+
+        /**
+        * This op calculates digamma function psi(x) = derivative of log(Gamma(x))
+        *
+        * Input arrays:
+        *    0: x - abscissa points where to evaluate the digamma function, type float
+        *
+        * Output array:
+        *    0: values of digamma function at corresponding x, type float
+        *
+        */
+        #if NOT_EXCLUDED(OP_digamma)
+        DECLARE_CONFIGURABLE_OP(digamma, 1, 1, false, 0, 0);
         #endif
 
         /**

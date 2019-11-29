@@ -1,6 +1,5 @@
 /*******************************************************************************
  * Copyright (c) 2015-2018 Skymind, Inc.
- * Copyright (c) 2019 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Apache License, Version 2.0 which is available at
@@ -19,32 +18,23 @@
 // @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
-#include <op_boilerplate.h>
-#if NOT_EXCLUDED(OP_digamma)
+#ifndef LIBND4J_DIGAMMA_H
+#define LIBND4J_DIGAMMA_H
 
-#include <ops/declarable/CustomOperations.h>
-#include <ops/declarable/helpers/diGamma.h>
+#include <ops/declarable/helpers/helpers.h>
+#include "NDArray.h"
 
 namespace nd4j {
-namespace ops  {
+namespace ops {
+namespace helpers {
 
-CONFIGURABLE_OP_IMPL(digamma, 1, 1, false, 0, 0) {
+    // calculate the digamma function
+    void diGamma(nd4j::LaunchContext* context, const NDArray& x, NDArray& z);
 
-    auto x = INPUT_VARIABLE(0);
-    auto z = OUTPUT_VARIABLE(0);
-
-    helpers::diGamma(block.launchContext(), *x, *z);
-
-    return Status::OK();
-}
-
-DECLARE_TYPES(digamma) {
-    getOpDescriptor()
-            ->setAllowedInputTypes({ALL_FLOATS, ALL_INTS})
-            ->setSameMode(true);
-}
 
 }
 }
+}
 
-#endif
+
+#endif //LIBND4J_DIGAMMA_H

@@ -15,7 +15,7 @@
  ******************************************************************************/
 
 //
-// @author Yurii Shyrma (iuriish@yahoo.com), created on 13.12.2017
+// @author Yurii Shyrma (iuriish@yahoo.com)
 //
 
 #include <op_boilerplate.h>
@@ -53,7 +53,7 @@ DECLARE_SYN(PolyGamma, polygamma);
 
     DECLARE_TYPES(polygamma) {
         getOpDescriptor()
-                ->setAllowedInputTypes({ALL_FLOATS, ALL_INTS})
+                ->setAllowedInputTypes({ALL_FLOATS})
                 ->setSameMode(true);
     }
 }
