@@ -18,7 +18,7 @@
 // @author Yurii Shyrma (iuriish@yahoo.com), created on 26.04.2019
 //
 
-#include<ops/declarable/helpers/polyGamma.h>
+#include<ops/declarable/helpers/gammaMathFunc.h>
 #include<ops/declarable/helpers/zeta.h>
 #include <NDArrayFactory.h>
 
@@ -37,9 +37,13 @@ __global__ static void polyGammaCuda(const void *vn, const Nd4jLong *nShapeInfo,
           auto z = reinterpret_cast<T*>(vz);
 
     __shared__ Nd4jLong len;
+    __shared__ bool sameOffsetNX, sameOffsetNZ;
 
-    if (threadIdx.x == 0)
+    if (threadIdx.x == 0) {
         len = shape::length(nShapeInfo);
+        sameOffsetNX = shape::haveSameShapeAndStrides(xShapeInfo, nShapeInfo);
+        sameOffsetNZ = shape::haveSameShapeAndStrides(zShapeInfo, nShapeInfo);
+    }
     __syncthreads();
 
     const auto tid = blockIdx.x * blockDim.x + threadIdx.x;
@@ -48,8 +52,8 @@ __global__ static void polyGammaCuda(const void *vn, const Nd4jLong *nShapeInfo,
     for (int i = tid; i < len; i += totalThreads) {
 
         const auto nOffset = shape::getIndexOffset(i, nShapeInfo);
-        const auto xOffset = shape::getIndexOffset(i, xShapeInfo);
-        const auto zOffset = shape::getIndexOffset(i, zShapeInfo);
+        const auto xOffset = sameOffsetNX ? nOffset : shape::getIndexOffset(i, xShapeInfo);
+        const auto zOffset = sameOffsetNZ ? nOffset : shape::getIndexOffset(i, zShapeInfo);
 
         const T nVal = n[nOffset];
 

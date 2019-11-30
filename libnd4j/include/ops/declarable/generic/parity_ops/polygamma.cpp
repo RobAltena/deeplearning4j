@@ -22,7 +22,7 @@
 #if NOT_EXCLUDED(OP_polygamma)
 
 #include <ops/declarable/CustomOperations.h>
-#include <ops/declarable/helpers/polyGamma.h>
+#include <ops/declarable/helpers/gammaMathFunc.h>
 
 namespace nd4j {
 namespace ops  {

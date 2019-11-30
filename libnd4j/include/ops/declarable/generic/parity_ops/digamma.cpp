@@ -23,7 +23,7 @@
 #if NOT_EXCLUDED(OP_digamma)
 
 #include <ops/declarable/CustomOperations.h>
-#include <ops/declarable/helpers/diGamma.h>
+#include <ops/declarable/helpers/gammaMathFunc.h>
 
 namespace nd4j {
 namespace ops  {

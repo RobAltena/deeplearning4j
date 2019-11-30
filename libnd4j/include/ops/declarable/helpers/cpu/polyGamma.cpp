@@ -18,7 +18,7 @@
 // Created by Yurii Shyrma on 12.12.2017
 //
 
-#include<ops/declarable/helpers/polyGamma.h>
+#include<ops/declarable/helpers/gammaMathFunc.h>
 #include<ops/declarable/helpers/zeta.h>
 #include <NDArrayFactory.h>
 #include <execution/Threads.h>
@@ -57,8 +57,6 @@ static FORCEINLINE T polyGammaScalar(nd4j::LaunchContext * context, const int n,
 	// if (x <= (T)0.)
 	// 	throw("polyGamma function: x must be > 0 !");
 
-	// TODO case for n = 0 (digamma)
-
 	int sign = (n + 1) % 2  ?  -1 : 1;
 	// T factorial = (T)std::tgamma(n + 1);
 
@@ -74,8 +72,10 @@ static void polyGamma_(nd4j::LaunchContext * context, const NDArray& n, const ND
 	auto func = PRAGMA_THREADS_FOR {
         for (auto i = start; i < stop; i += increment) {
         	const T order = n.e<T>(i);
-        	if(order != static_cast<int>(order))		// if order has fractional part then do not perform calculations and return NAN
+        	if(order != static_cast<int>(order))						// if order has fractional part then do not perform calculations and return NAN
         		output.p(i, std::numeric_limits<T>::quiet_NaN());
+        	else if (order == 0)										// polygamma function of zero order is digamma function
+        		output.p(i, diGammaScalar<T>(x.e<T>(i)));
         	else
             	output.p(i, polyGammaScalar<T>(context, order, x.e<T>(i)));
         }
