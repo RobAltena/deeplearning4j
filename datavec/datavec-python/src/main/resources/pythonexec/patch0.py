@@ -13,6 +13,10 @@ from numpy.compat._inspect import getargspec
 ENABLE_ARRAY_FUNCTION = bool(
     int(os.environ.get('NUMPY_EXPERIMENTAL_ARRAY_FUNCTION', 0)))
 
+
+ARRAY_FUNCTION_ENABLED = ENABLE_ARRAY_FUNCTION  # backward compat
+
+
 _add_docstring = add_docstring
 
 

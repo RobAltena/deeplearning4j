@@ -1102,6 +1102,7 @@ public class PythonExecutioner {
                 "pythonexec/patch1.py",
                 evalString("__random_path")
         });
+
         return patches;
     }
 
@@ -1126,11 +1127,14 @@ public class PythonExecutioner {
 
     private static void applyPatches() {
         for (String[] patch : _getPatches()){
-            if (!_checkPatchApplied(patch[1])){
+            if (_checkPatchApplied(patch[1])){
+                log.info("Patch already applied for " + patch[1]);
+            }
+            else{
                 _applyPatch(patch[0], patch[1]);
+                log.info("Applied patch for " + patch[1]);
             }
         }
-        // exec("print('Reloading numpy'); sys.stdout.flush(); sys.stderr.flush(); import importlib; print('Imported importlib'); sys.stdout.flush();  importlib.reload(np); print('Reloaded lib'); sys.stdout.flush(); sys.stderr.flush();");
         for (String[] patch: _getPatches()){
             if (!_checkPatchApplied(patch[1])){
                 throw new RuntimeException("Error patching numpy");
