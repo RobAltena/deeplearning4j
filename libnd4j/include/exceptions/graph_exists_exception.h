@@ -25,9 +25,10 @@
 #include <pointercast.h>
 #include <stdexcept>
 #include <exceptions/graph_exception.h>
+#include <dll.h>
 
 namespace nd4j {
-    class graph_exists_exception: public graph_exception {
+    class ND4J_EXPORT graph_exists_exception: public graph_exception {
     public:
         explicit graph_exists_exception(Nd4jLong graphId);
     };

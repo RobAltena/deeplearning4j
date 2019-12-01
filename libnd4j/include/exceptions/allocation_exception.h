@@ -24,9 +24,10 @@
 #include <string>
 #include <stdexcept>
 #include <pointercast.h>
+#include <dll.h>
 
 namespace nd4j {
-    class allocation_exception : public std::runtime_error {
+    class ND4J_EXPORT allocation_exception : public std::runtime_error {
     public:
         allocation_exception(std::string message);
         ~allocation_exception() = default;

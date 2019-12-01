@@ -25,9 +25,10 @@
 #include <pointercast.h>
 #include <stdexcept>
 #include <exceptions/graph_exception.h>
+#include <dll.h>
 
 namespace nd4j {
-    class unknown_graph_exception: public graph_exception {
+    class ND4J_EXPORT unknown_graph_exception: public graph_exception {
     public:
         explicit unknown_graph_exception(Nd4jLong graphId);
     };
