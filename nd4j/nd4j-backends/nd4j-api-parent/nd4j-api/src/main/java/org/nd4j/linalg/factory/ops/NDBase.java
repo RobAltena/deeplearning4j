@@ -101,36 +101,25 @@ public class NDBase {
   }
 
   /**
-   * Argmax array reduction operation, optionally along specified dimensions.<br>
-   * Output values are the index of the maximum value of each slice along the specified dimension<br>
+   * Argmin array reduction operation, optionally along specified dimensions.<br>
+   * Output values are the index of the minimum value of each slice along the specified dimension.<br>
+   * <br>
+   * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
+   * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
+   * the mean along a dimension).<br>
+   * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
+   * keepDims = true: [a,1,c]<br>
+   * keepDims = false: [a,c]<br>
    *
    * @param in Input variable (NUMERIC type)
+   * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
    * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
-   * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
+   * @return output reduced array of rank (input rank - num dimensions) if keepDims = false, or of rank (input rank) if keepdims = true (NUMERIC type)
    */
-  public INDArray argmax(INDArray in, int... dimensions) {
-    NDValidation.validateNumerical("argmax", "in", in);
-    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.indexaccum.Argmax(in, dimensions));
-  }
-
-  /**
-   * Argmin array reduction operation, optionally along specified dimensions.<br>
-   * Output values are the index of the minimum value of each slice along the specified dimension<br>
-   * <br>
-   * @param in         Input variable<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
-   *
-   * @param in  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray argmin(INDArray in, INDArray dimensions) {
+  public INDArray argmin(INDArray in, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("argmin", "in", in);
-    NDValidation.validateNumerical("argmin", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Argmin(in, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.indexaccum.IMin(in, keepDims, dimensions));
   }
 
   /**
@@ -143,44 +132,30 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name       Name of the output variable<br>
-   * @param in         Input variable<br>
-   * @param keepDims   If true: keep the dimensions that are reduced on (as length 1). False: remove the reduction dimensions<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Output variable: reduced array of rank (input rank - num dimensions) if keepDims = false, or<br>
-   * of rank (input rank) if keepdims = true<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
+   * @return output reduced array of rank (input rank - num dimensions) if keepDims = false, or of rank (input rank) if keepdims = true (NUMERIC type)
    */
-  public INDArray argmin(INDArray in, INDArray keepDims, INDArray dimensions) {
+  public INDArray argmin(INDArray in, int... dimensions) {
     NDValidation.validateNumerical("argmin", "in", in);
-    NDValidation.validateNumerical("argmin", "keepDims", keepDims);
-    NDValidation.validateNumerical("argmin", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Argmin(in, keepDims, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.indexaccum.IMin(in, dimensions));
   }
 
   /**
    * Assign/copy op: out = x.assign(y). Supports broadcasting<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input variable x<br>
-   * @param y    Input variable y<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable x (NUMERIC type)
+   * @param y Input variable y (NUMERIC type)
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray assign(INDArray x, INDArray y) {
+  public INDArray assign(INDArray[] x, INDArray[] y) {
     NDValidation.validateNumerical("assign", "x", x);
+    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("assign", "y", y);
-    return Nd4j.exec(new TODO.Assign(x, y))[0];
+    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.Assign(x, y))[0];
   }
 
   /**

@@ -46,6 +46,11 @@ public class IMin extends BaseIndexAccumulation {
         super(x, z, dimensions);
     }
 
+    public IMin(INDArray x, boolean keepDims, int... dimensions) {
+        super(x, null, dimensions); //TODO: Fix this hack. not using keepDims.
+    }
+
+
 
     @Override
     public int opNum() {
