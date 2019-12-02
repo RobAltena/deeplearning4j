@@ -47,6 +47,9 @@ public class IMax extends BaseIndexAccumulation {
         super(x, null, dimensions);
     }
 
+    public IMax(INDArray x, boolean keepDims, int... dimensions) {
+        super(x, null, dimensions); //TODO: Fix this hack. not using keepDims.
+    }
 
     @Override
     public int opNum() {
