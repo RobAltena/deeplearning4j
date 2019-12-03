@@ -438,36 +438,27 @@ public class NDBase {
 
   /**
    * Elementwise identity operation: out = x<br>
-   * <br>
-   * @param name  name of the output variable<br>
-   * @param input Input variable<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param input  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param input Input variable (NUMERIC type)
+   * @return output Output variable (NUMERIC type)
    */
   public INDArray identity(INDArray input) {
     NDValidation.validateNumerical("identity", "input", input);
-    return Nd4j.exec(new TODO.Identity(input))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.same.Identity(input))[0];
   }
 
   /**
    * Compute the inverse permutation indices for a permutation operation<br>
    * Example: if input is [2, 0, 1] then output is [1, 2, 0]<br>
    * The idea is that x.permute(input).permute(invertPermutation(input)) == x<br>
-   * <br>
-   * @param name  name of the output variable<br>
-   * @param input 1D indices for permutation<br>
-   * @return 1D inverted permutation<br>
-   *     <br>
    *
-   * @param input  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param input 1D indices for permutation (NUMERIC type)
+   * @return output 1D inverted permutation (NUMERIC type)
    */
-  public INDArray invertPermutation(INDArray input) {
+  public INDArray invertPermutation(INDArray[] input) {
     NDValidation.validateNumerical("invertPermutation", "input", input);
-    return Nd4j.exec(new TODO.InvertPermutation(input))[0];
+    Preconditions.checkArgument(input.length >= 1, "input has incorrect size/length. Expected: input.length >= 1, got %s", input.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.InvertPermutation(input))[0];
   }
 
   /**
