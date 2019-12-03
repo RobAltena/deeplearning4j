@@ -159,44 +159,18 @@ public class NDBase {
   }
 
   /**
-   * Return an array with equal shape to the input, but all elements set to 'value'<br>
-   * <br>
-   * @param name  Name of the output variable<br>
-   * @param in    Input variable<br>
-   * @param value Value to set<br>
-   * @return Output variable<br>
-   *     <br>
-   *
-   * @param in  (NUMERIC type)
-   * @param value  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray assign(INDArray in, INDArray value) {
-    NDValidation.validateNumerical("assign", "in", in);
-    NDValidation.validateNumerical("assign", "value", value);
-    return Nd4j.exec(new TODO.Assign(in, value))[0];
-  }
-
-  /**
    * Concatenate a set of inputs along the specified dimension.<br>
    * Note that inputs must have identical rank and identical dimensions, other than the dimension to stack on.<br>
    * For example, if 2 inputs have shape [a, x, c] and [a, y, c] and dimension = 1, then the output has shape [a, x+y, c]<br>
-   * <br>
-   * @param name      Name of the output variable<br>
-   * @param dimension Dimension to concatenate on<br>
-   * @param inputs    Input variables<br>
-   * @return Output variable<br>
-   * @see #stack(String, int, SDVariable...)<br>
-   *     <br>
    *
-   * @param dimension  (NUMERIC type)
-   * @param inputs  (NUMERIC type)
+   * @param inputs Input variables (NUMERIC type)
+   * @param dimension Dimension to concatenate on
    * @return output  (NUMERIC type)
    */
-  public INDArray concat(INDArray dimension, INDArray inputs) {
-    NDValidation.validateNumerical("concat", "dimension", dimension);
+  public INDArray concat(INDArray[] inputs, int dimension) {
     NDValidation.validateNumerical("concat", "inputs", inputs);
-    return Nd4j.exec(new TODO.Concat(dimension, inputs))[0];
+    Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Concat(inputs, dimension))[0];
   }
 
   /**
@@ -205,28 +179,18 @@ public class NDBase {
    * exclusize=false, reverse=false: [a, a*b, a*b*c]<br>
    * exclusive=true, reverse=false, [0, a, a*b]<br>
    * exclusive=false, reverse=true: [a*b*c, b*c, c]<br>
-   * exclusive=true, reverse=true: [b*c, c, 0]<br><br>
-   * <br>
-   * @param name      Name of the output variable<br>
-   * @param in        Input variable<br>
-   * @param axis      Scalar axis argument for dimension to perform cumululative sum operations along<br>
-   * @param exclusive If true: exclude the first value<br>
-   * @param reverse   If true: reverse the direction of the accumulation<br>
-   * @return Output variable<br>
-   *     <br>
+   * exclusive=true, reverse=true: [b*c, c, 0]<br>
    *
-   * @param in  (NUMERIC type)
-   * @param exclusive  (NUMERIC type)
-   * @param reverse  (NUMERIC type)
-   * @param axis  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @param exclusive If true: exclude the first value
+   * @param reverse If true: reverse the direction of the accumulation
+   * @param axis Scalar axis argument for dimension to perform cumululative sum operations along (Size: AtLeast(min=1))
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray cumprod(INDArray in, INDArray exclusive, INDArray reverse, INDArray axis) {
+  public INDArray cumprod(INDArray in, boolean exclusive, boolean reverse, int... axis) {
     NDValidation.validateNumerical("cumprod", "in", in);
-    NDValidation.validateNumerical("cumprod", "exclusive", exclusive);
-    NDValidation.validateNumerical("cumprod", "reverse", reverse);
-    NDValidation.validateNumerical("cumprod", "axis", axis);
-    return Nd4j.exec(new TODO.Cumprod(in, exclusive, reverse, axis))[0];
+    Preconditions.checkArgument(axis.length >= 1, "axis has incorrect size/length. Expected: axis.length >= 1, got %s", axis.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.CumProd(in, exclusive, reverse, axis))[0];
   }
 
   /**
@@ -235,50 +199,33 @@ public class NDBase {
    * exclusize=false, reverse=false: [a, a+b, a+b+c]<br>
    * exclusive=true, reverse=false, [0, a, a+b]<br>
    * exclusive=false, reverse=true: [a+b+c, b+c, c]<br>
-   * exclusive=true, reverse=true: [b+c, c, 0]<br><br>
-   * <br>
-   * @param name      Name of the output variable<br>
-   * @param in        Input variable<br>
-   * @param axis      Scalar axis argument for dimension to perform cumululative sum operations along<br>
-   * @param exclusive If true: exclude the first value<br>
-   * @param reverse   If true: reverse the direction of the accumulation<br>
-   * @return Output variable<br>
-   *     <br>
+   * exclusive=true, reverse=true: [b+c, c, 0]<br>
    *
-   * @param in  (NUMERIC type)
-   * @param exclusive  (NUMERIC type)
-   * @param reverse  (NUMERIC type)
-   * @param axis  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @param exclusive If true: exclude the first value
+   * @param reverse If true: reverse the direction of the accumulation
+   * @param axis Scalar axis argument for dimension to perform cumululative sum operations along (Size: AtLeast(min=1))
    * @return output  (NUMERIC type)
    */
-  public INDArray cumsum(INDArray in, INDArray exclusive, INDArray reverse, INDArray axis) {
+  public INDArray cumsum(INDArray in, boolean exclusive, boolean reverse, int... axis) {
     NDValidation.validateNumerical("cumsum", "in", in);
-    NDValidation.validateNumerical("cumsum", "exclusive", exclusive);
-    NDValidation.validateNumerical("cumsum", "reverse", reverse);
-    NDValidation.validateNumerical("cumsum", "axis", axis);
-    return Nd4j.exec(new TODO.Cumsum(in, exclusive, reverse, axis))[0];
+    Preconditions.checkArgument(axis.length >= 1, "axis has incorrect size/length. Expected: axis.length >= 1, got %s", axis.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.CumSum(in, exclusive, reverse, axis))[0];
   }
 
   /**
    * TODO doc string<br>
-   * <br>
-   * @param name<br>
-   * @param x<br>
-   * @param y<br>
-   * @param dimensions<br>
-   * @return<br>
-   *     <br>
    *
    * @param x  (NUMERIC type)
    * @param y  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
+   * @param dimensions  (Size: AtLeast(min=1))
    * @return output  (NUMERIC type)
    */
-  public INDArray dot(INDArray x, INDArray y, INDArray dimensions) {
+  public INDArray dot(INDArray x, INDArray y, int... dimensions) {
     NDValidation.validateNumerical("dot", "x", x);
     NDValidation.validateNumerical("dot", "y", y);
-    NDValidation.validateNumerical("dot", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Dot(x, y, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce3.Dot(x, y, dimensions));
   }
 
   /**
@@ -291,24 +238,16 @@ public class NDBase {
    * out[0] = [2,3,5]<br>
    * out[1] = [1,4] }<br>
    * </pre><br>
-   * <br>
-   * @param name          Names for the output variables. Length must be equal to numPartitions<br>
-   * @param x             Input variable<br>
-   * @param partitions    1D input with values 0 to numPartitions-1<br>
-   * @param numPartitions Number of partitions, >= 1<br>
-   * @return Output variables (equal in number to numPartitions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param partitions  (NUMERIC type)
-   * @param numPartitions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param partitions 1D input with values 0 to numPartitions-1 (NUMERIC type)
+   * @param numPartitions Number of partitions, >= 1
+   * @return output Output variables (equal in number to numPartitions) (NUMERIC type)
    */
-  public INDArray dynamicPartition(INDArray x, INDArray partitions, INDArray numPartitions) {
+  public INDArray dynamicPartition(INDArray x, INDArray partitions, int numPartitions) {
     NDValidation.validateNumerical("dynamicPartition", "x", x);
     NDValidation.validateNumerical("dynamicPartition", "partitions", partitions);
-    NDValidation.validateNumerical("dynamicPartition", "numPartitions", numPartitions);
-    return Nd4j.exec(new TODO.DynamicPartition(x, partitions, numPartitions))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.DynamicPartition(x, partitions, numPartitions))[0];
   }
 
   /**

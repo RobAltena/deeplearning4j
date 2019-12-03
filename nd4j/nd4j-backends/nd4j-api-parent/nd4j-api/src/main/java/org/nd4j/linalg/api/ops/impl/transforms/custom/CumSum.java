@@ -70,7 +70,17 @@ public class CumSum extends DynamicCustomOp {
         this.jaxis = axis;
         addArgs();
     }
+    //TODO: Needs testing. simply setting the outputs to null in super may not work.
+    public CumSum(INDArray in, boolean exclusive, boolean reverse, int... axis){
+        super(null, new INDArray[]{in}, null, null, (List<Integer>)null);
+        this.exclusive = exclusive;
+        this.reverse = reverse;
+        this.jaxis = axis;
 
+        tArguments.clear();
+        iArguments.clear();
+        addArgs();
+    }
 
     @Override
     public String opName() {
