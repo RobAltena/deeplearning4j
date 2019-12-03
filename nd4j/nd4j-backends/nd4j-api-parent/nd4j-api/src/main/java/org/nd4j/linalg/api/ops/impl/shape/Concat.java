@@ -46,14 +46,13 @@ public class Concat extends DynamicCustomOp {
     }
 
     public Concat(int concatDimension, INDArray... arrays) {
-        super(null, arrays, new INDArray[0]);
+        super(null, arrays, null);
         this.concatDimension = concatDimension;
         addIArgument(concatDimension);
     }
 
-    //TODO: This constructor to work around the code generator switching arguments.
     public Concat(INDArray[] arrays, int concatDimension) {
-        super(null, arrays, new INDArray[0]);
+        super(null, arrays, null);
         this.concatDimension = concatDimension;
         addIArgument(concatDimension);
     }
