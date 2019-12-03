@@ -21,6 +21,7 @@ package org.nd4j.linalg.factory.ops;
 import static org.nd4j.linalg.factory.NDValidation.isSameType;
 
 import org.nd4j.base.Preconditions;
+import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.NDValidation;
 import org.nd4j.linalg.factory.Nd4j;
@@ -252,42 +253,31 @@ public class NDBase {
 
   /**
    * Dynamically merge the specified input arrays into a single array, using the specified indices<br>
-   * <br>
-   * @param name    Name of the output variable<br>
-   * @param indices Indices to use when merging. Must be >= 1, same length as input variables<br>
-   * @param x       Input variables.<br>
-   * @return Merged output variable<br>
-   *     <br>
    *
-   * @param indices  (NUMERIC type)
-   * @param x  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param indices Indices to use when merging. Must be >= 1, same length as input variables (NUMERIC type)
+   * @param x Input variables. (NUMERIC type)
+   * @return output Merged output variable (NUMERIC type)
    */
-  public INDArray dynamicStitch(INDArray indices, INDArray x) {
+  public INDArray dynamicStitch(INDArray[] indices, INDArray[] x) {
     NDValidation.validateNumerical("dynamicStitch", "indices", indices);
+    Preconditions.checkArgument(indices.length >= 1, "indices has incorrect size/length. Expected: indices.length >= 1, got %s", indices.length);
     NDValidation.validateNumerical("dynamicStitch", "x", x);
-    return Nd4j.exec(new TODO.DynamicStitch(indices, x))[0];
+    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.DynamicStitch(indices, x))[0];
   }
 
   /**
    * Equals operation: elementwise x == y<br>
    * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
    * value 0 otherwise<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input array<br>
-   * @param y    Double value argument to use in operation<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input array (NUMERIC type)
+   * @param y Double value argument to use in operation
+   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray eq(INDArray x, INDArray y) {
+  public INDArray eq(INDArray x, double y) {
     NDValidation.validateNumerical("eq", "x", x);
-    NDValidation.validateNumerical("eq", "y", y);
-    return Nd4j.exec(new TODO.Eq(x, y))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.comparison.ScalarEquals(x, y));
   }
 
   /**
@@ -295,21 +285,17 @@ public class NDBase {
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input 1<br>
-   * @param y    Input 2<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input 1 (NUMERIC type)
+   * @param y Input 2 (NUMERIC type)
+   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray eq(INDArray x, INDArray y) {
+  public INDArray eq(INDArray[] x, INDArray[] y) {
     NDValidation.validateNumerical("eq", "x", x);
+    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("eq", "y", y);
-    return Nd4j.exec(new TODO.Eq(x, y))[0];
+    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.EqualTo(x, y))[0];
   }
 
   /**
@@ -318,129 +304,86 @@ public class NDBase {
    * axis = 0: [1, a, b]<br>
    * axis = 1: [a, 1, b]<br>
    * axis = 2: [a, b, 1]<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input variable<br>
-   * @param axis Axis to expand<br>
-   * @return Output variable<br>
-   * @see #squeeze(String, SDVariable, int)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param axis  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param axis Axis to expand
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray expandDims(INDArray x, INDArray axis) {
+  public INDArray expandDims(INDArray x, int axis) {
     NDValidation.validateNumerical("expandDims", "x", x);
-    NDValidation.validateNumerical("expandDims", "axis", axis);
-    return Nd4j.exec(new TODO.ExpandDims(x, axis))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.ExpandDims(x, axis))[0];
   }
 
   /**
    * Generate an output variable with the specified (dynamic) shape with all elements set to the specified value<br>
-   * <br>
-   * @param name  Name of the output variable<br>
-   * @param shape Shape: must be a 1D array/variable<br>
-   * @param value Value to set all elements to<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param shape  (NUMERIC type)
-   * @param dataType  (NUMERIC type)
-   * @param value  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param shape Shape: must be a 1D array/variable (NUMERIC type)
+   * @param dataType 
+   * @param value Value to set all elements to
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray fill(INDArray shape, INDArray dataType, INDArray value) {
+  public INDArray fill(INDArray shape, DataType dataType, double value) {
     NDValidation.validateNumerical("fill", "shape", shape);
-    NDValidation.validateNumerical("fill", "dataType", dataType);
-    NDValidation.validateNumerical("fill", "value", value);
-    return Nd4j.exec(new TODO.Fill(shape, dataType, value))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.Fill(shape, dataType, value))[0];
   }
 
   /**
    * Gather slices from the input variable where the indices are specified as fixed int[] values.<br>
    * Output shape is same as input shape, except for axis dimension, which has size equal to indices.length.<br>
-   * <br>
-   * @param name    name of the output variable<br>
-   * @param df      Input variable<br>
-   * @param indices Indices to get<br>
-   * @param axis    Axis that the indices refer to<br>
-   * @return Output variable with slices pulled from the specified axis<br>
-   *     <br>
    *
-   * @param df  (NUMERIC type)
-   * @param indices  (NUMERIC type)
-   * @param axis  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param df Input variable (NUMERIC type)
+   * @param indices Indices to get (Size: AtLeast(min=1))
+   * @param axis Axis that the indices refer to
+   * @return output Output variable with slices pulled from the specified axis (NUMERIC type)
    */
-  public INDArray gather(INDArray df, INDArray indices, INDArray axis) {
+  public INDArray gather(INDArray df, int[] indices, int axis) {
     NDValidation.validateNumerical("gather", "df", df);
-    NDValidation.validateNumerical("gather", "indices", indices);
-    NDValidation.validateNumerical("gather", "axis", axis);
-    return Nd4j.exec(new TODO.Gather(df, indices, axis))[0];
+    Preconditions.checkArgument(indices.length >= 1, "indices has incorrect size/length. Expected: indices.length >= 1, got %s", indices.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Gather(df, indices, axis))[0];
   }
 
   /**
    * Gather slices from the input variable where the indices are specified as dynamic SDVariable values.<br>
    * Output shape is same as input shape, except for axis dimension, which has size equal to indices.length.<br>
-   * <br>
-   * @param name    name of the output variable<br>
-   * @param df      Input variable<br>
-   * @param indices Indices to get slices for. Rank 0 or 1 input<br>
-   * @param axis    Axis that the indices refer to<br>
-   * @return Output variable with slices pulled from the specified axis<br>
-   *     <br>
    *
-   * @param df  (NUMERIC type)
-   * @param indices  (NUMERIC type)
-   * @param axis  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param df Input variable (NUMERIC type)
+   * @param indices Indices to get slices for. Rank 0 or 1 input (NUMERIC type)
+   * @param axis Axis that the indices refer to
+   * @return output Output variable with slices pulled from the specified axis (NUMERIC type)
    */
-  public INDArray gather(INDArray df, INDArray indices, INDArray axis) {
+  public INDArray gather(INDArray df, INDArray indices, int axis) {
     NDValidation.validateNumerical("gather", "df", df);
     NDValidation.validateNumerical("gather", "indices", indices);
-    NDValidation.validateNumerical("gather", "axis", axis);
-    return Nd4j.exec(new TODO.Gather(df, indices, axis))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Gather(df, indices, axis))[0];
   }
 
   /**
    * TODO doc string<br>
-   * <br>
-   * @param name<br>
-   * @param df<br>
-   * @param indices<br>
-   * @return<br>
-   *     <br>
    *
    * @param df  (NUMERIC type)
    * @param indices  (NUMERIC type)
    * @return output  (NUMERIC type)
    */
-  public INDArray gatherNd(INDArray df, INDArray indices) {
+  public INDArray gatherNd(INDArray[] df, INDArray[] indices) {
     NDValidation.validateNumerical("gatherNd", "df", df);
+    Preconditions.checkArgument(df.length >= 1, "df has incorrect size/length. Expected: df.length >= 1, got %s", df.length);
     NDValidation.validateNumerical("gatherNd", "indices", indices);
-    return Nd4j.exec(new TODO.GatherNd(df, indices))[0];
+    Preconditions.checkArgument(indices.length >= 1, "indices has incorrect size/length. Expected: indices.length >= 1, got %s", indices.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.GatherNd(df, indices))[0];
   }
 
   /**
    * Greater than operation: elementwise x > y<br>
    * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
    * value 0 otherwise<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input array<br>
-   * @param y    Double value argument to use in operation<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input array (NUMERIC type)
+   * @param y Double value argument to use in operation
+   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray gt(INDArray x, INDArray y) {
+  public INDArray gt(INDArray x, double y) {
     NDValidation.validateNumerical("gt", "x", x);
-    NDValidation.validateNumerical("gt", "y", y);
-    return Nd4j.exec(new TODO.Gt(x, y))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.comparison.ScalarGreaterThan(x, y));
   }
 
   /**
@@ -448,42 +391,31 @@ public class NDBase {
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input 1<br>
-   * @param y    Input 2<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input 1 (NUMERIC type)
+   * @param y Input 2 (NUMERIC type)
+   * @return output Output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray gt(INDArray x, INDArray y) {
+  public INDArray gt(INDArray[] x, INDArray[] y) {
     NDValidation.validateNumerical("gt", "x", x);
+    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("gt", "y", y);
-    return Nd4j.exec(new TODO.Gt(x, y))[0];
+    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.GreaterThan(x, y))[0];
   }
 
   /**
    * Greater than or equals operation: elementwise x >= y<br>
    * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
    * value 0 otherwise<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input array<br>
-   * @param y    Double value argument to use in operation<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input array (NUMERIC type)
+   * @param y Double value argument to use in operation
+   * @return output Output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray gte(INDArray x, INDArray y) {
+  public INDArray gte(INDArray x, double y) {
     NDValidation.validateNumerical("gte", "x", x);
-    NDValidation.validateNumerical("gte", "y", y);
-    return Nd4j.exec(new TODO.Gte(x, y))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.comparison.ScalarGreaterThanOrEqual(x, y));
   }
 
   /**
@@ -491,21 +423,17 @@ public class NDBase {
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input 1<br>
-   * @param y    Input 2<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
+   * @param x Input 1 (NUMERIC type)
+   * @param y Input 2 (NUMERIC type)
    * @return output  (NUMERIC type)
    */
-  public INDArray gte(INDArray x, INDArray y) {
+  public INDArray gte(INDArray[] x, INDArray[] y) {
     NDValidation.validateNumerical("gte", "x", x);
+    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("gte", "y", y);
-    return Nd4j.exec(new TODO.Gte(x, y))[0];
+    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.GreaterThanOrEqual(x, y))[0];
   }
 
   /**

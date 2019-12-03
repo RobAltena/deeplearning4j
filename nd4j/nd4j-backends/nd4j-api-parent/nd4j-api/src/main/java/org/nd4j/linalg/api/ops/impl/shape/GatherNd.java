@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
 import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 import java.util.Collections;
@@ -34,6 +35,10 @@ public class GatherNd extends DynamicCustomOp {
 
     public GatherNd(SameDiff sameDiff, SDVariable input, SDVariable indices, boolean inPlace) {
         super(null, sameDiff, new SDVariable[] {input, indices}, inPlace);
+    }
+
+    public GatherNd(INDArray[] inputs, INDArray[] outputs){
+        super(inputs, outputs);
     }
 
     @Override

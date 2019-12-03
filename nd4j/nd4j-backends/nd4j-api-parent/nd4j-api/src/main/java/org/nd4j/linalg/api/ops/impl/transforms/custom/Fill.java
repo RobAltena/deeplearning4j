@@ -55,7 +55,13 @@ public class Fill extends DynamicCustomOp {
         super(null,sameDiff, new SDVariable[] {shape}, false);
         this.value = value;
         this.outputDataType = outputDataType;
+        this.outputDataType = outputDataType;
         addArgs();
+    }
+
+    public Fill(INDArray shape, DataType outputDataType, double value) {
+        super(null, shape, result, Collections.singletonList(value), null);
+        this.value = value;
     }
 
     public Fill(INDArray shape, INDArray result, double value) {

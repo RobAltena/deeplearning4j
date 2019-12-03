@@ -67,6 +67,12 @@ public class ExpandDims extends DynamicCustomOp {
         super(null, sameDiff, args, inPlace);
     }
 
+    public ExpandDims(INDArray x, int axis){
+        super(new INDArray[]{x}, null);
+        this.jaxis = axis;
+        addIArgument(axis);
+    }
+
     @Override
     public void initFromTensorFlow(NodeDef nodeDef, SameDiff initWith, Map<String, AttrValue> attributesForNode, GraphDef graph) {
         val targetNode = TFGraphMapper.getNodeWithNameFromGraph(graph, nodeDef.getInput(1));

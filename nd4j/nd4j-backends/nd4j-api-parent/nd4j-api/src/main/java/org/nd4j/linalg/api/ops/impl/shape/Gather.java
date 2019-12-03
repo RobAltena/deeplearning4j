@@ -24,6 +24,7 @@ import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.imports.descriptors.properties.PropertyMapping;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
@@ -53,6 +54,19 @@ public class Gather extends DynamicCustomOp {
     public Gather(SameDiff sameDiff, SDVariable input, SDVariable indices, int axis, boolean inPlace) {
         super(null, sameDiff, new SDVariable[] {input, indices}, inPlace);
         addIArgument(axis);
+        this.jaxis = axis;
+    }
+
+    public Gather(INDArray x, int[] indices, int axis){
+        super(new INDArray[]{x}, null);
+        addIArgument(axis);
+        this.indices = indices;
+        this.jaxis = axis;
+    }
+
+    public Gather(INDArray x, INDArray indices, int axis){
+        super(new INDArray[]{x}, null);
+        //TODO: correct handling of indices as INDArray.
         this.jaxis = axis;
     }
 
