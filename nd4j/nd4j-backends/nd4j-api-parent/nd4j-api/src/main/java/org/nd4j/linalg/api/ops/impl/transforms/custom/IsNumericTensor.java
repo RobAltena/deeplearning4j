@@ -42,6 +42,10 @@ public class IsNumericTensor extends DynamicCustomOp {
         super(null, inputs, outputs);
     }
 
+    public IsNumericTensor(INDArray[] inputs) {
+        super( inputs, null);
+    }
+
 
     @Override
     public String opName() {

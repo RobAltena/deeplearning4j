@@ -46,6 +46,11 @@ public class Linspace extends DynamicCustomOp {
         this.dataType = dataType;
     }
 
+    public Linspace(DataType dataType, double start, double stop, double number){
+        //TODO: implement this constructor for NDBase.java.
+        this.dataType = dataType;
+    }
+
     public Linspace(){ }
 
     @Override

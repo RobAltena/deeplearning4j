@@ -25,6 +25,7 @@ import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.NDValidation;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.indexing.conditions.Condition;
 
 public class NDBase {
   public NDBase() {
@@ -463,91 +464,42 @@ public class NDBase {
 
   /**
    * Is the director a numeric tensor? In the current version of ND4J/SameDiff, this always returns true/1<br>
-   * <br>
-   * @param name Output variable name<br>
-   * @param x    Input variable<br>
-   * @return Scalar variable with value 1<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @return output Scalar variable with value 1 (NUMERIC type)
    */
-  public INDArray isNumericTensor(INDArray x) {
+  public INDArray isNumericTensor(INDArray[] x) {
     NDValidation.validateNumerical("isNumericTensor", "x", x);
-    return Nd4j.exec(new TODO.IsNumericTensor(x))[0];
+    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.IsNumericTensor(x))[0];
   }
 
   /**
    * Create a new 1d array with values evenly spaced between values 'start' and 'stop'<br>
-   * For example, linspace(start=3.0, stop=4.0, number=3) will generate [3.0, 3.5, 4.0]<br>
-   * <br>
-   * @param name     Name of the new variable<br>
-   * @param dataType Data type of the output array<br>
-   * @param start    Start value<br>
-   * @param stop     Stop value<br>
-   * @param number   Number of values to generate<br>
-   * @return SDVariable with linearly spaced elements<br>
-   *     <br>
+   * For example, linspace(start=3.0, stop=4.0, number=3) will generate [3.0, 3.5, 4.0<br>
    *
-   * @param dataType  (NUMERIC type)
-   * @param start  (NUMERIC type)
-   * @param stop  (NUMERIC type)
-   * @param number  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param dataType Data type of the output array
+   * @param start Start value
+   * @param stop Stop value
+   * @param number Number of values to generate
+   * @return output SDVariable with linearly spaced elements (NUMERIC type)
    */
-  public INDArray linspace(INDArray dataType, INDArray start, INDArray stop, INDArray number) {
-    NDValidation.validateNumerical("linspace", "dataType", dataType);
-    NDValidation.validateNumerical("linspace", "start", start);
-    NDValidation.validateNumerical("linspace", "stop", stop);
-    NDValidation.validateNumerical("linspace", "number", number);
-    return Nd4j.exec(new TODO.Linspace(dataType, start, stop, number))[0];
-  }
-
-  /**
-   * Create a new 1d array with values evenly spaced between values 'start' and 'stop'<br>
-   * For example, linspace(start=3.0, stop=4.0, number=3) will generate [3.0, 3.5, 4.0]<br>
-   * <br>
-   * @param name   Name of the new variable<br>
-   * @param from   Start value<br>
-   * @param to     Stop value<br>
-   * @param length Number of values to generate<br>
-   * @param dt     Data type of the output array<br>
-   * @return SDVariable with linearly spaced elements<br>
-   *     <br>
-   *
-   * @param from  (NUMERIC type)
-   * @param to  (NUMERIC type)
-   * @param length  (NUMERIC type)
-   * @param dt  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray linspace(INDArray from, INDArray to, INDArray length, INDArray dt) {
-    NDValidation.validateNumerical("linspace", "from", from);
-    NDValidation.validateNumerical("linspace", "to", to);
-    NDValidation.validateNumerical("linspace", "length", length);
-    NDValidation.validateNumerical("linspace", "dt", dt);
-    return Nd4j.exec(new TODO.Linspace(from, to, length, dt))[0];
+  public INDArray linspace(DataType dataType, double start, double stop, double number) {
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Linspace(dataType, start, stop, number))[0];
   }
 
   /**
    * Less than operation: elementwise x < y<br>
    * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
    * value 0 otherwise<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input array<br>
-   * @param y    Double value argument to use in operation<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input array (NUMERIC type)
+   * @param y Double value argument to use in operation
+   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray lt(INDArray x, INDArray y) {
+  public INDArray lt(INDArray x, double y) {
     NDValidation.validateNumerical("lt", "x", x);
-    NDValidation.validateNumerical("lt", "y", y);
-    return Nd4j.exec(new TODO.Lt(x, y))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.comparison.ScalarLessThan(x, y));
   }
 
   /**
@@ -555,42 +507,31 @@ public class NDBase {
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input 1<br>
-   * @param y    Input 2<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input 1 (NUMERIC type)
+   * @param y Input 2 (NUMERIC type)
+   * @return output Output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray lt(INDArray x, INDArray y) {
+  public INDArray lt(INDArray[] x, INDArray[] y) {
     NDValidation.validateNumerical("lt", "x", x);
+    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("lt", "y", y);
-    return Nd4j.exec(new TODO.Lt(x, y))[0];
+    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.LessThan(x, y))[0];
   }
 
   /**
    * Less than or equals operation: elementwise x <= y<br>
    * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
    * value 0 otherwise<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input array<br>
-   * @param y    Double value argument to use in operation<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input array (NUMERIC type)
+   * @param y Double value argument to use in operation
+   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray lte(INDArray x, INDArray y) {
+  public INDArray lte(INDArray x, double y) {
     NDValidation.validateNumerical("lte", "x", x);
-    NDValidation.validateNumerical("lte", "y", y);
-    return Nd4j.exec(new TODO.Lte(x, y))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.comparison.ScalarLessThanOrEqual(x, y));
   }
 
   /**
@@ -598,39 +539,29 @@ public class NDBase {
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input 1<br>
-   * @param y    Input 2<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input 1 (NUMERIC type)
+   * @param y Input 2 (NUMERIC type)
+   * @return output Output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray lte(INDArray x, INDArray y) {
+  public INDArray lte(INDArray[] x, INDArray[] y) {
     NDValidation.validateNumerical("lte", "x", x);
+    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("lte", "y", y);
-    return Nd4j.exec(new TODO.Lte(x, y))[0];
+    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.LessThanOrEqual(x, y))[0];
   }
 
   /**
    * Returns a boolean mask of equal shape to the input, where the condition is satisfied - value 1 where satisfied, 0 otherwise<br>
-   * <br>
-   * @param in        Input<br>
-   * @param condition Condition<br>
-   * @return Boolean mask<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @param condition  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input (NUMERIC type)
+   * @param condition Condition
+   * @return output Boolean mask (NUMERIC type)
    */
-  public INDArray matchCondition(INDArray in, INDArray condition) {
+  public INDArray matchCondition(INDArray in, Condition condition) {
     NDValidation.validateNumerical("matchCondition", "in", in);
-    NDValidation.validateNumerical("matchCondition", "condition", condition);
-    return Nd4j.exec(new TODO.MatchCondition(in, condition))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.bool.MatchConditionTransform(in, condition));
   }
 
   /**
