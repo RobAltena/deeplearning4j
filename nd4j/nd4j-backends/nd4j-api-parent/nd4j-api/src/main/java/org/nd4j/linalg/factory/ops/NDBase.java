@@ -566,21 +566,14 @@ public class NDBase {
 
   /**
    * Returns a count of the number of elements that satisfy the condition<br>
-   * <br>
-   * @param name      Name of the output variable<br>
-   * @param in        Input<br>
-   * @param condition Condition<br>
-   * @return Number of elements that the condition is satisfied for<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @param condition  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input (NUMERIC type)
+   * @param condition Condition
+   * @return output Number of elements that the condition is satisfied for (NUMERIC type)
    */
-  public INDArray matchConditionCount(INDArray in, INDArray condition) {
+  public INDArray matchConditionCount(INDArray in, Condition condition) {
     NDValidation.validateNumerical("matchConditionCount", "in", in);
-    NDValidation.validateNumerical("matchConditionCount", "condition", condition);
-    return Nd4j.exec(new TODO.MatchConditionCount(in, condition))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.longer.MatchCondition(in, condition));
   }
 
   /**
@@ -591,47 +584,31 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name       Name of the output variable<br>
-   * @param in         Input variable<br>
-   * @param condition  Condition<br>
-   * @param keepDim    If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Number of elements that the condition is satisfied for<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @param condition  (NUMERIC type)
-   * @param keepDim  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @param condition Condition
+   * @param keepDim If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output Number of elements that the condition is satisfied for (NUMERIC type)
    */
-  public INDArray matchConditionCount(INDArray in, INDArray condition, INDArray keepDim,
-      INDArray dimensions) {
+  public INDArray matchConditionCount(INDArray in, Condition condition, boolean keepDim,
+      int... dimensions) {
     NDValidation.validateNumerical("matchConditionCount", "in", in);
-    NDValidation.validateNumerical("matchConditionCount", "condition", condition);
-    NDValidation.validateNumerical("matchConditionCount", "keepDim", keepDim);
-    NDValidation.validateNumerical("matchConditionCount", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.MatchConditionCount(in, condition, keepDim, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.longer.MatchCondition(in, condition, keepDim, dimensions));
   }
 
   /**
    * Max array reduction operation, optionally along specified dimensions<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
-  public INDArray max(INDArray x, INDArray dimensions) {
+  public INDArray max(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("max", "x", x);
-    NDValidation.validateNumerical("max", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Max(x, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Max(x, dimensions));
   }
 
   /**
@@ -642,63 +619,43 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param keepDims   If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
-  public INDArray max(INDArray x, INDArray keepDims, INDArray dimensions) {
+  public INDArray max(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("max", "x", x);
-    NDValidation.validateNumerical("max", "keepDims", keepDims);
-    NDValidation.validateNumerical("max", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Max(x, keepDims, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Max(x, keepDims, dimensions));
   }
 
   /**
    * Element-wise maximum operation: out[i] = max(first[i], second[i])<br>
    * Supports broadcasting<br>
-   * <br>
-   * @param name   Name of the output variable<br>
-   * @param first  First input array<br>
-   * @param second Second input array<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param first  (NUMERIC type)
-   * @param second  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param first First input array (NUMERIC type)
+   * @param second Second input array (NUMERIC type)
+   * @return output Output variable (NUMERIC type)
    */
   public INDArray max(INDArray first, INDArray second) {
     NDValidation.validateNumerical("max", "first", first);
     NDValidation.validateNumerical("max", "second", second);
-    return Nd4j.exec(new TODO.Max(first, second))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.Max(first, second))[0];
   }
 
   /**
    * Mean (average) array reduction operation, optionally along specified dimensions<br>
-   * <br>
-   * @param name      Output variable name<br>
-   * @param x         Input variable<br>
-   * @param dimension Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param dimension  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
-  public INDArray mean(INDArray x, INDArray dimension) {
+  public INDArray mean(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("mean", "x", x);
-    NDValidation.validateNumerical("mean", "dimension", dimension);
-    return Nd4j.exec(new TODO.Mean(x, dimension))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Mean(x, dimensions));
   }
 
   /**
@@ -709,43 +666,29 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name      Output variable name<br>
-   * @param x         Input variable<br>
-   * @param keepDims  If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions<br>
-   * @param dimension Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimension  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
-  public INDArray mean(INDArray x, INDArray keepDims, INDArray dimension) {
+  public INDArray mean(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("mean", "x", x);
-    NDValidation.validateNumerical("mean", "keepDims", keepDims);
-    NDValidation.validateNumerical("mean", "dimension", dimension);
-    return Nd4j.exec(new TODO.Mean(x, keepDims, dimension))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Mean(x, keepDims, dimensions));
   }
 
   /**
    * Minimum array reduction operation, optionally along specified dimensions. out = min(in)<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
    * @return output  (NUMERIC type)
    */
-  public INDArray min(INDArray x, INDArray dimensions) {
+  public INDArray min(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("min", "x", x);
-    NDValidation.validateNumerical("min", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Min(x, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Min(x, dimensions));
   }
 
   /**
@@ -756,44 +699,30 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param keepDims   If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
-  public INDArray min(INDArray x, INDArray keepDims, INDArray dimensions) {
+  public INDArray min(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("min", "x", x);
-    NDValidation.validateNumerical("min", "keepDims", keepDims);
-    NDValidation.validateNumerical("min", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Min(x, keepDims, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Min(x, keepDims, dimensions));
   }
 
   /**
    * Element-wise minimum operation: out[i] = min(first[i], second[i])<br>
    * Supports broadcasting<br>
-   * <br>
-   * @param name   Name of the output variable<br>
-   * @param first  First input array<br>
-   * @param second Second input array<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param first  (NUMERIC type)
-   * @param second  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param first First input array (NUMERIC type)
+   * @param second Second input array (NUMERIC type)
+   * @return output Second input array (NUMERIC type)
    */
   public INDArray min(INDArray first, INDArray second) {
     NDValidation.validateNumerical("min", "first", first);
     NDValidation.validateNumerical("min", "second", second);
-    return Nd4j.exec(new TODO.Min(first, second))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.Min(first, second))[0];
   }
 
   /**

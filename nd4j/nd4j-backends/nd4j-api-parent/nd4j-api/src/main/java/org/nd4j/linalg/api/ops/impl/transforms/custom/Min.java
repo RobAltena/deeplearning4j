@@ -48,6 +48,10 @@ public class Min extends BaseDynamicTransformOp {
         super(new INDArray[]{first, second}, out == null ? null : new INDArray[]{out});
     }
 
+    public Min( INDArray first, INDArray second){
+        this(first, second, null);
+    }
+
     public Min( INDArray[] inputs, INDArray[] outputs) {
         super(inputs, outputs);
     }
