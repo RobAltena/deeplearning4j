@@ -728,64 +728,44 @@ public class NDBase {
   /**
    * Matrix multiplication: out = mmul(x,y)<br>
    * Supports specifying a {@link MMulTranspose} argument to perform operation such as mmul(a^T, b), etc.<br>
-   * <br>
-   * @param name      Output variable name<br>
-   * @param x         First input variable<br>
-   * @param y         Second input variable<br>
-   * @param transpose Transpose arguments<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @param transpose  (NUMERIC type)
+   * @param x First input variable (NUMERIC type)
+   * @param y Second input variable (NUMERIC type)
+   * @param transpose Transpose arguments (NUMERIC type)
    * @return output  (NUMERIC type)
    */
   public INDArray mmul(INDArray x, INDArray y, INDArray transpose) {
     NDValidation.validateNumerical("mmul", "x", x);
     NDValidation.validateNumerical("mmul", "y", y);
     NDValidation.validateNumerical("mmul", "transpose", transpose);
-    return Nd4j.exec(new TODO.Mmul(x, y, transpose))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.Mmul(x, y, transpose))[0];
   }
 
   /**
    * Matrix multiplication: out = mmul(x,y)<br>
-   * <br>
-   * @param name Output variable name<br>
-   * @param x    First input variable<br>
-   * @param y    Second input variable<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
+   * @param x First input variable (NUMERIC type)
+   * @param y Second input variable (NUMERIC type)
    * @return output  (NUMERIC type)
    */
   public INDArray mmul(INDArray x, INDArray y) {
     NDValidation.validateNumerical("mmul", "x", x);
     NDValidation.validateNumerical("mmul", "y", y);
-    return Nd4j.exec(new TODO.Mmul(x, y))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.Mmul(x, y))[0];
   }
 
   /**
    * Not equals operation: elementwise x != y<br>
    * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
    * value 0 otherwise<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input array<br>
-   * @param y    Double value argument to use in operation<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input array (NUMERIC type)
+   * @param y Double value argument to use in operation
+   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray neq(INDArray x, INDArray y) {
+  public INDArray neq(INDArray x, double y) {
     NDValidation.validateNumerical("neq", "x", x);
-    NDValidation.validateNumerical("neq", "y", y);
-    return Nd4j.exec(new TODO.Neq(x, y))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.comparison.ScalarNotEquals(x, y));
   }
 
   /**
@@ -793,90 +773,66 @@ public class NDBase {
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input 1<br>
-   * @param y    Input 2<br>
-   * @return Output SDVariable with values 0 and 1 based on where the condition is satisfied<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input 1 (NUMERIC type)
+   * @param y Input 2 (NUMERIC type)
+   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray neq(INDArray x, INDArray y) {
+  public INDArray neq(INDArray[] x, INDArray[] y) {
     NDValidation.validateNumerical("neq", "x", x);
+    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("neq", "y", y);
-    return Nd4j.exec(new TODO.Neq(x, y))[0];
+    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.NotEqualTo(x, y))[0];
   }
 
   /**
    * Norm1 (L1 norm) reduction operation: The output contains the L1 norm for each tensor/subset along the specified dimensions:<br>
    * out = sum_i abs(x[i])<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param dimensions dimensions to reduce over<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray norm1(INDArray x, INDArray dimensions) {
+  public INDArray norm1(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("norm1", "x", x);
-    NDValidation.validateNumerical("norm1", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Norm1(x, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Norm1(x, dimensions));
   }
 
   /**
-   * Norm1 (L1 norm) reduction operation: The output contains the L1 norm for each tensor/subset along the specified dimensions:<br>
+   * Norm1 (L1 norm) reduction operation: The output contains the L1 norm for each tensor/subset along the specified dimensions: <br>
    * out = sum_i abs(x[i])<br>
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
-   * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
+   * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting <br>
    * the mean along a dimension).<br>
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param keepDims   If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions<br>
-   * @param dimensions dimensions to reduce over<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
+   * @param dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray norm1(INDArray x, INDArray keepDims, INDArray dimensions) {
+  public INDArray norm1(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("norm1", "x", x);
-    NDValidation.validateNumerical("norm1", "keepDims", keepDims);
-    NDValidation.validateNumerical("norm1", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Norm1(x, keepDims, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Norm1(x, keepDims, dimensions));
   }
 
   /**
-   * Norm2 (L2 norm) reduction operation: The output contains the L2 norm for each tensor/subset along the specified dimensions:<br>
+   * Norm2 (L2 norm) reduction operation: The output contains the L2 norm for each tensor/subset along the specified dimensions: <br>
    * out = sqrt(sum_i x[i]^2)<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param dimensions dimensions to reduce over<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions dimensions dimensions to reduce over (NUMERIC type)
+   * @return output Output variable (NUMERIC type)
    */
   public INDArray norm2(INDArray x, INDArray dimensions) {
     NDValidation.validateNumerical("norm2", "x", x);
     NDValidation.validateNumerical("norm2", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Norm2(x, dimensions))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Norm2(x, dimensions));
   }
 
   /**
@@ -888,44 +844,30 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param keepDims   If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions<br>
-   * @param dimensions dimensions to reduce over<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
+   * @param dimensions dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray norm2(INDArray x, INDArray keepDims, INDArray dimensions) {
+  public INDArray norm2(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("norm2", "x", x);
-    NDValidation.validateNumerical("norm2", "keepDims", keepDims);
-    NDValidation.validateNumerical("norm2", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Norm2(x, keepDims, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Norm2(x, keepDims, dimensions));
   }
 
   /**
    * Max norm (infinity norm) reduction operation: The output contains the max norm for each tensor/subset along the<br>
    * specified dimensions<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param dimensions dimensions to reduce over<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray normmax(INDArray x, INDArray dimensions) {
+  public INDArray normmax(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("normmax", "x", x);
-    NDValidation.validateNumerical("normmax", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Normmax(x, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.NormMax(x, dimensions));
   }
 
   /**
@@ -938,97 +880,65 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param keepDims   If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions<br>
-   * @param dimensions dimensions to reduce over<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
+   * @param dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray normmax(INDArray x, INDArray keepDims, INDArray dimensions) {
+  public INDArray normmax(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("normmax", "x", x);
-    NDValidation.validateNumerical("normmax", "keepDims", keepDims);
-    NDValidation.validateNumerical("normmax", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Normmax(x, keepDims, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.NormMax(x, keepDims, dimensions));
   }
 
   /**
    * Convert the array to a one-hot array with walues {@code on} and {@code off} for each entry<br>
    * If input has shape [ a, ..., n] then output has shape [ a, ..., n, depth],<br>
    * with {@code out[i, ..., j, in[i,...,j]] = on} with other values being set to {@code off}<br>
-   * <br>
-   * @param name    Output variable name<br>
-   * @param indices Indices - value 0 to depth-1<br>
-   * @param depth   Number of classes<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param indices  (NUMERIC type)
-   * @param depth  (NUMERIC type)
-   * @param axis  (NUMERIC type)
-   * @param on  (NUMERIC type)
-   * @param off  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param indices Indices - value 0 to depth-1 (NUMERIC type)
+   * @param depth Number of classes
+   * @param axis 
+   * @param on 
+   * @param off 
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray oneHot(INDArray indices, INDArray depth, INDArray axis, INDArray on,
-      INDArray off) {
+  public INDArray oneHot(INDArray indices, int depth, int axis, double on, double off) {
     NDValidation.validateNumerical("oneHot", "indices", indices);
-    NDValidation.validateNumerical("oneHot", "depth", depth);
-    NDValidation.validateNumerical("oneHot", "axis", axis);
-    NDValidation.validateNumerical("oneHot", "on", on);
-    NDValidation.validateNumerical("oneHot", "off", off);
-    return Nd4j.exec(new TODO.OneHot(indices, depth, axis, on, off))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.OneHot(indices, depth, axis, on, off))[0];
   }
 
   /**
    * As per {@link #oneHot(String, SDVariable, int, int, double, double)} but allows configuring the output datatype<br>
-   *     <br>
    *
    * @param indices  (NUMERIC type)
-   * @param depth  (NUMERIC type)
-   * @param axis  (NUMERIC type)
-   * @param on  (NUMERIC type)
-   * @param off  (NUMERIC type)
-   * @param dataType  (NUMERIC type)
+   * @param depth 
+   * @param axis 
+   * @param on 
+   * @param off 
+   * @param dataType 
    * @return output  (NUMERIC type)
    */
-  public INDArray oneHot(INDArray indices, INDArray depth, INDArray axis, INDArray on, INDArray off,
-      INDArray dataType) {
+  public INDArray oneHot(INDArray indices, int depth, int axis, double on, double off,
+      DataType dataType) {
     NDValidation.validateNumerical("oneHot", "indices", indices);
-    NDValidation.validateNumerical("oneHot", "depth", depth);
-    NDValidation.validateNumerical("oneHot", "axis", axis);
-    NDValidation.validateNumerical("oneHot", "on", on);
-    NDValidation.validateNumerical("oneHot", "off", off);
-    NDValidation.validateNumerical("oneHot", "dataType", dataType);
-    return Nd4j.exec(new TODO.OneHot(indices, depth, axis, on, off, dataType))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.OneHot(indices, depth, axis, on, off, dataType))[0];
   }
 
   /**
    * Convert the array to a one-hot array with walues 0 and 1 for each entry<br>
    * If input has shape [ a, ..., n] then output has shape [ a, ..., n, depth],<br>
    * with out[i, ..., j, in[i,...,j]] = 1 with other values being set to 0<br>
-   * <br>
-   * @param name    Output variable name<br>
-   * @param indices Indices - value 0 to depth-1<br>
-   * @param depth   Number of classes<br>
-   * @return Output variable<br>
    * @see #oneHot(SDVariable, int, int, double, double)<br>
-   *     <br>
    *
-   * @param indices  (NUMERIC type)
-   * @param depth  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param indices Indices - value 0 to depth-1 (NUMERIC type)
+   * @param depth Number of classes
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray oneHot(INDArray indices, INDArray depth) {
+  public INDArray oneHot(INDArray indices, int depth) {
     NDValidation.validateNumerical("oneHot", "indices", indices);
-    NDValidation.validateNumerical("oneHot", "depth", depth);
-    return Nd4j.exec(new TODO.OneHot(indices, depth))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.OneHot(indices, depth))[0];
   }
 
   /**

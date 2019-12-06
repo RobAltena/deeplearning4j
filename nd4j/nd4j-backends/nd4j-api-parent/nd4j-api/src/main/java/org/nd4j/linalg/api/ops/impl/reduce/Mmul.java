@@ -94,6 +94,9 @@ public class Mmul extends DynamicCustomOp {
         }
     }
 
+    public Mmul(INDArray x, INDArray y){
+        this(x, y, null, null);
+    }
 
     public Mmul() {}
 
