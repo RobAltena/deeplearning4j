@@ -23,6 +23,7 @@ import org.nd4j.base.Preconditions;
 import org.nd4j.imports.NoOpNameFoundException;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
@@ -52,6 +53,15 @@ public class OnesLike extends DynamicCustomOp {
 
     public OnesLike(String name, SameDiff sameDiff, SDVariable input, DataType dataType) {
         super(name, sameDiff, new SDVariable[]{input}, false);
+        this.outputType = dataType;
+    }
+
+    public OnesLike(INDArray[] inputs){
+        super(inputs, null);
+    }
+
+    public OnesLike(INDArray[] inputs, DataType dataType){
+        super(inputs, null);
         this.outputType = dataType;
     }
 

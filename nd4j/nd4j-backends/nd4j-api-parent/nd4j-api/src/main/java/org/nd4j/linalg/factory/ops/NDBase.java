@@ -944,63 +944,53 @@ public class NDBase {
   /**
    * Return a variable of all 1s, with the same shape as the input variable. Note that this is dynamic:<br>
    * if the input shape changes in later execution, the returned variable's shape will also be updated<br>
-   * <br>
-   * @param name  Name of the new SDVariable<br>
-   * @param input Input SDVariable<br>
-   * @return A new SDVariable with the same (dynamic) shape as the input<br>
-   *     <br>
    *
-   * @param input  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param input Input SDVariable (NUMERIC type)
+   * @return output A new SDVariable with the same (dynamic) shape as the input (NUMERIC type)
    */
-  public INDArray onesLike(INDArray input) {
+  public INDArray onesLike(INDArray[] input) {
     NDValidation.validateNumerical("onesLike", "input", input);
-    return Nd4j.exec(new TODO.OnesLike(input))[0];
+    Preconditions.checkArgument(input.length >= 1, "input has incorrect size/length. Expected: input.length >= 1, got %s", input.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.OnesLike(input))[0];
   }
 
   /**
    * As per {@link #onesLike(String, SDVariable)} but the output datatype may be specified<br>
-   *     <br>
    *
    * @param input  (NUMERIC type)
-   * @param dataType  (NUMERIC type)
+   * @param dataType 
    * @return output  (NUMERIC type)
    */
-  public INDArray onesLike(INDArray input, INDArray dataType) {
+  public INDArray onesLike(INDArray[] input, DataType dataType) {
     NDValidation.validateNumerical("onesLike", "input", input);
-    NDValidation.validateNumerical("onesLike", "dataType", dataType);
-    return Nd4j.exec(new TODO.OnesLike(input, dataType))[0];
+    Preconditions.checkArgument(input.length >= 1, "input has incorrect size/length. Expected: input.length >= 1, got %s", input.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.OnesLike(input, dataType))[0];
   }
 
   /**
    * @see #stack(String, int, SDVariable...)<br>
-   *     <br>
    *
    * @param values  (NUMERIC type)
    * @return output  (NUMERIC type)
    */
-  public INDArray parallel_stack(INDArray values) {
+  public INDArray parallel_stack(INDArray[] values) {
     NDValidation.validateNumerical("parallel_stack", "values", values);
-    return Nd4j.exec(new TODO.Parallel_stack(values))[0];
+    Preconditions.checkArgument(values.length >= 1, "values has incorrect size/length. Expected: values.length >= 1, got %s", values.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.ParallelStack(values))[0];
   }
 
   /**
    * Array permutation operation: permute the dimensions according to the specified permutation indices.<br>
    * Example: if input has shape [a,b,c] and dimensions = [2,0,1] the output has shape [c,a,b]<br>
-   * <br>
-   * @param name Output variable name<br>
-   * @param x    Input variable<br>
-   * @return Output variable (permuted input)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions  (Size: AtLeast(min=1))
+   * @return output Output variable (permuted input) (NUMERIC type)
    */
-  public INDArray permute(INDArray x, INDArray dimensions) {
+  public INDArray permute(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("permute", "x", x);
-    NDValidation.validateNumerical("permute", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Permute(x, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Permute(x, dimensions))[0];
   }
 
   /**

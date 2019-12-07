@@ -59,6 +59,12 @@ public class Permute extends Transpose {
         super(sd, input, permuteDims);
     }
 
+    public Permute(INDArray input, int... permuteDims){
+        super(input, null);
+        this.permuteDims = permuteDims;
+        addIArgument(permuteDims);
+    }
+
     public Permute() {
     }
 
