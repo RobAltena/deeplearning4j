@@ -994,36 +994,16 @@ public class NDBase {
   }
 
   /**
-   * As per {@link #permute(String, SDVariable, int...)} but with SDVariable permute dimension<br>
-   *     <br>
-   *
-   * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray permute(INDArray x, INDArray dimensions) {
-    NDValidation.validateNumerical("permute", "x", x);
-    NDValidation.validateNumerical("permute", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Permute(x, dimensions))[0];
-  }
-
-  /**
    * Product array reduction operation, optionally along specified dimensions<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Output variable: reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
-  public INDArray prod(INDArray x, INDArray dimensions) {
+  public INDArray prod(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("prod", "x", x);
-    NDValidation.validateNumerical("prod", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Prod(x, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Prod(x, dimensions));
   }
 
   /**
@@ -1034,84 +1014,43 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param keepDims   If true: keep the dimensions that are reduced on (as length 1). False: remove the reduction dimensions<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Output variable: reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
+   * @param dimensions  (Size: AtLeast(min=1))
    * @return output  (NUMERIC type)
    */
-  public INDArray prod(INDArray x, INDArray keepDims, INDArray dimensions) {
+  public INDArray prod(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("prod", "x", x);
-    NDValidation.validateNumerical("prod", "keepDims", keepDims);
-    NDValidation.validateNumerical("prod", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Prod(x, keepDims, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Prod(x, keepDims, dimensions));
   }
 
   /**
    * Create a new variable with a 1d array, where the values start at {@code from} and increment by {@code step}<br>
    * up to (but not including) limit.<br>
-   * For example, {@code range(1.0, 3.0, 0.5)} will return {@code [1.0, 1.5, 2.0, 2.5]}<br>
-   * <br>
-   * @param name Name of the new variable<br>
-   * @param from Initial/smallest value<br>
-   * @param to   Largest value (exclusive)<br>
-   * @param step Step size<br>
-   * @return 1D SDVariable with the specified values<br>
-   *     <br>
+   * For example, {@code range(1.0, 3.0, 0.5)} will return {@code [1.0, 1.5, 2.0, 2.5]<br>
    *
-   * @param from  (NUMERIC type)
-   * @param to  (NUMERIC type)
-   * @param step  (NUMERIC type)
-   * @param dataType  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param from Initial/smallest value
+   * @param to Largest value (exclusive)
+   * @param step Step size
+   * @param dataType 
+   * @return output SDVariable with the specified values (NUMERIC type)
    */
-  public INDArray range(INDArray from, INDArray to, INDArray step, INDArray dataType) {
-    NDValidation.validateNumerical("range", "from", from);
-    NDValidation.validateNumerical("range", "to", to);
-    NDValidation.validateNumerical("range", "step", step);
-    NDValidation.validateNumerical("range", "dataType", dataType);
-    return Nd4j.exec(new TODO.Range(from, to, step, dataType))[0];
-  }
-
-  /**
-   * As per {@link #range(String, double, double, double, DataType)} but with SDVariable arguments<br>
-   *     <br>
-   *
-   * @param from  (NUMERIC type)
-   * @param to  (NUMERIC type)
-   * @param step  (NUMERIC type)
-   * @param dataType  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray range(INDArray from, INDArray to, INDArray step, INDArray dataType) {
-    NDValidation.validateNumerical("range", "from", from);
-    NDValidation.validateNumerical("range", "to", to);
-    NDValidation.validateNumerical("range", "step", step);
-    NDValidation.validateNumerical("range", "dataType", dataType);
-    return Nd4j.exec(new TODO.Range(from, to, step, dataType))[0];
+  public INDArray range(double from, double to, double step, DataType dataType) {
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.random.impl.Range(from, to, step, dataType))[0];
   }
 
   /**
    * Returns the rank (number of dimensions, i.e., length(shape)) of the specified SDVariable as a 0D scalar variable<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param in   Input variable<br>
-   * @return 0D (scalar) output variable with value equal to the rank of the input variable<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @return output (scalar) output variable with value equal to the rank of the input variable (NUMERIC type)
    */
-  public INDArray rank(INDArray in) {
+  public INDArray rank(INDArray[] in) {
     NDValidation.validateNumerical("rank", "in", in);
-    return Nd4j.exec(new TODO.Rank(in))[0];
+    Preconditions.checkArgument(in.length >= 1, "in has incorrect size/length. Expected: in.length >= 1, got %s", in.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Rank(in))[0];
   }
 
   /**
