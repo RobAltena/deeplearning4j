@@ -23,6 +23,7 @@ import org.nd4j.base.Preconditions;
 import org.nd4j.imports.NoOpNameFoundException;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
@@ -45,6 +46,10 @@ public class ScatterAdd extends DynamicCustomOp {
     }
 
     public ScatterAdd(){}
+
+    public ScatterAdd(INDArray ref, INDArray indices, INDArray update){
+        //TODO: implement
+    }
 
     @Override
     public String opName() {

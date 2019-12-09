@@ -24,6 +24,7 @@ import org.nd4j.imports.NoOpNameFoundException;
 import org.nd4j.imports.descriptors.properties.PropertyMapping;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
@@ -57,6 +58,14 @@ public class ReverseSequence extends DynamicCustomOp {
         this.seqDim = 1;
         this.batchDim = 0;
         addArguments();
+    }
+
+    public ReverseSequence(INDArray x, INDArray seq_lengths, int seqDim, int batchDim){
+        //TODO: Implement.
+    }
+
+    public ReverseSequence(INDArray x, INDArray seq_lengths){
+        //TODO: Implement.
     }
 
     private void addArguments(){
