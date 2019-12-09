@@ -47,7 +47,7 @@ public class ScatterMul extends DynamicCustomOp {
     public ScatterMul() {}
 
     public ScatterMul(INDArray ref, INDArray indices, INDArray update){
-        //TODO: implement
+        super(new INDArray[]{ref, indices, update}, null);
     }
 
     @Override

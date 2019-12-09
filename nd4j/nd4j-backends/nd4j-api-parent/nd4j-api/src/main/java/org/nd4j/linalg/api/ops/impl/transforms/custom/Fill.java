@@ -60,8 +60,9 @@ public class Fill extends DynamicCustomOp {
     }
 
     public Fill(INDArray shape, DataType outputDataType, double value) {
-        super(null, shape, result, Collections.singletonList(value), null);
+        super(null, shape, null, Collections.singletonList(value), null);
         this.value = value;
+        this.outputDataType = outputDataType;
     }
 
     public Fill(INDArray shape, INDArray result, double value) {

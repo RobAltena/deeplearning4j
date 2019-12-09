@@ -24,6 +24,7 @@ import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.api.shape.LongShapeDescriptor;
+import org.nd4j.linalg.factory.Nd4j;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
 import org.tensorflow.framework.NodeDef;
@@ -47,7 +48,8 @@ public class Linspace extends DynamicCustomOp {
     }
 
     public Linspace(DataType dataType, double start, double stop, double number){
-        //TODO: implement this constructor for NDBase.java.
+        super(new INDArray[]{Nd4j.scalar(start), Nd4j.scalar(stop), Nd4j.scalar(number)}, null);
+        //TODO: switch to args once issue eclipse#8513 is done.
         this.dataType = dataType;
     }
 

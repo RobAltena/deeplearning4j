@@ -56,12 +56,12 @@ public class OnesLike extends DynamicCustomOp {
         this.outputType = dataType;
     }
 
-    public OnesLike(INDArray[] inputs){
-        super(inputs, null);
+    public OnesLike(INDArray inputs){
+        super(new INDArray[] {inputs}, null);
     }
 
-    public OnesLike(INDArray[] inputs, DataType dataType){
-        super(inputs, null);
+    public OnesLike(INDArray inputs, DataType dataType){
+        super(new INDArray[] {inputs}, null);
         this.outputType = dataType;
     }
 

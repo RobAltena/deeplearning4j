@@ -42,8 +42,8 @@ public class InvertPermutation extends BaseDynamicTransformOp {
         super( sameDiff, new SDVariable[] {input}, inPlace);
     }
 
-    public InvertPermutation(INDArray[] inputs) {
-        super( inputs, null);
+    public InvertPermutation(INDArray inputs) {
+        super( new INDArray[] {inputs}, null);
     }
     @Override
     public String opName() {

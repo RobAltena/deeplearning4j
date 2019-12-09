@@ -48,7 +48,7 @@ public class ScatterAdd extends DynamicCustomOp {
     public ScatterAdd(){}
 
     public ScatterAdd(INDArray ref, INDArray indices, INDArray update){
-        //TODO: implement
+        super(new INDArray[]{ref, indices, update}, null);
     }
 
     @Override

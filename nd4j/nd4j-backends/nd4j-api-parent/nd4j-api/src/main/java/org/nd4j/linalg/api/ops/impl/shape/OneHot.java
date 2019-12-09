@@ -76,16 +76,13 @@ public class OneHot extends DynamicCustomOp {
         addArgs();
     }
 
-    //TODO: Make sure this is correct.
     public OneHot(INDArray indices, int depth, int axis, double on, double off) {
         this(indices, null, depth, axis, on, off);
     }
 
-    //TODO: Make sure this is correct.
     public OneHot(INDArray indices, int depth, int axis, double on, double off, DataType dataType){
         this(indices, null, depth, axis, on, off);
         this.outputType = dataType;
-        addArgs();
     }
 
     public OneHot(INDArray indices, int depth) {

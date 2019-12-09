@@ -45,7 +45,7 @@ public class ScatterMin extends DynamicCustomOp {
     public ScatterMin() {}
 
     public ScatterMin(INDArray ref, INDArray indices, INDArray update){
-        //TODO: implement
+        super(new INDArray[]{ref, indices, update}, null);
     }
 
     @Override

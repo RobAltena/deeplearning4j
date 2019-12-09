@@ -468,9 +468,8 @@ public class NDBase {
    * @param x Input variable (NUMERIC type)
    * @return output Scalar variable with value 1 (NUMERIC type)
    */
-  public INDArray isNumericTensor(INDArray[] x) {
+  public INDArray isNumericTensor(INDArray x) {
     NDValidation.validateNumerical("isNumericTensor", "x", x);
-    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.IsNumericTensor(x))[0];
   }
 
@@ -948,9 +947,8 @@ public class NDBase {
    * @param input Input SDVariable (NUMERIC type)
    * @return output A new SDVariable with the same (dynamic) shape as the input (NUMERIC type)
    */
-  public INDArray onesLike(INDArray[] input) {
+  public INDArray onesLike(INDArray input) {
     NDValidation.validateNumerical("onesLike", "input", input);
-    Preconditions.checkArgument(input.length >= 1, "input has incorrect size/length. Expected: input.length >= 1, got %s", input.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.OnesLike(input))[0];
   }
 
@@ -961,9 +959,8 @@ public class NDBase {
    * @param dataType 
    * @return output  (NUMERIC type)
    */
-  public INDArray onesLike(INDArray[] input, DataType dataType) {
+  public INDArray onesLike(INDArray input, DataType dataType) {
     NDValidation.validateNumerical("onesLike", "input", input);
-    Preconditions.checkArgument(input.length >= 1, "input has incorrect size/length. Expected: input.length >= 1, got %s", input.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.OnesLike(input, dataType))[0];
   }
 
@@ -1047,138 +1044,53 @@ public class NDBase {
    * @param in Input variable (NUMERIC type)
    * @return output (scalar) output variable with value equal to the rank of the input variable (NUMERIC type)
    */
-  public INDArray rank(INDArray[] in) {
+  public INDArray rank(INDArray in) {
     NDValidation.validateNumerical("rank", "in", in);
-    Preconditions.checkArgument(in.length >= 1, "in has incorrect size/length. Expected: in.length >= 1, got %s", in.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Rank(in))[0];
   }
 
   /**
    * @see #repeat(String, SDVariable, int)<br>
-   *     <br>
    *
    * @param df  (NUMERIC type)
-   * @param axis  (NUMERIC type)
+   * @param axis 
    * @return output  (NUMERIC type)
    */
-  public INDArray repeat(INDArray df, INDArray axis) {
+  public INDArray repeat(INDArray[] df, int axis) {
     NDValidation.validateNumerical("repeat", "df", df);
-    NDValidation.validateNumerical("repeat", "axis", axis);
-    return Nd4j.exec(new TODO.Repeat(df, axis))[0];
+    Preconditions.checkArgument(df.length >= 1, "df has incorrect size/length. Expected: df.length >= 1, got %s", df.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Repeat(df, axis))[0];
   }
 
   /**
    * Element-wise replace where condition:<br>
    * out[i] = from[i] if condition(update[i]) is satisfied, or<br>
    * out[i] = update[i] if condition(update[i]) is NOT satisfied<br>
-   * <br>
-   * @param name      Name of the output variable<br>
-   * @param update    Source array<br>
-   * @param from      Replacement values array (used conditionally). Must be same shape as 'update' array<br>
-   * @param condition Condition to check on update array elements<br>
-   * @return New array with values replaced where condition is satisfied<br>
-   *     <br>
    *
-   * @param update  (NUMERIC type)
-   * @param from  (NUMERIC type)
-   * @param condition  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param update Source array (NUMERIC type)
+   * @param from Replacement values array (used conditionally). Must be same shape as 'update' array (NUMERIC type)
+   * @param condition Condition to check on update array elements
+   * @return output New array with values replaced where condition is satisfied (NUMERIC type)
    */
-  public INDArray replaceWhere(INDArray update, INDArray from, INDArray condition) {
+  public INDArray replaceWhere(INDArray update, INDArray from, Condition condition) {
     NDValidation.validateNumerical("replaceWhere", "update", update);
     NDValidation.validateNumerical("replaceWhere", "from", from);
-    NDValidation.validateNumerical("replaceWhere", "condition", condition);
-    return Nd4j.exec(new TODO.ReplaceWhere(update, from, condition))[0];
-  }
-
-  /**
-   * Element-wise replace where condition:<br>
-   * out[i] = value if condition(update[i]) is satisfied, or<br>
-   * out[i] = update[i] if condition(update[i]) is NOT satisfied<br>
-   * <br>
-   * @param name      Name of the output variable<br>
-   * @param update    Source array<br>
-   * @param value     Value to set at the output, if the condition is satisfied<br>
-   * @param condition Condition to check on update array elements<br>
-   * @return New array with values replaced where condition is satisfied<br>
-   *     <br>
-   *
-   * @param update  (NUMERIC type)
-   * @param value  (NUMERIC type)
-   * @param condition  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray replaceWhere(INDArray update, INDArray value, INDArray condition) {
-    NDValidation.validateNumerical("replaceWhere", "update", update);
-    NDValidation.validateNumerical("replaceWhere", "value", value);
-    NDValidation.validateNumerical("replaceWhere", "condition", condition);
-    return Nd4j.exec(new TODO.ReplaceWhere(update, value, condition))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.comparison.CompareAndReplace(update, from, condition));
   }
 
   /**
    * Reshape the input variable to the specified (fixed) shape. The output variable will have the same values as the<br>
    * input, but with the specified shape.<br>
    * Note that prod(shape) must match length(input) == prod(input.shape)<br>
-   * <br>
-   * @param name  Output variable name<br>
-   * @param x     Input variable<br>
-   * @param shape New shape for variable<br>
-   * @return Output variable<br>
-   * @see #reshape(SDVariable, SDVariable)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param shape  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param shape New shape for variable (NUMERIC type)
+   * @return output Output variable (NUMERIC type)
    */
   public INDArray reshape(INDArray x, INDArray shape) {
     NDValidation.validateNumerical("reshape", "x", x);
     NDValidation.validateNumerical("reshape", "shape", shape);
-    return Nd4j.exec(new TODO.Reshape(x, shape))[0];
-  }
-
-  /**
-   * Reshape the input variable to the specified (fixed) shape. The output variable will have the same values as the<br>
-   * input, but with the specified shape.<br>
-   * Note that prod(shape) must match length(input) == prod(input.shape)<br>
-   * <br>
-   * @param name  Output variable name<br>
-   * @param x     Input variable<br>
-   * @param shape New shape for variable<br>
-   * @return Output variable<br>
-   * @see #reshape(SDVariable, SDVariable)<br>
-   *     <br>
-   *
-   * @param x  (NUMERIC type)
-   * @param shape  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray reshape(INDArray x, INDArray shape) {
-    NDValidation.validateNumerical("reshape", "x", x);
-    NDValidation.validateNumerical("reshape", "shape", shape);
-    return Nd4j.exec(new TODO.Reshape(x, shape))[0];
-  }
-
-  /**
-   * Reshape the input variable to the specified (dynamic) shape. The output variable will have the same values as the<br>
-   * input, but with the specified shape.<br>
-   * Note that prod(shape) must match length(input) == prod(input.shape)<br>
-   * <br>
-   * @param name  Output variable name<br>
-   * @param x     Input variable<br>
-   * @param shape New shape for variable<br>
-   * @return Output variable<br>
-   * @see #reshape(SDVariable, int[])<br>
-   *     <br>
-   *
-   * @param x  (NUMERIC type)
-   * @param shape  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray reshape(INDArray x, INDArray shape) {
-    NDValidation.validateNumerical("reshape", "x", x);
-    NDValidation.validateNumerical("reshape", "shape", shape);
-    return Nd4j.exec(new TODO.Reshape(x, shape))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Reshape(x, shape))[0];
   }
 
   /**
@@ -1193,51 +1105,34 @@ public class NDBase {
    * reverse(in, 0):<br>
    * [4, 5, 6]<br>
    * [1, 2 3]<br>
-   * <br>
-   * @param x          Input variable<br>
-   * @param dimensions Dimensions<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions Input variable (Size: AtLeast(min=1))
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray reverse(INDArray x, INDArray dimensions) {
+  public INDArray reverse(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("reverse", "x", x);
-    NDValidation.validateNumerical("reverse", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Reverse(x, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.Reverse(x, dimensions))[0];
   }
 
   /**
    * Reverse sequence op: for each slice along dimension seqDimension, the first seqLength values are reversed<br>
-   * <br>
-   * @param name        Name of the output variable<br>
-   * @param x           Input variable<br>
-   * @param seq_lengths Length of the sequences<br>
-   * @param seqDim      Sequence dimension<br>
-   * @param batchDim    Batch dimension<br>
-   * @return Reversed sequences<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param seq_lengths  (NUMERIC type)
-   * @param seqDim  (NUMERIC type)
-   * @param batchDim  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param seq_lengths Length of the sequences (NUMERIC type)
+   * @param seqDim Sequence dimension
+   * @param batchDim Batch dimension
+   * @return output Reversed sequences (NUMERIC type)
    */
-  public INDArray reverseSequence(INDArray x, INDArray seq_lengths, INDArray seqDim,
-      INDArray batchDim) {
+  public INDArray reverseSequence(INDArray x, INDArray seq_lengths, int seqDim, int batchDim) {
     NDValidation.validateNumerical("reverseSequence", "x", x);
     NDValidation.validateNumerical("reverseSequence", "seq_lengths", seq_lengths);
-    NDValidation.validateNumerical("reverseSequence", "seqDim", seqDim);
-    NDValidation.validateNumerical("reverseSequence", "batchDim", batchDim);
-    return Nd4j.exec(new TODO.ReverseSequence(x, seq_lengths, seqDim, batchDim))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.ReverseSequence(x, seq_lengths, seqDim, batchDim))[0];
   }
 
   /**
    * @see #reverseSequence(String, SDVariable, SDVariable, int, int)<br>
-   *     <br>
    *
    * @param x  (NUMERIC type)
    * @param seq_lengths  (NUMERIC type)
@@ -1246,110 +1141,75 @@ public class NDBase {
   public INDArray reverseSequence(INDArray x, INDArray seq_lengths) {
     NDValidation.validateNumerical("reverseSequence", "x", x);
     NDValidation.validateNumerical("reverseSequence", "seq_lengths", seq_lengths);
-    return Nd4j.exec(new TODO.ReverseSequence(x, seq_lengths))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.ReverseSequence(x, seq_lengths))[0];
   }
 
   /**
    * Element-wise scalar floor modulus operation: out = floorMod(in, value).<br>
    * i.e., returns the remainder after division by 'value'<br>
-   * <br>
-   * @param name  Name of the output variable<br>
-   * @param in    Input variable<br>
-   * @param value Scalar value to compare<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @param value  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @param value Scalar value to compare
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray scalarFloorMod(INDArray in, INDArray value) {
+  public INDArray scalarFloorMod(INDArray in, double value) {
     NDValidation.validateNumerical("scalarFloorMod", "in", in);
-    NDValidation.validateNumerical("scalarFloorMod", "value", value);
-    return Nd4j.exec(new TODO.ScalarFloorMod(in, value))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.ScalarFMod(in, value));
   }
 
   /**
    * Element-wise scalar maximum operation: out = max(in, value)<br>
-   * <br>
-   * @param name  Name of the output variable<br>
-   * @param in    Input variable<br>
-   * @param value Scalar value to compare<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @param value  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @param value Scalar value to compare
+   * @return output Scalar value to compare (NUMERIC type)
    */
-  public INDArray scalarMax(INDArray in, INDArray value) {
+  public INDArray scalarMax(INDArray in, double value) {
     NDValidation.validateNumerical("scalarMax", "in", in);
-    NDValidation.validateNumerical("scalarMax", "value", value);
-    return Nd4j.exec(new TODO.ScalarMax(in, value))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.ScalarMax(in, value));
   }
 
   /**
    * Element-wise scalar minimum operation: out = min(in, value)<br>
-   * <br>
-   * @param name  Name of the output variable<br>
-   * @param in    Input variable<br>
-   * @param value Scalar value to compare<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @param value  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @param value Scalar value to compare
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray scalarMin(INDArray in, INDArray value) {
+  public INDArray scalarMin(INDArray in, double value) {
     NDValidation.validateNumerical("scalarMin", "in", in);
-    NDValidation.validateNumerical("scalarMin", "value", value);
-    return Nd4j.exec(new TODO.ScalarMin(in, value))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.ScalarMin(in, value));
   }
 
   /**
    * Return a variable with equal shape to the input, but all elements set to value 'set'<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param in   Input variable<br>
-   * @param set  Value to set<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @param set  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @param set Value to set
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray scalarSet(INDArray in, INDArray set) {
+  public INDArray scalarSet(INDArray in, double set) {
     NDValidation.validateNumerical("scalarSet", "in", in);
-    NDValidation.validateNumerical("scalarSet", "set", set);
-    return Nd4j.exec(new TODO.ScalarSet(in, set))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scalar.ScalarSet(in, set));
   }
 
   /**
    * Scatter addition operation.<br>
    * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
    * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...]<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.<br>
-   * <br>
-   * @param name    Name of the output variable<br>
-   * @param ref     Initial/source variable<br>
-   * @param indices Indices array<br>
-   * @param updates Updates to add to the initial/source array<br>
-   * @return The updated variable<br>
-   *     <br>
    *
-   * @param ref  (NUMERIC type)
-   * @param indices  (NUMERIC type)
-   * @param updates  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param ref Initial/source variable (NUMERIC type)
+   * @param indices Indices array (NUMERIC type)
+   * @param updates Updates to add to the initial/source array (NUMERIC type)
+   * @return output The updated variable (NUMERIC type)
    */
   public INDArray scatterAdd(INDArray ref, INDArray indices, INDArray updates) {
     NDValidation.validateNumerical("scatterAdd", "ref", ref);
     NDValidation.validateNumerical("scatterAdd", "indices", indices);
     NDValidation.validateNumerical("scatterAdd", "updates", updates);
-    return Nd4j.exec(new TODO.ScatterAdd(ref, indices, updates))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scatter.ScatterAdd(ref, indices, updates))[0];
   }
 
   /**
@@ -1358,50 +1218,36 @@ public class NDBase {
    * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] /= updates[i, ...]<br>
    * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] /= updates[i, ..., k, ...]<br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.<br>
-   * <br>
-   * @param name    Name of the output variable<br>
-   * @param ref     Initial/source variable<br>
-   * @param indices Indices array<br>
-   * @param updates Updates to add to the initial/source array<br>
-   * @return The updated variable<br>
-   *     <br>
    *
-   * @param ref  (NUMERIC type)
-   * @param indices  (NUMERIC type)
-   * @param updates  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param ref Initial/source variable (NUMERIC type)
+   * @param indices Indices array (NUMERIC type)
+   * @param updates Updates to add to the initial/source array (NUMERIC type)
+   * @return output The updated variable (NUMERIC type)
    */
   public INDArray scatterDiv(INDArray ref, INDArray indices, INDArray updates) {
     NDValidation.validateNumerical("scatterDiv", "ref", ref);
     NDValidation.validateNumerical("scatterDiv", "indices", indices);
     NDValidation.validateNumerical("scatterDiv", "updates", updates);
-    return Nd4j.exec(new TODO.ScatterDiv(ref, indices, updates))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scatter.ScatterDiv(ref, indices, updates))[0];
   }
 
   /**
    * Scatter max operation.<br>
    * If indices is rank 0 (a scalar), then out[index, ...] = max(updates[...], in[index,...])<br>
    * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = max(updates[i,...], in[indices[i],...])<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = max(updates[i, ..., k, ...], in[indices[i], ..., indices[k], ...]<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = max(updates[i, ..., k, ...], in[indices[i], ..., indices[k], ...] <br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.<br>
-   * <br>
-   * @param name    Name of the output variable<br>
-   * @param ref     Initial/source variable<br>
-   * @param indices Indices array<br>
-   * @param updates Updates to add to the initial/source array<br>
-   * @return The updated variable<br>
-   *     <br>
    *
-   * @param ref  (NUMERIC type)
-   * @param indices  (NUMERIC type)
-   * @param updates  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param ref Initial/source variable (NUMERIC type)
+   * @param indices Indices array (NUMERIC type)
+   * @param updates Updates to add to the initial/source array (NUMERIC type)
+   * @return output The updated variable (NUMERIC type)
    */
   public INDArray scatterMax(INDArray ref, INDArray indices, INDArray updates) {
     NDValidation.validateNumerical("scatterMax", "ref", ref);
     NDValidation.validateNumerical("scatterMax", "indices", indices);
     NDValidation.validateNumerical("scatterMax", "updates", updates);
-    return Nd4j.exec(new TODO.ScatterMax(ref, indices, updates))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scatter.ScatterMax(ref, indices, updates))[0];
   }
 
   /**
@@ -1410,24 +1256,17 @@ public class NDBase {
    * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = min(updates[i,...], in[indices[i],...])<br>
    * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = min(updates[i, ..., k, ...], in[indices[i], ..., indices[k], ...]<br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.<br>
-   * <br>
-   * @param name    Name of the output variable<br>
-   * @param ref     Initial/source variable<br>
-   * @param indices Indices array<br>
-   * @param updates Updates to add to the initial/source array<br>
-   * @return The updated variable<br>
-   *     <br>
    *
-   * @param ref  (NUMERIC type)
-   * @param indices  (NUMERIC type)
-   * @param updates  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param ref Initial/source variable (NUMERIC type)
+   * @param indices Indices array (NUMERIC type)
+   * @param updates Updates to add to the initial/source array (NUMERIC type)
+   * @return output The updated variable (NUMERIC type)
    */
   public INDArray scatterMin(INDArray ref, INDArray indices, INDArray updates) {
     NDValidation.validateNumerical("scatterMin", "ref", ref);
     NDValidation.validateNumerical("scatterMin", "indices", indices);
     NDValidation.validateNumerical("scatterMin", "updates", updates);
-    return Nd4j.exec(new TODO.ScatterMin(ref, indices, updates))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scatter.ScatterMin(ref, indices, updates))[0];
   }
 
   /**
@@ -1435,25 +1274,18 @@ public class NDBase {
    * If indices is rank 0 (a scalar), then out[index, ...] *= updates[...]<br>
    * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] *= updates[i, ...]<br>
    * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] *= updates[i, ..., k, ...]<br>
-   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.<br>
-   * <br>
-   * @param name    Name of the output variable<br>
-   * @param ref     Initial/source variable<br>
-   * @param indices Indices array<br>
-   * @param updates Updates to add to the initial/source array<br>
-   * @return The updated variable<br>
-   *     <br>
+   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.     <br>
    *
-   * @param ref  (NUMERIC type)
-   * @param indices  (NUMERIC type)
-   * @param updates  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param ref Initial/source variable (NUMERIC type)
+   * @param indices Indices array (NUMERIC type)
+   * @param updates Updates to add to the initial/source array (NUMERIC type)
+   * @return output The updated variable (NUMERIC type)
    */
   public INDArray scatterMul(INDArray ref, INDArray indices, INDArray updates) {
     NDValidation.validateNumerical("scatterMul", "ref", ref);
     NDValidation.validateNumerical("scatterMul", "indices", indices);
     NDValidation.validateNumerical("scatterMul", "updates", updates);
-    return Nd4j.exec(new TODO.ScatterMul(ref, indices, updates))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.scatter.ScatterMul(ref, indices, updates))[0];
   }
 
   /**

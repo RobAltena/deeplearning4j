@@ -50,9 +50,9 @@ public class Rank extends DynamicCustomOp {
     public Rank(SameDiff sameDiff, SDVariable input, boolean inPlace) {
         super(null, sameDiff, new SDVariable[] {input}, inPlace);
     }
-    
-    public Rank(INDArray [] in){
-        super(in, null);
+
+    public Rank(INDArray in){
+        super(new INDArray[] {in}, null);
     }
 
     @Override

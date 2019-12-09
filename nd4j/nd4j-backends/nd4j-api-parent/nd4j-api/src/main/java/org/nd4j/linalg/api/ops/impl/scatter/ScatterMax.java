@@ -45,7 +45,7 @@ public class ScatterMax extends DynamicCustomOp {
     public ScatterMax() {}
 
     public ScatterMax(INDArray ref, INDArray indices, INDArray update){
-        //TODO: implement
+        super(new INDArray[]{ref, indices, update}, null);
     }
 
     @Override

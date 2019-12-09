@@ -47,7 +47,7 @@ public class ScatterDiv extends DynamicCustomOp {
     public ScatterDiv() {}
 
     public ScatterDiv(INDArray ref, INDArray indices, INDArray update){
-        //TODO: implement
+        super(new INDArray[]{ref, indices, update}, null);
     }
 
 
