@@ -20,6 +20,7 @@ import org.nd4j.autodiff.samediff.SDVariable;
 import org.nd4j.autodiff.samediff.SameDiff;
 import org.nd4j.base.Preconditions;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 
 import java.util.Arrays;
@@ -38,6 +39,10 @@ public class SegmentSum extends DynamicCustomOp {
     }
 
     public SegmentSum(){ }
+
+    public SegmentSum(INDArray data, INDArray segmentIds){
+        super(new INDArray[]{data, segmentIds}, null);
+    }
 
     @Override
     public String opName(){

@@ -56,6 +56,11 @@ public class Shape extends DynamicCustomOp {
         super(null, in, out, null, null);
     }
 
+    public Shape(INDArray in){
+        //TODO: check.
+        this(in, null);
+    }
+
     @Override
     public String onnxName() {
         throw new NoOpNameFoundException("No onnx name found for shape " + opName());
