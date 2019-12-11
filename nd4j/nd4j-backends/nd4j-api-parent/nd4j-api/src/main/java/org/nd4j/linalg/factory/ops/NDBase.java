@@ -1456,38 +1456,26 @@ public class NDBase {
 
   /**
    * Returns the size (number of elements, i.e., prod(shape)) of the specified SDVariable as a 0D scalar variable<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param in   Input variable<br>
-   * @return 0D (scalar) output variable with value equal to the number of elements in the specified array<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @return output 0D (scalar) output variable with value equal to the number of elements in the specified array (NUMERIC type)
    */
   public INDArray size(INDArray in) {
     NDValidation.validateNumerical("size", "in", in);
-    return Nd4j.exec(new TODO.Size(in))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Size(in))[0];
   }
 
   /**
    * Returns a rank 0 (scalar) variable for the size of the specified dimension.<br>
    * For example, if X has shape [10,20,30] then sizeAt(X,1)=20. Similarly, sizeAt(X,-1)=30<br>
-   * <br>
-   * @param name      Name of the output variable<br>
-   * @param in        Input variable<br>
-   * @param dimension Dimension to get size of<br>
-   * @return Scalar SDVariable for size at specified variable<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @param dimension  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Input variable (NUMERIC type)
+   * @param dimension Dimension to get size of
+   * @return output Scalar SDVariable for size at specified variable (NUMERIC type)
    */
-  public INDArray sizeAt(INDArray in, INDArray dimension) {
+  public INDArray sizeAt(INDArray in, int dimension) {
     NDValidation.validateNumerical("sizeAt", "in", in);
-    NDValidation.validateNumerical("sizeAt", "dimension", dimension);
-    return Nd4j.exec(new TODO.SizeAt(in, dimension))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.SizeAt(in, dimension))[0];
   }
 
   /**
@@ -1498,76 +1486,58 @@ public class NDBase {
    * then slice(input, begin=[0,1], size=[2,1] will return:<br>
    * [b]<br>
    * [e]<br>
-   * <br>
    * Note that for each dimension i, begin[i] + size[i] <= input.size(i)<br>
-   * <br>
-   * @param name  Output variable name<br>
-   * @param input Variable to get subset of<br>
-   * @param begin Beginning index. Must be same length as rank of input array<br>
-   * @param size  Size of the output array. Must be same length as rank of input array<br>
-   * @return Subset of the input<br>
-   *     <br>
    *
-   * @param input  (NUMERIC type)
-   * @param begin  (NUMERIC type)
-   * @param size  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param input input Variable to get subset of (NUMERIC type)
+   * @param begin Beginning index. Must be same length as rank of input array (Size: AtLeast(min=1))
+   * @param size Size of the output array. Must be same length as rank of input array (Size: AtLeast(min=1))
+   * @return output Subset of the input (NUMERIC type)
    */
-  public INDArray slice(INDArray input, INDArray begin, INDArray size) {
+  public INDArray slice(INDArray input, int[] begin, int... size) {
     NDValidation.validateNumerical("slice", "input", input);
-    NDValidation.validateNumerical("slice", "begin", begin);
-    NDValidation.validateNumerical("slice", "size", size);
-    return Nd4j.exec(new TODO.Slice(input, begin, size))[0];
+    Preconditions.checkArgument(begin.length >= 1, "begin has incorrect size/length. Expected: begin.length >= 1, got %s", begin.length);
+    Preconditions.checkArgument(size.length >= 1, "size has incorrect size/length. Expected: size.length >= 1, got %s", size.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Slice(input, begin, size))[0];
   }
 
   /**
    * Squared L2 norm: see {@link #norm2(String, SDVariable, boolean, int...)}<br>
-   *     <br>
    *
    * @param x  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
+   * @param keepDims 
+   * @param dimensions  (Size: AtLeast(min=1))
    * @return output  (NUMERIC type)
    */
-  public INDArray squaredNorm(INDArray x, INDArray keepDims, INDArray dimensions) {
+  public INDArray squaredNorm(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("squaredNorm", "x", x);
-    NDValidation.validateNumerical("squaredNorm", "keepDims", keepDims);
-    NDValidation.validateNumerical("squaredNorm", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.SquaredNorm(x, keepDims, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.SquaredNorm(x, keepDims, dimensions));
   }
 
   /**
    * Squared L2 norm: see {@link #norm2(String, SDVariable, int...)}<br>
-   *     <br>
    *
    * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
+   * @param dimensions  (Size: AtLeast(min=1))
    * @return output  (NUMERIC type)
    */
-  public INDArray squaredNorm(INDArray x, INDArray dimensions) {
+  public INDArray squaredNorm(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("squaredNorm", "x", x);
-    NDValidation.validateNumerical("squaredNorm", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.SquaredNorm(x, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.SquaredNorm(x, dimensions));
   }
 
   /**
    * Remove a single dimension of size 1.<br>
    * For example, if input has shape [a,b,1,c] then squeeze(input, 2) returns an array of shape [a,b,c]<br>
-   * <br>
-   * @param name Name of the output variable<br>
-   * @param x    Input variable<br>
-   * @param axis Size 1 dimension to remove<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param axis  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param axis Size 1 dimension to remove
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray squeeze(INDArray x, INDArray axis) {
+  public INDArray squeeze(INDArray x, int axis) {
     NDValidation.validateNumerical("squeeze", "x", x);
-    NDValidation.validateNumerical("squeeze", "axis", axis);
-    return Nd4j.exec(new TODO.Squeeze(x, axis))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Squeeze(x, axis))[0];
   }
 
   /**
@@ -1577,44 +1547,29 @@ public class NDBase {
    * axis = 1: [a,N,b,c]<br>
    * axis = 2: [a,b,N,c]<br>
    * axis = 3: [a,b,c,N]<br>
-   * <br>
-   * @param name   Name of the output variable<br>
-   * @param axis   Axis to stack on<br>
-   * @param values Input variables to stack. Must have the same shape for all inputs<br>
-   * @return Output variable<br>
    * @see #unstack(String[], SDVariable, int, int)<br>
-   *     <br>
    *
-   * @param axis  (NUMERIC type)
-   * @param values  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param values Input variables to stack. Must have the same shape for all inputs (NUMERIC type)
+   * @param axis Axis to stack on
+   * @return output Output variable (NUMERIC type)
    */
-  public INDArray stack(INDArray axis, INDArray values) {
-    NDValidation.validateNumerical("stack", "axis", axis);
+  public INDArray stack(INDArray values, int axis) {
     NDValidation.validateNumerical("stack", "values", values);
-    return Nd4j.exec(new TODO.Stack(axis, values))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Stack(values, axis))[0];
   }
 
   /**
    * Stardard deviation array reduction operation, optionally along specified dimensions<br>
-   * <br>
-   * @param name          Output variable name<br>
-   * @param x             Input variable<br>
-   * @param biasCorrected If true: divide by (N-1) (i.e., sample stdev). If false: divide by N (population stdev)<br>
-   * @param dimensions    Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Output variable: reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param biasCorrected  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param biasCorrected If true: divide by (N-1) (i.e., sample stdev). If false: divide by N (population stdev)
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
-  public INDArray standardDeviation(INDArray x, INDArray biasCorrected, INDArray dimensions) {
+  public INDArray standardDeviation(INDArray x, boolean biasCorrected, int... dimensions) {
     NDValidation.validateNumerical("standardDeviation", "x", x);
-    NDValidation.validateNumerical("standardDeviation", "biasCorrected", biasCorrected);
-    NDValidation.validateNumerical("standardDeviation", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.StandardDeviation(x, biasCorrected, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.summarystats.StandardDeviation(x, biasCorrected, dimensions));
   }
 
   /**
@@ -1625,75 +1580,18 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param x             Input variable<br>
-   * @param biasCorrected If true: divide by (N-1) (i.e., sample stdev). If false: divide by N (population stdev)<br>
-   * @param keepDims      If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions<br>
-   * @param dimensions    Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Output variable: reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param biasCorrected  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param biasCorrected If true: divide by (N-1) (i.e., sample stdev). If false: divide by N (population stdev)
+   * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
-  public INDArray standardDeviation(INDArray x, INDArray biasCorrected, INDArray keepDims,
-      INDArray dimensions) {
+  public INDArray standardDeviation(INDArray x, boolean biasCorrected, boolean keepDims,
+      int... dimensions) {
     NDValidation.validateNumerical("standardDeviation", "x", x);
-    NDValidation.validateNumerical("standardDeviation", "biasCorrected", biasCorrected);
-    NDValidation.validateNumerical("standardDeviation", "keepDims", keepDims);
-    NDValidation.validateNumerical("standardDeviation", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.StandardDeviation(x, biasCorrected, keepDims, dimensions))[0];
-  }
-
-  /**
-   * @see #stridedSlice(String, SDVariable, long[], long[], long[])<br>
-   *     <br>
-   *
-   * @param input  (NUMERIC type)
-   * @param begin  (NUMERIC type)
-   * @param end  (NUMERIC type)
-   * @param strides  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray stridedSlice(INDArray input, INDArray begin, INDArray end, INDArray strides) {
-    NDValidation.validateNumerical("stridedSlice", "input", input);
-    NDValidation.validateNumerical("stridedSlice", "begin", begin);
-    NDValidation.validateNumerical("stridedSlice", "end", end);
-    NDValidation.validateNumerical("stridedSlice", "strides", strides);
-    return Nd4j.exec(new TODO.StridedSlice(input, begin, end, strides))[0];
-  }
-
-  /**
-   * @see #stridedSlice(String, SDVariable, long[], long[], long[], int, int, int, int, int)<br>
-   *     <br>
-   *
-   * @param in  (NUMERIC type)
-   * @param begin  (NUMERIC type)
-   * @param end  (NUMERIC type)
-   * @param strides  (NUMERIC type)
-   * @param beginMask  (NUMERIC type)
-   * @param endMask  (NUMERIC type)
-   * @param ellipsisMask  (NUMERIC type)
-   * @param newAxisMask  (NUMERIC type)
-   * @param shrinkAxisMask  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray stridedSlice(INDArray in, INDArray begin, INDArray end, INDArray strides,
-      INDArray beginMask, INDArray endMask, INDArray ellipsisMask, INDArray newAxisMask,
-      INDArray shrinkAxisMask) {
-    NDValidation.validateNumerical("stridedSlice", "in", in);
-    NDValidation.validateNumerical("stridedSlice", "begin", begin);
-    NDValidation.validateNumerical("stridedSlice", "end", end);
-    NDValidation.validateNumerical("stridedSlice", "strides", strides);
-    NDValidation.validateNumerical("stridedSlice", "beginMask", beginMask);
-    NDValidation.validateNumerical("stridedSlice", "endMask", endMask);
-    NDValidation.validateNumerical("stridedSlice", "ellipsisMask", ellipsisMask);
-    NDValidation.validateNumerical("stridedSlice", "newAxisMask", newAxisMask);
-    NDValidation.validateNumerical("stridedSlice", "shrinkAxisMask", shrinkAxisMask);
-    return Nd4j.exec(new TODO.StridedSlice(in, begin, end, strides, beginMask, endMask, ellipsisMask, newAxisMask, shrinkAxisMask))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.summarystats.StandardDeviation(x, biasCorrected, keepDims, dimensions));
   }
 
   /**
@@ -1705,80 +1603,46 @@ public class NDBase {
    * then stridedSlice(input, begin=[0,1], end=[2,2], strides=[2,1]) will return:<br>
    * [b, c]<br>
    * [h, i]<br>
-   * <br>
-   * <br>
-   * @param name    Output variable name<br>
-   * @param input   Variable to get subset of<br>
-   * @param begin   Beginning index. Must be same length as rank of input array<br>
-   * @param end     End index. Must be same length as the rank of the array<br>
-   * @param strides Stride ("step size") for each dimension. Must be same length as the rank of the array. For example,<br>
-   *                stride of 2 means take every second element.<br>
-   * @return Subset of the input<br>
-   *     <br>
    *
-   * @param input  (NUMERIC type)
-   * @param begin  (NUMERIC type)
-   * @param end  (NUMERIC type)
-   * @param strides  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param input Variable to get subset of (NUMERIC type)
+   * @param begin Beginning index. Must be same length as rank of input array (Size: AtLeast(min=1))
+   * @param end End index. Must be same length as the rank of the array (Size: AtLeast(min=1))
+   * @param strides ("step size") for each dimension. Must be same length as the rank of the array. For example, stride of 2 means take every second element (Size: AtLeast(min=1))
+   * @return output Subset of the input (NUMERIC type)
    */
-  public INDArray stridedSlice(INDArray input, INDArray begin, INDArray end, INDArray strides) {
+  public INDArray stridedSlice(INDArray input, int[] begin, int[] end, int... strides) {
     NDValidation.validateNumerical("stridedSlice", "input", input);
-    NDValidation.validateNumerical("stridedSlice", "begin", begin);
-    NDValidation.validateNumerical("stridedSlice", "end", end);
-    NDValidation.validateNumerical("stridedSlice", "strides", strides);
-    return Nd4j.exec(new TODO.StridedSlice(input, begin, end, strides))[0];
+    Preconditions.checkArgument(begin.length >= 1, "begin has incorrect size/length. Expected: begin.length >= 1, got %s", begin.length);
+    Preconditions.checkArgument(end.length >= 1, "end has incorrect size/length. Expected: end.length >= 1, got %s", end.length);
+    Preconditions.checkArgument(strides.length >= 1, "strides has incorrect size/length. Expected: strides.length >= 1, got %s", strides.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.StridedSlice(input, begin, end, strides))[0];
   }
 
   /**
    * Get a subset of the specified input, by specifying the first element, last element, and the strides.<br>
    * Operates as described in {@link #stridedSlice(SDVariable, long[], long[], long[])} with some extra mask arrays<br>
    * as described below.<br>
-   * <br>
-   * @param name           Output variable name<br>
-   * @param in             Variable to get subset of<br>
-   * @param begin          Beginning index<br>
-   * @param end            End index<br>
-   * @param strides        Stride ("step size") for each dimension. For example,<br>
-   *                       stride of 2 means take every second element.<br>
-   * @param beginMask      Bit mask: If the ith bit is set to 1, then the value in the begin long[] is ignored,<br>
-   *                       and a value of 0 is used instead for the beginning index for that dimension<br>
-   * @param endMask        Bit mask: If the ith bit is set to 1, then the value in the end long[] is ignored,<br>
-   *                       and a value of size(i)-1 is used instead for the end index for that dimension<br>
-   * @param ellipsisMask   Bit mask: only one non-zero value is allowed here. If a non-zero value is set, then other<br>
-   *                       dimensions are inserted as required at the specified position<br>
-   * @param newAxisMask    Bit mask: if the ith bit is set to 1, then the begin/end/stride values are ignored, and<br>
-   *                       a size 1 dimension is inserted at this point<br>
-   * @param shrinkAxisMask Bit mask: if the ith bit is set to 1, then the begin/end/stride values are ignored, and<br>
-   *                       a size 1 dimension is removed at this point. Note that begin/end/stride values must<br>
-   *                       result in a size 1 output for these dimensions<br>
-   * @return A subset of the input array<br>
-   *     <br>
    *
-   * @param in  (NUMERIC type)
-   * @param begin  (NUMERIC type)
-   * @param end  (NUMERIC type)
-   * @param strides  (NUMERIC type)
-   * @param beginMask  (NUMERIC type)
-   * @param endMask  (NUMERIC type)
-   * @param ellipsisMask  (NUMERIC type)
-   * @param newAxisMask  (NUMERIC type)
-   * @param shrinkAxisMask  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param in Variable to get subset of (NUMERIC type)
+   * @param newAxisMask Bit mask: if the ith bit is set to 1, then the begin/end/stride values are ignored, and a size 1 dimension is inserted at this point (NUMERIC type)
+   * @param shrinkAxisMask Bit mask: if the ith bit is set to 1, then the begin/end/stride values are ignored, and a size 1 dimension is removed at this point. Note that begin/end/stride values must result in a size 1 output for these dimensions (NUMERIC type)
+   * @param begin Beginning index (Size: AtLeast(min=1))
+   * @param end End index (Size: AtLeast(min=1))
+   * @param strides Stride ("step size") for each dimension. For example, stride of 2 means take every second element. (Size: AtLeast(min=1))
+   * @param beginMask Bit mask: If the ith bit is set to 1, then the value in the begin long[] is ignored, and a value of 0 is used instead for the beginning index for that dimension
+   * @param endMask Bit mask: If the ith bit is set to 1, then the value in the end long[] is ignored, and a value of size(i)-1 is used instead for the end index for that dimension
+   * @param ellipsisMask Bit mask: only one non-zero value is allowed here. If a non-zero value is set, then other dimensions are inserted as required at the specified position
+   * @return output A subset of the input array (NUMERIC type)
    */
-  public INDArray stridedSlice(INDArray in, INDArray begin, INDArray end, INDArray strides,
-      INDArray beginMask, INDArray endMask, INDArray ellipsisMask, INDArray newAxisMask,
-      INDArray shrinkAxisMask) {
+  public INDArray stridedSlice(INDArray in, INDArray newAxisMask, INDArray shrinkAxisMask,
+      int[] begin, int[] end, int[] strides, int beginMask, int endMask, int ellipsisMask) {
     NDValidation.validateNumerical("stridedSlice", "in", in);
-    NDValidation.validateNumerical("stridedSlice", "begin", begin);
-    NDValidation.validateNumerical("stridedSlice", "end", end);
-    NDValidation.validateNumerical("stridedSlice", "strides", strides);
-    NDValidation.validateNumerical("stridedSlice", "beginMask", beginMask);
-    NDValidation.validateNumerical("stridedSlice", "endMask", endMask);
-    NDValidation.validateNumerical("stridedSlice", "ellipsisMask", ellipsisMask);
     NDValidation.validateNumerical("stridedSlice", "newAxisMask", newAxisMask);
     NDValidation.validateNumerical("stridedSlice", "shrinkAxisMask", shrinkAxisMask);
-    return Nd4j.exec(new TODO.StridedSlice(in, begin, end, strides, beginMask, endMask, ellipsisMask, newAxisMask, shrinkAxisMask))[0];
+    Preconditions.checkArgument(begin.length >= 1, "begin has incorrect size/length. Expected: begin.length >= 1, got %s", begin.length);
+    Preconditions.checkArgument(end.length >= 1, "end has incorrect size/length. Expected: end.length >= 1, got %s", end.length);
+    Preconditions.checkArgument(strides.length >= 1, "strides has incorrect size/length. Expected: strides.length >= 1, got %s", strides.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.StridedSlice(in, newAxisMask, shrinkAxisMask, begin, end, strides, beginMask, endMask, ellipsisMask))[0];
   }
 
   /**

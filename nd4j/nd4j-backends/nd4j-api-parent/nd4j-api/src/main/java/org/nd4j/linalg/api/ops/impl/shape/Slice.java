@@ -26,6 +26,7 @@ import org.nd4j.imports.NoOpNameFoundException;
 import org.nd4j.imports.descriptors.properties.PropertyMapping;
 import org.nd4j.imports.graphmapper.tf.TFGraphMapper;
 import org.nd4j.linalg.api.buffer.DataType;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.exception.ND4JIllegalStateException;
 import org.tensorflow.framework.AttrValue;
@@ -59,6 +60,14 @@ public class Slice extends DynamicCustomOp {
         super(null, sameDiff, new SDVariable[]{input, begin, end});
     }
 
+    public Slice(INDArray input, int[] begin, int... size){
+        //TODO: Check.
+        super(new INDArray[] {input}, null);
+        this.begin = begin;
+        this.size = size;
+        addIArgument(begin);
+        addIArgument(size);
+    }
 
     @Override
     public String opName() {
