@@ -97,13 +97,22 @@ public class StridedSlice extends DynamicCustomOp {
 
     }
 
-    public StridedSlice(INDArray input, int[] begin, int[] end, int... strides){
-        //TODO: implement.
+    public StridedSlice(INDArray in, int[] begin, int[] end, int[] strides){
+        this(in, begin, end, strides, 0, 0, 0, 0, 0);
     }
 
-    public StridedSlice(INDArray in, INDArray newAxisMask, INDArray shrinkAxisMask,
-    int[] begin, int[] end, int[] strides, int beginMask, int endMask, int ellipsisMask){
-        //TODO: implement.
+    public StridedSlice(INDArray in, int[] begin, int[] end, int[] strides, int beginMask, int endMask, int ellipsisMask,
+                        int newAxisMask, int shrinkAxisMask){
+        super(new INDArray[]{in}, null);
+        this.begin = ArrayUtil.toLongArray(begin);
+        this.end = ArrayUtil.toLongArray(end);
+        this.strides = ArrayUtil.toLongArray(strides);
+        this.beginMask = beginMask;
+        this.endMask = endMask;
+        this.ellipsisMask = ellipsisMask;
+        this.newAxisMask = newAxisMask;
+        this.shrinkAxisMask = shrinkAxisMask;
+        addArguments();
     }
 
     private void addArguments(){

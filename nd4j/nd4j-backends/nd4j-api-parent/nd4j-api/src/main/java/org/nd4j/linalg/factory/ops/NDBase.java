@@ -1619,30 +1619,28 @@ public class NDBase {
   }
 
   /**
-   * Get a subset of the specified input, by specifying the first element, last element, and the strides.<br>
+   * ***** Get a subset of the specified input, by specifying the first element, last element, and the strides.<br>
    * Operates as described in {@link #stridedSlice(SDVariable, long[], long[], long[])} with some extra mask arrays<br>
    * as described below.<br>
    *
    * @param in Variable to get subset of (NUMERIC type)
-   * @param newAxisMask Bit mask: if the ith bit is set to 1, then the begin/end/stride values are ignored, and a size 1 dimension is inserted at this point (NUMERIC type)
-   * @param shrinkAxisMask Bit mask: if the ith bit is set to 1, then the begin/end/stride values are ignored, and a size 1 dimension is removed at this point. Note that begin/end/stride values must result in a size 1 output for these dimensions (NUMERIC type)
    * @param begin Beginning index (Size: AtLeast(min=1))
    * @param end End index (Size: AtLeast(min=1))
    * @param strides Stride ("step size") for each dimension. For example, stride of 2 means take every second element. (Size: AtLeast(min=1))
    * @param beginMask Bit mask: If the ith bit is set to 1, then the value in the begin long[] is ignored, and a value of 0 is used instead for the beginning index for that dimension
    * @param endMask Bit mask: If the ith bit is set to 1, then the value in the end long[] is ignored, and a value of size(i)-1 is used instead for the end index for that dimension
    * @param ellipsisMask Bit mask: only one non-zero value is allowed here. If a non-zero value is set, then other dimensions are inserted as required at the specified position
+   * @param newAxisMask Bit mask: if the ith bit is set to 1, then the begin/end/stride values are ignored, and a size 1 dimension is inserted at this point
+   * @param shrinkAxisMask Bit mask: if the ith bit is set to 1, then the begin/end/stride values are ignored, and a size 1 dimension is removed at this point. Note that begin/end/stride values must result in a size 1 output for these dimensions
    * @return output A subset of the input array (NUMERIC type)
    */
-  public INDArray stridedSlice(INDArray in, INDArray newAxisMask, INDArray shrinkAxisMask,
-      int[] begin, int[] end, int[] strides, int beginMask, int endMask, int ellipsisMask) {
+  public INDArray stridedSlice(INDArray in, int[] begin, int[] end, int[] strides, int beginMask,
+      int endMask, int ellipsisMask, int newAxisMask, int shrinkAxisMask) {
     NDValidation.validateNumerical("stridedSlice", "in", in);
-    NDValidation.validateNumerical("stridedSlice", "newAxisMask", newAxisMask);
-    NDValidation.validateNumerical("stridedSlice", "shrinkAxisMask", shrinkAxisMask);
     Preconditions.checkArgument(begin.length >= 1, "begin has incorrect size/length. Expected: begin.length >= 1, got %s", begin.length);
     Preconditions.checkArgument(end.length >= 1, "end has incorrect size/length. Expected: end.length >= 1, got %s", end.length);
     Preconditions.checkArgument(strides.length >= 1, "strides has incorrect size/length. Expected: strides.length >= 1, got %s", strides.length);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.StridedSlice(in, newAxisMask, shrinkAxisMask, begin, end, strides, beginMask, endMask, ellipsisMask))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.StridedSlice(in, begin, end, strides, beginMask, endMask, ellipsisMask, newAxisMask, shrinkAxisMask))[0];
   }
 
   /**
