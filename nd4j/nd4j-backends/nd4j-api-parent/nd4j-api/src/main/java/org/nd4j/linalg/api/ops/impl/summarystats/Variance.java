@@ -78,6 +78,10 @@ public class Variance extends BaseReduceOp {
         defineDimensions(dimensions);
     }
 
+    public Variance(INDArray x, boolean biasCorrected, boolean keepDims, int... dimensions){
+        this(x, null, biasCorrected, keepDims, dimensions); //TODO: check.
+    }
+
     @Override
     public INDArray noOp() {
         return Nd4j.zerosLike(x());

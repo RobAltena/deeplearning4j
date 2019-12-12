@@ -1619,7 +1619,7 @@ public class NDBase {
   }
 
   /**
-   * ***** Get a subset of the specified input, by specifying the first element, last element, and the strides.<br>
+   * Get a subset of the specified input, by specifying the first element, last element, and the strides.<br>
    * Operates as described in {@link #stridedSlice(SDVariable, long[], long[], long[])} with some extra mask arrays<br>
    * as described below.<br>
    *
@@ -1645,21 +1645,15 @@ public class NDBase {
 
   /**
    * Sum array reduction operation, optionally along specified dimensions<br>
-   * <br>
-   * @param x          Input variable<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Output variable: reduced array of rank (input rank - num dimensions) if keepDims = false, or<br>
-   * of rank (input rank) if keepdims = true<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output reduced array of rank (input rank - num dimensions) if keepDims = false, or of rank (input rank) if keepdims = true (NUMERIC type)
    */
-  public INDArray sum(INDArray x, INDArray dimensions) {
+  public INDArray sum(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("sum", "x", x);
-    NDValidation.validateNumerical("sum", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Sum(x, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Sum(x, dimensions));
   }
 
   /**
@@ -1670,44 +1664,30 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name       Output variable name<br>
-   * @param x          Input variable<br>
-   * @param keepDims   If true: keep the dimensions that are reduced on (as length 1). False: remove the reduction dimensions<br>
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Output variable: reduced array of rank (input rank - num dimensions) if keepDims = false, or<br>
-   * of rank (input rank) if keepdims = true<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param keepDims If true: keep the dimensions that are reduced on (as length 1). False: remove the reduction dimensions
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output reduced array of rank (input rank - num dimensions) if keepDims = false, or of rank (input rank) if keepdims = true (NUMERIC type)
    */
-  public INDArray sum(INDArray x, INDArray keepDims, INDArray dimensions) {
+  public INDArray sum(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("sum", "x", x);
-    NDValidation.validateNumerical("sum", "keepDims", keepDims);
-    NDValidation.validateNumerical("sum", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Sum(x, keepDims, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Sum(x, keepDims, dimensions));
   }
 
   /**
-   * @param x          Input variable x<br>
-   * @param y          Input variable y<br>
-   * @param dimensions dimensions<br>
-   * @return Output variable<br>
-   *     <br>
+   * //TODO: Ops must be documented.<br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable x (NUMERIC type)
+   * @param y Input variable y (NUMERIC type)
+   * @param dimensions dimensions (NUMERIC type)
    */
-  public INDArray tensorMmul(INDArray x, INDArray y, INDArray dimensions) {
+  public INDArray[] tensorMmul(INDArray x, INDArray y, INDArray dimensions) {
     NDValidation.validateNumerical("tensorMmul", "x", x);
     NDValidation.validateNumerical("tensorMmul", "y", y);
     NDValidation.validateNumerical("tensorMmul", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.TensorMmul(x, y, dimensions))[0];
+    return Nd4j.exec(new TODO.TensorMmul(x, y, dimensions));
   }
 
   /**
@@ -1721,52 +1701,39 @@ public class NDBase {
    * [3, 4, 3, 4, 3, 4]<br>
    * [1, 2, 1, 2, 1, 2]<br>
    * [3, 4, 3, 4, 3, 4]<br>
-   * <br>
-   * <br>
-   * @param name   Output variable name<br>
-   * @param x      Input variable<br>
-   * @param repeat Number of times to repeat in each axis. Must have length equal to the rank of the input array<br>
-   * @return Output variable<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param repeat  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param repeat Number of times to repeat in each axis. Must have length equal to the rank of the input array (NUMERIC type)
+   * @return output Output variable (NUMERIC type)
    */
   public INDArray tile(INDArray x, INDArray repeat) {
     NDValidation.validateNumerical("tile", "x", x);
     NDValidation.validateNumerical("tile", "repeat", repeat);
-    return Nd4j.exec(new TODO.Tile(x, repeat))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Tile(x, repeat))[0];
   }
 
   /**
    * @see #tile(String, SDVariable, int...)<br>
-   *     <br>
    *
    * @param x  (NUMERIC type)
-   * @param repeat  (NUMERIC type)
+   * @param repeat  (Size: AtLeast(min=1))
    * @return output  (NUMERIC type)
    */
-  public INDArray tile(INDArray x, INDArray repeat) {
+  public INDArray tile(INDArray x, int... repeat) {
     NDValidation.validateNumerical("tile", "x", x);
-    NDValidation.validateNumerical("tile", "repeat", repeat);
-    return Nd4j.exec(new TODO.Tile(x, repeat))[0];
+    Preconditions.checkArgument(repeat.length >= 1, "repeat has incorrect size/length. Expected: repeat.length >= 1, got %s", repeat.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Tile(x, repeat))[0];
   }
 
   /**
    * Matrix transpose operation: If input has shape [a,b] output has shape [b,a]<br>
-   * <br>
-   * @param name Output variable name<br>
-   * @param x    Input variable<br>
-   * @return Output variable (transposed input)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @return output transposed input (NUMERIC type)
    */
   public INDArray transpose(INDArray x) {
     NDValidation.validateNumerical("transpose", "x", x);
-    return Nd4j.exec(new TODO.Transpose(x))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Transpose(x))[0];
   }
 
   /**
@@ -1878,24 +1845,16 @@ public class NDBase {
 
   /**
    * Variance array reduction operation, optionally along specified dimensions<br>
-   * <br>
-   * @param name          Output variable name<br>
-   * @param x             Input variable<br>
-   * @param biasCorrected If true: divide by (N-1) (i.e., sample variable). If false: divide by N (population variance)<br>
-   * @param dimensions    Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Output variable: reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param biasCorrected  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param biasCorrected If true: divide by (N-1) (i.e., sample variable). If false: divide by N (population variance)
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
-  public INDArray variance(INDArray x, INDArray biasCorrected, INDArray dimensions) {
+  public INDArray variance(INDArray x, boolean biasCorrected, int... dimensions) {
     NDValidation.validateNumerical("variance", "x", x);
-    NDValidation.validateNumerical("variance", "biasCorrected", biasCorrected);
-    NDValidation.validateNumerical("variance", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Variance(x, biasCorrected, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.summarystats.Variance(x, biasCorrected, dimensions));
   }
 
   /**
@@ -1906,44 +1865,28 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
-   * <br>
-   * @param name          Output variable name<br>
-   * @param x             Input variable<br>
-   * @param biasCorrected If true: divide by (N-1) (i.e., sample variable). If false: divide by N (population variance)<br>
-   * @param keepDims      If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions<br>
-   * @param dimensions    Dimensions to reduce over. If dimensions are not specified, full array reduction is performed<br>
-   * @return Output variable: reduced array of rank (input rank - num dimensions)<br>
-   *     <br>
    *
-   * @param x  (NUMERIC type)
-   * @param biasCorrected  (NUMERIC type)
-   * @param keepDims  (NUMERIC type)
-   * @param dimensions  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param x Input variable (NUMERIC type)
+   * @param biasCorrected If true: divide by (N-1) (i.e., sample variable). If false: divide by N (population variance)
+   * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
-  public INDArray variance(INDArray x, INDArray biasCorrected, INDArray keepDims,
-      INDArray dimensions) {
+  public INDArray variance(INDArray x, boolean biasCorrected, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("variance", "x", x);
-    NDValidation.validateNumerical("variance", "biasCorrected", biasCorrected);
-    NDValidation.validateNumerical("variance", "keepDims", keepDims);
-    NDValidation.validateNumerical("variance", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.Variance(x, biasCorrected, keepDims, dimensions))[0];
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.summarystats.Variance(x, biasCorrected, keepDims, dimensions));
   }
 
   /**
    * Return a variable of all 0s, with the same shape as the input variable. Note that this is dynamic:<br>
    * if the input shape changes in later execution, the returned variable's shape will also be updated<br>
-   * <br>
-   * @param name  Name of the new SDVariable<br>
-   * @param input Input SDVariable<br>
-   * @return A new SDVariable with the same (dynamic) shape as the input<br>
-   *     <br>
    *
-   * @param input  (NUMERIC type)
-   * @return output  (NUMERIC type)
+   * @param input Input  (NUMERIC type)
+   * @return output A new Variable with the same (dynamic) shape as the input (NUMERIC type)
    */
   public INDArray zerosLike(INDArray input) {
     NDValidation.validateNumerical("zerosLike", "input", input);
-    return Nd4j.exec(new TODO.ZerosLike(input))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.ZerosLike(input))[0];
   }
 }

@@ -40,7 +40,6 @@ public class Sum extends BaseReduceSameOp {
         super(sameDiff, i_v, i_v2, dimensions);
     }
 
-
     public Sum() {
     }
 
@@ -54,6 +53,11 @@ public class Sum extends BaseReduceSameOp {
 
     public Sum(INDArray x, INDArray z, boolean keepDims, int... dimensions) {
         super(x, z, keepDims, dimensions);
+    }
+
+    public Sum(INDArray x, boolean keepDims, int... dimensions){
+        //TODO: Check.
+        this(x, null, keepDims, dimensions);
     }
 
     @Override

@@ -59,6 +59,10 @@ public class ZerosLike extends DynamicCustomOp {
         super(null, in, out, null, null);
     }
 
+    public ZerosLike(INDArray in){
+        this(in, null); //TODO: Check.
+    }
+
 
     @Override
     public String opName() {

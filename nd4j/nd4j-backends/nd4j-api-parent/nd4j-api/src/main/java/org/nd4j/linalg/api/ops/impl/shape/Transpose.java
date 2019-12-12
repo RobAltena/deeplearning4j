@@ -62,6 +62,10 @@ public class Transpose extends DynamicCustomOp {
         super(null, new INDArray[]{input}, result == null ? null : new INDArray[]{result}, null, (List<Integer>) null);
     }
 
+    public Transpose(INDArray input){
+        this(input, null);
+    }
+
     public Transpose() {
     }
 
