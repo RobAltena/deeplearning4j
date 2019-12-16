@@ -50,6 +50,11 @@ public class EqualTo extends BaseDynamicTransformOp {
         this(new INDArray[]{x, y}, new INDArray[]{z});
     }
 
+    public EqualTo(INDArray x, INDArray y){
+        //Todo: Check.
+        this(new INDArray[]{x, y}, null);
+    }
+
     @Override
     public String opName() {
         return "equals";

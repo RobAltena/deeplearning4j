@@ -60,7 +60,7 @@ public class NDBase {
   /**
    * Argmax array reduction operation, optionally along specified dimensions.<br>
    * Output values are the index of the maximum value of each slice along the specified dimension.<br>
-   * <br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -83,7 +83,7 @@ public class NDBase {
   /**
    * Argmax array reduction operation, optionally along specified dimensions.<br>
    * Output values are the index of the maximum value of each slice along the specified dimension.<br>
-   * <br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -105,13 +105,15 @@ public class NDBase {
   /**
    * Argmin array reduction operation, optionally along specified dimensions.<br>
    * Output values are the index of the minimum value of each slice along the specified dimension.<br>
-   * <br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param in Input variable (NUMERIC type)
    * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
@@ -127,13 +129,15 @@ public class NDBase {
   /**
    * Argmin array reduction operation, optionally along specified dimensions.<br>
    * Output values are the index of the minimum value of each slice along the specified dimension.<br>
-   * <br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
    * keepDims = false: [a,c]<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param in Input variable (NUMERIC type)
    * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
@@ -146,17 +150,17 @@ public class NDBase {
   }
 
   /**
-   * Assign/copy op: out = x.assign(y). Supports broadcasting<br>
+   * Assign/copy op: out = x.assign(y).<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param x Input variable x (NUMERIC type)
    * @param y Input variable y (NUMERIC type)
    * @return output Output variable (NUMERIC type)
    */
-  public INDArray assign(INDArray[] x, INDArray[] y) {
+  public INDArray assign(INDArray x, INDArray y) {
     NDValidation.validateNumerical("assign", "x", x);
-    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("assign", "y", y);
-    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.Assign(x, y))[0];
   }
 
@@ -178,7 +182,7 @@ public class NDBase {
   /**
    * Cumulative product operation.<br>
    * For input: [ a, b, c], output is:<br>
-   * exclusize=false, reverse=false: [a, a*b, a*b*c]<br>
+   * exclusive=false, reverse=false: [a, a*b, a*b*c]<br>
    * exclusive=true, reverse=false, [0, a, a*b]<br>
    * exclusive=false, reverse=true: [a*b*c, b*c, c]<br>
    * exclusive=true, reverse=true: [b*c, c, 0]<br>
@@ -198,7 +202,7 @@ public class NDBase {
   /**
    * Cumulative sum operation.<br>
    * For input: [ a, b, c], output is:<br>
-   * exclusize=false, reverse=false: [a, a+b, a+b+c]<br>
+   * exclusive=false, reverse=false: [a, a+b, a+b+c]<br>
    * exclusive=true, reverse=false, [0, a, a+b]<br>
    * exclusive=false, reverse=true: [a+b+c, b+c, c]<br>
    * exclusive=true, reverse=true: [b+c, c, 0]<br>
@@ -216,12 +220,13 @@ public class NDBase {
   }
 
   /**
-   * TODO doc string<br>
+   * Pairwise dot product reduction along dimension<br>
+   * output = sum(i=0 ... size(dim)-1) x[i] * y[i]<br>
    *
-   * @param x  (NUMERIC type)
-   * @param y  (NUMERIC type)
-   * @param dimensions  (Size: AtLeast(min=1))
-   * @return output  (NUMERIC type)
+   * @param x first input (NUMERIC type)
+   * @param y second input (NUMERIC type)
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output output variable (NUMERIC type)
    */
   public INDArray dot(INDArray x, INDArray y, int... dimensions) {
     NDValidation.validateNumerical("dot", "x", x);
@@ -242,29 +247,27 @@ public class NDBase {
    * </pre><br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param partitions 1D input with values 0 to numPartitions-1 (NUMERIC type)
+   * @param partitions 1D input with values 0 to numPartitions-1
    * @param numPartitions Number of partitions, >= 1
    * @return output Output variables (equal in number to numPartitions) (NUMERIC type)
    */
-  public INDArray dynamicPartition(INDArray x, INDArray partitions, int numPartitions) {
+  public INDArray dynamicPartition(INDArray x, int partitions, int numPartitions) {
     NDValidation.validateNumerical("dynamicPartition", "x", x);
-    NDValidation.validateNumerical("dynamicPartition", "partitions", partitions);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.DynamicPartition(x, partitions, numPartitions))[0];
   }
 
   /**
    * Dynamically merge the specified input arrays into a single array, using the specified indices<br>
    *
-   * @param indices Indices to use when merging. Must be >= 1, same length as input variables (NUMERIC type)
    * @param x Input variables. (NUMERIC type)
+   * @param indices Indices to use when merging. Must be >= 1, same length as input variables (Size: AtLeast(min=1))
    * @return output Merged output variable (NUMERIC type)
    */
-  public INDArray dynamicStitch(INDArray[] indices, INDArray[] x) {
-    NDValidation.validateNumerical("dynamicStitch", "indices", indices);
-    Preconditions.checkArgument(indices.length >= 1, "indices has incorrect size/length. Expected: indices.length >= 1, got %s", indices.length);
+  public INDArray dynamicStitch(INDArray[] x, int... indices) {
     NDValidation.validateNumerical("dynamicStitch", "x", x);
     Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.DynamicStitch(indices, x))[0];
+    Preconditions.checkArgument(indices.length >= 1, "indices has incorrect size/length. Expected: indices.length >= 1, got %s", indices.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.DynamicStitch(x, indices))[0];
   }
 
   /**
@@ -284,18 +287,17 @@ public class NDBase {
   /**
    * Equal to operation: elementwise x == y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
    * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray eq(INDArray[] x, INDArray[] y) {
+  public INDArray eq(INDArray x, INDArray y) {
     NDValidation.validateNumerical("eq", "x", x);
-    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("eq", "y", y);
-    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.EqualTo(x, y))[0];
   }
 
@@ -319,7 +321,7 @@ public class NDBase {
    * Generate an output variable with the specified (dynamic) shape with all elements set to the specified value<br>
    *
    * @param shape Shape: must be a 1D array/variable (NUMERIC type)
-   * @param dataType 
+   * @param dataType Datatype of the output array
    * @param value Value to set all elements to
    * @return output Output variable (NUMERIC type)
    */
@@ -390,8 +392,9 @@ public class NDBase {
   /**
    * Greater than operation: elementwise x > y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
@@ -422,8 +425,9 @@ public class NDBase {
   /**
    * Greater than or equal to operation: elementwise x >= y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
@@ -503,8 +507,9 @@ public class NDBase {
   /**
    * Less than operation: elementwise x < y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
@@ -535,8 +540,9 @@ public class NDBase {
   /**
    * Less than or equal to operation: elementwise x <= y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
@@ -576,6 +582,7 @@ public class NDBase {
 
   /**
    * Returns a count of the number of elements that satisfy the condition (for each slice along the specified dimensions)<br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -611,6 +618,7 @@ public class NDBase {
 
   /**
    * Max array reduction operation, optionally along specified dimensions<br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -631,7 +639,8 @@ public class NDBase {
 
   /**
    * Element-wise maximum operation: out[i] = max(first[i], second[i])<br>
-   * Supports broadcasting<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param first First input array (NUMERIC type)
    * @param second Second input array (NUMERIC type)
@@ -658,6 +667,7 @@ public class NDBase {
 
   /**
    * Mean (average) array reduction operation, optionally along specified dimensions<br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -691,6 +701,7 @@ public class NDBase {
 
   /**
    * Minimum array reduction operation, optionally along specified dimensions. out = min(in)<br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -711,7 +722,8 @@ public class NDBase {
 
   /**
    * Element-wise minimum operation: out[i] = min(first[i], second[i])<br>
-   * Supports broadcasting<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param first First input array (NUMERIC type)
    * @param second Second input array (NUMERIC type)
@@ -725,7 +737,7 @@ public class NDBase {
 
   /**
    * Matrix multiplication: out = mmul(x,y)<br>
-   * Supports specifying a {@link MMulTranspose} argument to perform operation such as mmul(a^T, b), etc.<br>
+   * Supports specifying a MMulTranspose argument to perform operation such as mmul(a^T, b), etc.<br>
    *
    * @param x First input variable (NUMERIC type)
    * @param y Second input variable (NUMERIC type)
@@ -769,8 +781,9 @@ public class NDBase {
   /**
    * Not equal to operation: elementwise x != y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
+   *
+   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
@@ -801,8 +814,9 @@ public class NDBase {
   /**
    * Norm1 (L1 norm) reduction operation: The output contains the L1 norm for each tensor/subset along the specified dimensions: <br>
    * out = sum_i abs(x[i])<br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
-   * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting <br>
+   * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
    * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
    * keepDims = true: [a,1,c]<br>
@@ -836,6 +850,7 @@ public class NDBase {
   /**
    * Norm2 (L2 norm) reduction operation: The output contains the L2 norm for each tensor/subset along the specified dimensions:<br>
    * out = sqrt(sum_i x[i]^2)<br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -872,6 +887,7 @@ public class NDBase {
    * Max norm (infinity norm) reduction operation: The output contains the max norm for each tensor/subset along the<br>
    * specified dimensions:<br>
    * out = max(abs(x[i]))<br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -908,7 +924,7 @@ public class NDBase {
   }
 
   /**
-   * As per {@link #oneHot(String, SDVariable, int, int, double, double)} but allows configuring the output datatype<br>
+   * As per oneHot(String, SDVariable, int, int, double, double) but allows configuring the output datatype<br>
    *
    * @param indices  (NUMERIC type)
    * @param depth 
@@ -928,7 +944,7 @@ public class NDBase {
    * Convert the array to a one-hot array with walues 0 and 1 for each entry<br>
    * If input has shape [ a, ..., n] then output has shape [ a, ..., n, depth],<br>
    * with out[i, ..., j, in[i,...,j]] = 1 with other values being set to 0<br>
-   * @see #oneHot(SDVariable, int, int, double, double)<br>
+   * see oneHot(SDVariable, int, int, double, double)<br>
    *
    * @param indices Indices - value 0 to depth-1 (NUMERIC type)
    * @param depth Number of classes
@@ -952,7 +968,7 @@ public class NDBase {
   }
 
   /**
-   * As per {@link #onesLike(String, SDVariable)} but the output datatype may be specified<br>
+   * As per onesLike(String, SDVariable) but the output datatype may be specified<br>
    *
    * @param input  (NUMERIC type)
    * @param dataType 
@@ -964,7 +980,7 @@ public class NDBase {
   }
 
   /**
-   * @see #stack(String, int, SDVariable...)<br>
+   * see stack(String, int, SDVariable...)<br>
    *
    * @param values  (NUMERIC type)
    * @return output  (NUMERIC type)
@@ -1049,7 +1065,7 @@ public class NDBase {
   }
 
   /**
-   * @see #repeat(String, SDVariable, int)<br>
+   * see repeat(String, SDVariable, int)<br>
    *
    * @param df  (NUMERIC type)
    * @param axis 
@@ -1131,7 +1147,7 @@ public class NDBase {
   }
 
   /**
-   * @see #reverseSequence(String, SDVariable, SDVariable, int, int)<br>
+   * see reverseSequence(String, SDVariable, SDVariable, int, int)<br>
    *
    * @param x  (NUMERIC type)
    * @param seq_lengths  (NUMERIC type)
@@ -1332,7 +1348,7 @@ public class NDBase {
    * segmentIds =  [0, 0, 1, 1, 1, 2, 2]<br>
    * then output = [6, 9, 8] = [max(3,6), max(1,4,9), max(2,8)]<br>
    * Note that the segment IDs must be sorted from smallest to largest segment.<br>
-   * See {@link #unsortedSegmentMax(String, SDVariable, SDVariable, int)}<br>
+   * See {unsortedSegmentMax(String, SDVariable, SDVariable, int)<br>
    * for the same op without this sorted requirement<br>
    *
    * @param data Data to perform segment max on (NUMERIC type)
@@ -1351,7 +1367,7 @@ public class NDBase {
    * segmentIds =  [0, 0, 1, 1, 1, 2, 2]<br>
    * then output = [4.5, 4.666, 5] = [mean(3,6), mean(1,4,9), mean(2,8)]<br>
    * Note that the segment IDs must be sorted from smallest to largest segment.<br>
-   * See {@link #unsortedSegmentMean(String, SDVariable, SDVariable, int)} for the same op without this sorted requirement<br>
+   * See unsortedSegmentMean(String, SDVariable, SDVariable, int) for the same op without this sorted requirement<br>
    *
    * @param data Data to perform segment max on (NUMERIC type)
    * @param segmentIds Variable for the segment IDs (NUMERIC type)
@@ -1369,7 +1385,7 @@ public class NDBase {
    * segmentIds =  [0, 0, 1, 1, 1, 2, 2]<br>
    * then output = [3, 1, 2] = [min(3,6), min(1,4,9), min(2,8)]<br>
    * Note that the segment IDs must be sorted from smallest to largest segment.<br>
-   * See {@link #unsortedSegmentMin(String, SDVariable, SDVariable, int)} for the same op without this sorted requirement<br>
+   * See unsortedSegmentMin(String, SDVariable, SDVariable, int) for the same op without this sorted requirement<br>
    *
    * @param data Data to perform segment max on (NUMERIC type)
    * @param segmentIds Variable for the segment IDs (NUMERIC type)
@@ -1387,7 +1403,7 @@ public class NDBase {
    * segmentIds =  [0, 0, 1, 1, 1, 2, 2]<br>
    * then output = [18, 36, 16] = [prod(3,6), prod(1,4,9), prod(2,8)]<br>
    * Note that the segment IDs must be sorted from smallest to largest segment.<br>
-   * See {@link #unsortedSegmentProd(String, SDVariable, SDVariable, int)} for the same op without this sorted requirement<br>
+   * See unsortedSegmentProd(String, SDVariable, SDVariable, int) for the same op without this sorted requirement<br>
    *
    * @param data Data to perform segment max on (NUMERIC type)
    * @param segmentIds Variable for the segment IDs (NUMERIC type)
@@ -1405,7 +1421,7 @@ public class NDBase {
    * segmentIds =  [0, 0, 1, 1, 1, 2, 2]<br>
    * then output = [9, 14, 10] = [sum(3,6), sum(1,4,9), sum(2,8)]<br>
    * Note that the segment IDs must be sorted from smallest to largest segment.<br>
-   * See {@link #unsortedSegmentSum(String, SDVariable, SDVariable, int)} for the same op without this sorted requirement<br>
+   * See unsortedSegmentSum(String, SDVariable, SDVariable, int) for the same op without this sorted requirement<br>
    *
    * @param data Data to perform segment max on (NUMERIC type)
    * @param segmentIds Variable for the segment IDs (NUMERIC type)
@@ -1432,7 +1448,7 @@ public class NDBase {
   }
 
   /**
-   * @see #sequenceMask(String, SDVariable, SDVariable, DataType)<br>
+   * see sequenceMask(String, SDVariable, SDVariable, DataType)<br>
    *
    * @param lengths  (NUMERIC type)
    * @param dataType 
@@ -1501,7 +1517,7 @@ public class NDBase {
   }
 
   /**
-   * Squared L2 norm: see {@link #norm2(String, SDVariable, boolean, int...)}<br>
+   * Squared L2 norm: see norm2(String, SDVariable, boolean, int...)<br>
    *
    * @param x  (NUMERIC type)
    * @param keepDims 
@@ -1515,7 +1531,7 @@ public class NDBase {
   }
 
   /**
-   * Squared L2 norm: see {@link #norm2(String, SDVariable, int...)}<br>
+   * Squared L2 norm: see {norm2(String, SDVariable, int...)<br>
    *
    * @param x  (NUMERIC type)
    * @param dimensions  (Size: AtLeast(min=1))
@@ -1547,7 +1563,7 @@ public class NDBase {
    * axis = 1: [a,N,b,c]<br>
    * axis = 2: [a,b,N,c]<br>
    * axis = 3: [a,b,c,N]<br>
-   * @see #unstack(String[], SDVariable, int, int)<br>
+   * see unstack(String[], SDVariable, int, int)<br>
    *
    * @param values Input variables to stack. Must have the same shape for all inputs (NUMERIC type)
    * @param axis Axis to stack on
@@ -1574,6 +1590,7 @@ public class NDBase {
 
   /**
    * Stardard deviation array reduction operation, optionally along specified dimensions<br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -1620,7 +1637,7 @@ public class NDBase {
 
   /**
    * Get a subset of the specified input, by specifying the first element, last element, and the strides.<br>
-   * Operates as described in {@link #stridedSlice(SDVariable, long[], long[], long[])} with some extra mask arrays<br>
+   * Operates as described in stridedSlice(SDVariable, long[], long[], long[]) with some extra mask arrays<br>
    * as described below.<br>
    *
    * @param in Variable to get subset of (NUMERIC type)
@@ -1658,6 +1675,7 @@ public class NDBase {
 
   /**
    * Sum array reduction operation, optionally along specified dimensions.<br>
+   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -1687,7 +1705,7 @@ public class NDBase {
     NDValidation.validateNumerical("tensorMmul", "x", x);
     NDValidation.validateNumerical("tensorMmul", "y", y);
     NDValidation.validateNumerical("tensorMmul", "dimensions", dimensions);
-    return Nd4j.exec(new TODO.TensorMmul(x, y, dimensions));
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.TensorMmul(x, y, dimensions));
   }
 
   /**
@@ -1713,7 +1731,7 @@ public class NDBase {
   }
 
   /**
-   * @see #tile(String, SDVariable, int...)<br>
+   * see tile(String, SDVariable, int...)<br>
    *
    * @param x  (NUMERIC type)
    * @param repeat  (Size: AtLeast(min=1))
@@ -1737,7 +1755,7 @@ public class NDBase {
   }
 
   /**
-   * Unsorted segment max operation. As per {@link #segmentMax(String, SDVariable, SDVariable)} but without<br>
+   * Unsorted segment max operation. As per segmentMax(String, SDVariable, SDVariable) but without<br>
    * the requirement for the indices to be sorted.<br>
    * If data =     [1, 3, 2, 6, 4, 9, 8]<br>
    * segmentIds =  [1, 0, 2, 0, 1, 1, 2]<br>
@@ -1755,7 +1773,7 @@ public class NDBase {
   }
 
   /**
-   * Unsorted segment mean operation. As per {@link #segmentMean(String, SDVariable, SDVariable)} but without<br>
+   * Unsorted segment mean operation. As per segmentMean(String, SDVariable, SDVariable) but without<br>
    * the requirement for the indices to be sorted.<br>
    * If data =     [1, 3, 2, 6, 4, 9, 8]<br>
    * segmentIds =  [1, 0, 2, 0, 1, 1, 2]<br>
@@ -1773,7 +1791,7 @@ public class NDBase {
   }
 
   /**
-   * Unsorted segment min operation. As per {@link #segmentMin(String, SDVariable, SDVariable)} but without<br>
+   * Unsorted segment min operation. As per segmentMin(String, SDVariable, SDVariable) but without<br>
    * the requirement for the indices to be sorted.<br>
    * If data =     [1, 3, 2, 6, 4, 9, 8]<br>
    * segmentIds =  [1, 0, 2, 0, 1, 1, 2]<br>
@@ -1791,7 +1809,7 @@ public class NDBase {
   }
 
   /**
-   * Unsorted segment product operation. As per {@link #segmentProd(String, SDVariable, SDVariable)} but without<br>
+   * Unsorted segment product operation. As per segmentProd(String, SDVariable, SDVariable) but without<br>
    * the requirement for the indices to be sorted.<br>
    * If data =     [1, 3, 2, 6, 4, 9, 8]<br>
    * segmentIds =  [1, 0, 2, 0, 1, 1, 2]<br>
@@ -1826,7 +1844,7 @@ public class NDBase {
   }
 
   /**
-   * Unsorted segment sum operation. As per {@link #segmentSum(String, SDVariable, SDVariable)} but without<br>
+   * Unsorted segment sum operation. As per segmentSum(String, SDVariable, SDVariable) but without<br>
    * the requirement for the indices to be sorted.<br>
    * If data =     [1, 3, 2, 6, 4, 9, 8]<br>
    * segmentIds =  [1, 0, 2, 0, 1, 1, 2]<br>

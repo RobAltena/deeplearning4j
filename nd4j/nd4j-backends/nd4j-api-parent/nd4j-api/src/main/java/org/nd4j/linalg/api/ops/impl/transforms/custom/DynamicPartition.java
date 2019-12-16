@@ -70,6 +70,14 @@ public class DynamicPartition extends DynamicCustomOp {
         addArgs();
     }
 
+    public DynamicPartition(INDArray x, int partitions, int numPartitions){
+        //TODO; This needs fixing.
+        super(new INDArray[]{x}, null);
+        // this.partitions = partitions;
+        this.numPartitions = numPartitions;
+        addArgs();
+    }
+
     @Override
     public List<SDVariable> doDiff(List<SDVariable> i_v) {
         return Arrays.asList(f().dynamicPartitionBp(arg(0), arg(1), i_v.toArray(new SDVariable[i_v.size()]), numPartitions));

@@ -46,6 +46,10 @@ public class Assign extends DynamicCustomOp {
         super(null,inputs, outputs);
     }
 
+    public Assign(INDArray x, INDArray y ) {
+        super(null, new INDArray[] {x, y}, null); // TODo check. modelled after the SameDiff constructor,
+    }
+
     @Override
     public void addIArgument(int... arg) {
         super.addIArgument(arg);
