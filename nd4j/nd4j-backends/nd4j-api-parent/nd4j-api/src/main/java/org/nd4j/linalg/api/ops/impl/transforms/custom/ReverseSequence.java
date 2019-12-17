@@ -60,7 +60,7 @@ public class ReverseSequence extends DynamicCustomOp {
         addArguments();
     }
 
-    public ReverseSequence(INDArray x, INDArray seq_lengths, int seqDim, int batchDim){
+    public ReverseSequence(INDArray x, int seq_lengths, int seqDim, int batchDim){
         //TODO: Implement.
     }
 

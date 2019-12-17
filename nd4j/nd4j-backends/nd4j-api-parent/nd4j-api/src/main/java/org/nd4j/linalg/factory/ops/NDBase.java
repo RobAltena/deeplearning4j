@@ -1,4 +1,4 @@
-/* ******************************************************************************
+/*******************************************************************************
  * Copyright (c) 2019 Konduit K.K.
  *
  * This program and the accompanying materials are made available under the
@@ -239,7 +239,7 @@ public class NDBase {
    * Dynamically partition the input variable values into the specified number of paritions, using the indices.<br>
    * Example:<br>
    * <pre><br>
-   * {@code input = [1,2,3,4,5]<br>
+   * input = [1,2,3,4,5]<br>
    * numPartitions = 2<br>
    * partitions = [1,0,0,1,0]<br>
    * out[0] = [2,3,5]<br>
@@ -272,12 +272,12 @@ public class NDBase {
 
   /**
    * Equals operation: elementwise x == y<br>
-   * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
-   * value 0 otherwise<br>
+   *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray eq(INDArray x, double y) {
     NDValidation.validateNumerical("eq", "x", x);
@@ -287,13 +287,14 @@ public class NDBase {
   /**
    * Equal to operation: elementwise x == y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
    *
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
+   *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
-   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output INDArray with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray eq(INDArray x, INDArray y) {
     NDValidation.validateNumerical("eq", "x", x);
@@ -346,22 +347,22 @@ public class NDBase {
   }
 
   /**
-   * Gather slices from the input variable where the indices are specified as dynamic SDVariable values.<br>
+   * Gather slices from the input variable where the indices are specified as dynamic array values.<br>
    * Output shape is same as input shape, except for axis dimension, which has size equal to indices.length.<br>
    *
    * @param df Input variable (NUMERIC type)
-   * @param indices Indices to get slices for. Rank 0 or 1 input (NUMERIC type)
+   * @param indices Indices to get slices for. Rank 0 or 1 input (INT type)
    * @param axis Axis that the indices refer to
    * @return output Output variable with slices pulled from the specified axis (NUMERIC type)
    */
   public INDArray gather(INDArray df, INDArray indices, int axis) {
     NDValidation.validateNumerical("gather", "df", df);
-    NDValidation.validateNumerical("gather", "indices", indices);
+    NDValidation.validateInteger("gather", "indices", indices);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Gather(df, indices, axis))[0];
   }
 
   /**
-   * TODO doc string<br>
+   * Gather slices from df with shape specified by indices. <br>
    *
    * @param df  (NUMERIC type)
    * @param indices  (NUMERIC type)
@@ -377,12 +378,12 @@ public class NDBase {
 
   /**
    * Greater than operation: elementwise x > y<br>
-   * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
-   * value 0 otherwise<br>
+   *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output INDArray with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray gt(INDArray x, double y) {
     NDValidation.validateNumerical("gt", "x", x);
@@ -392,30 +393,29 @@ public class NDBase {
   /**
    * Greater than operation: elementwise x > y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
    *
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
+   *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
-   * @return output Output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Output INDArray with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray gt(INDArray[] x, INDArray[] y) {
+  public INDArray gt(INDArray x, INDArray y) {
     NDValidation.validateNumerical("gt", "x", x);
-    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("gt", "y", y);
-    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.GreaterThan(x, y))[0];
   }
 
   /**
    * Greater than or equals operation: elementwise x >= y<br>
-   * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
-   * value 0 otherwise<br>
+   *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output Output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray gte(INDArray x, double y) {
     NDValidation.validateNumerical("gte", "x", x);
@@ -425,19 +425,18 @@ public class NDBase {
   /**
    * Greater than or equal to operation: elementwise x >= y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
    *
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
+   *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
    * @return output  (NUMERIC type)
    */
-  public INDArray gte(INDArray[] x, INDArray[] y) {
+  public INDArray gte(INDArray x, INDArray y) {
     NDValidation.validateNumerical("gte", "x", x);
-    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("gte", "y", y);
-    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.GreaterThanOrEqual(x, y))[0];
   }
 
@@ -457,11 +456,11 @@ public class NDBase {
    * Example: if input is [2, 0, 1] then output is [1, 2, 0]<br>
    * The idea is that x.permute(input).permute(invertPermutation(input)) == x<br>
    *
-   * @param input 1D indices for permutation (NUMERIC type)
-   * @return output 1D inverted permutation (NUMERIC type)
+   * @param input 1D indices for permutation (INT type)
+   * @return output 1D inverted permutation (INT type)
    */
   public INDArray invertPermutation(INDArray input) {
-    NDValidation.validateNumerical("invertPermutation", "input", input);
+    NDValidation.validateInteger("invertPermutation", "input", input);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.InvertPermutation(input))[0];
   }
 
@@ -469,7 +468,7 @@ public class NDBase {
    * Is the director a numeric tensor? In the current version of ND4J/SameDiff, this always returns true/1<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @return output Scalar variable with value 1 (NUMERIC type)
+   * @return output scalar boolean with value true or false (NUMERIC type)
    */
   public INDArray isNumericTensor(INDArray x) {
     NDValidation.validateNumerical("isNumericTensor", "x", x);
@@ -478,13 +477,13 @@ public class NDBase {
 
   /**
    * Create a new 1d array with values evenly spaced between values 'start' and 'stop'<br>
-   * For example, linspace(start=3.0, stop=4.0, number=3) will generate [3.0, 3.5, 4.0<br>
+   * For example, linspace(start=3.0, stop=4.0, number=3) will generate [3.0, 3.5, 4.0]<br>
    *
    * @param dataType Data type of the output array
    * @param start Start value
    * @param stop Stop value
    * @param number Number of values to generate
-   * @return output SDVariable with linearly spaced elements (NUMERIC type)
+   * @return output INDArray  with linearly spaced elements (NUMERIC type)
    */
   public INDArray linspace(DataType dataType, double start, double stop, double number) {
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Linspace(dataType, start, stop, number))[0];
@@ -492,12 +491,12 @@ public class NDBase {
 
   /**
    * Less than operation: elementwise x < y<br>
-   * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
-   * value 0 otherwise<br>
+   *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray lt(INDArray x, double y) {
     NDValidation.validateNumerical("lt", "x", x);
@@ -507,13 +506,14 @@ public class NDBase {
   /**
    * Less than operation: elementwise x < y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
    *
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
+   *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
-   * @return output Output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray lt(INDArray[] x, INDArray[] y) {
     NDValidation.validateNumerical("lt", "x", x);
@@ -525,12 +525,12 @@ public class NDBase {
 
   /**
    * Less than or equals operation: elementwise x <= y<br>
-   * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
-   * value 0 otherwise<br>
+   *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray lte(INDArray x, double y) {
     NDValidation.validateNumerical("lte", "x", x);
@@ -540,19 +540,18 @@ public class NDBase {
   /**
    * Less than or equal to operation: elementwise x <= y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
    *
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
+   *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
-   * @return output Output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray lte(INDArray[] x, INDArray[] y) {
+  public INDArray lte(INDArray x, INDArray y) {
     NDValidation.validateNumerical("lte", "x", x);
-    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("lte", "y", y);
-    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.LessThanOrEqual(x, y))[0];
   }
 
@@ -606,19 +605,6 @@ public class NDBase {
   /**
    * Max array reduction operation, optionally along specified dimensions<br>
    *
-   * @param x Input variable (NUMERIC type)
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
-   * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
-   */
-  public INDArray max(INDArray x, int... dimensions) {
-    NDValidation.validateNumerical("max", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Max(x, dimensions));
-  }
-
-  /**
-   * Max array reduction operation, optionally along specified dimensions<br>
-   *
    * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
    * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
    * the mean along a dimension).<br>
@@ -635,6 +621,26 @@ public class NDBase {
     NDValidation.validateNumerical("max", "x", x);
     Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Max(x, keepDims, dimensions));
+  }
+
+  /**
+   * Max array reduction operation, optionally along specified dimensions<br>
+   *
+   * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
+   * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
+   * the mean along a dimension).<br>
+   * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
+   * keepDims = true: [a,1,c]<br>
+   * keepDims = false: [a,c]<br>
+   *
+   * @param x Input variable (NUMERIC type)
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
+   */
+  public INDArray max(INDArray x, int... dimensions) {
+    NDValidation.validateNumerical("max", "x", x);
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Max(x, dimensions));
   }
 
   /**
@@ -766,12 +772,12 @@ public class NDBase {
 
   /**
    * Not equals operation: elementwise x != y<br>
-   * Returns an array with the same shape/size as the input, with values 1 where condition is satisfied, or<br>
-   * value 0 otherwise<br>
+   *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray neq(INDArray x, double y) {
     NDValidation.validateNumerical("neq", "x", x);
@@ -781,19 +787,18 @@ public class NDBase {
   /**
    * Not equal to operation: elementwise x != y<br>
    * If x and y arrays have equal shape, the output shape is the same as these inputs.<br>
-   * Returns an array with values 1 where condition is satisfied, or value 0 otherwise.<br>
    *
    * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
    *
+   * Return boolean array with values true where satisfied, or false otherwise.<br>
+   *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
-   * @return output SDVariable with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray neq(INDArray[] x, INDArray[] y) {
+  public INDArray neq(INDArray x, INDArray y) {
     NDValidation.validateNumerical("neq", "x", x);
-    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("neq", "y", y);
-    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.NotEqualTo(x, y))[0];
   }
 
@@ -907,9 +912,9 @@ public class NDBase {
   }
 
   /**
-   * Convert the array to a one-hot array with walues {@code on} and {@code off} for each entry<br>
+   * Convert the array to a one-hot array with walues and  for each entry<br>
    * If input has shape [ a, ..., n] then output has shape [ a, ..., n, depth],<br>
-   * with {@code out[i, ..., j, in[i,...,j]] = on} with other values being set to {@code off}<br>
+   * with {out[i, ..., j, in[i,...,j]]  with other values being set to <br>
    *
    * @param indices Indices - value 0 to depth-1 (NUMERIC type)
    * @param depth Number of classes
@@ -959,8 +964,8 @@ public class NDBase {
    * Return a variable of all 1s, with the same shape as the input variable. Note that this is dynamic:<br>
    * if the input shape changes in later execution, the returned variable's shape will also be updated<br>
    *
-   * @param input Input SDVariable (NUMERIC type)
-   * @return output A new SDVariable with the same (dynamic) shape as the input (NUMERIC type)
+   * @param input Input INDArray  (NUMERIC type)
+   * @return output A new INDArray  with the same (dynamic) shape as the input (NUMERIC type)
    */
   public INDArray onesLike(INDArray input) {
     NDValidation.validateNumerical("onesLike", "input", input);
@@ -977,18 +982,6 @@ public class NDBase {
   public INDArray onesLike(INDArray input, DataType dataType) {
     NDValidation.validateNumerical("onesLike", "input", input);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.OnesLike(input, dataType))[0];
-  }
-
-  /**
-   * see stack(String, int, SDVariable...)<br>
-   *
-   * @param values  (NUMERIC type)
-   * @return output  (NUMERIC type)
-   */
-  public INDArray parallel_stack(INDArray[] values) {
-    NDValidation.validateNumerical("parallel_stack", "values", values);
-    Preconditions.checkArgument(values.length >= 1, "values has incorrect size/length. Expected: values.length >= 1, got %s", values.length);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.ParallelStack(values))[0];
   }
 
   /**
@@ -1039,22 +1032,22 @@ public class NDBase {
   }
 
   /**
-   * Create a new variable with a 1d array, where the values start at {@code from} and increment by {@code step}<br>
+   * Create a new variable with a 1d array, where the values start at from and increment by step<br>
    * up to (but not including) limit.<br>
-   * For example, {@code range(1.0, 3.0, 0.5)} will return {@code [1.0, 1.5, 2.0, 2.5]<br>
+   * For example, range(1.0, 3.0, 0.5) will return [1.0, 1.5, 2.0, 2.5]<br>
    *
    * @param from Initial/smallest value
    * @param to Largest value (exclusive)
    * @param step Step size
    * @param dataType 
-   * @return output SDVariable with the specified values (NUMERIC type)
+   * @return output INDArray  with the specified values (NUMERIC type)
    */
   public INDArray range(double from, double to, double step, DataType dataType) {
     return Nd4j.exec(new org.nd4j.linalg.api.ops.random.impl.Range(from, to, step, dataType))[0];
   }
 
   /**
-   * Returns the rank (number of dimensions, i.e., length(shape)) of the specified SDVariable as a 0D scalar variable<br>
+   * Returns the rank (number of dimensions, i.e., length(shape)) of the specified INDArray  as a 0D scalar variable<br>
    *
    * @param in Input variable (NUMERIC type)
    * @return output (scalar) output variable with value equal to the rank of the input variable (NUMERIC type)
@@ -1135,14 +1128,13 @@ public class NDBase {
    * Reverse sequence op: for each slice along dimension seqDimension, the first seqLength values are reversed<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param seq_lengths Length of the sequences (NUMERIC type)
+   * @param seq_lengths Length of the sequences
    * @param seqDim Sequence dimension
    * @param batchDim Batch dimension
    * @return output Reversed sequences (NUMERIC type)
    */
-  public INDArray reverseSequence(INDArray x, INDArray seq_lengths, int seqDim, int batchDim) {
+  public INDArray reverseSequence(INDArray x, int seq_lengths, int seqDim, int batchDim) {
     NDValidation.validateNumerical("reverseSequence", "x", x);
-    NDValidation.validateNumerical("reverseSequence", "seq_lengths", seq_lengths);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.ReverseSequence(x, seq_lengths, seqDim, batchDim))[0];
   }
 
@@ -1210,10 +1202,11 @@ public class NDBase {
 
   /**
    * Scatter addition operation.<br>
+   *
    * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
    * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
    * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
-   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.<br>
+   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
    * @param indices Indices array (NUMERIC type)
@@ -1229,10 +1222,11 @@ public class NDBase {
 
   /**
    * Scatter division operation.<br>
-   * If indices is rank 0 (a scalar), then out[index, ...] /= updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] /= updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] /= updates[i, ..., k, ...]<br>
-   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.<br>
+   *
+   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
    * @param indices Indices array (NUMERIC type)
@@ -1248,10 +1242,11 @@ public class NDBase {
 
   /**
    * Scatter max operation.<br>
-   * If indices is rank 0 (a scalar), then out[index, ...] = max(updates[...], in[index,...])<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = max(updates[i,...], in[indices[i],...])<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = max(updates[i, ..., k, ...], in[indices[i], ..., indices[k], ...] <br>
-   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.<br>
+   *
+   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
    * @param indices Indices array (NUMERIC type)
@@ -1267,10 +1262,11 @@ public class NDBase {
 
   /**
    * Scatter min operation.<br>
-   * If indices is rank 0 (a scalar), then out[index, ...] = min(updates[...], in[index,...])<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = min(updates[i,...], in[indices[i],...])<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = min(updates[i, ..., k, ...], in[indices[i], ..., indices[k], ...]<br>
-   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.<br>
+   *
+   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
    * @param indices Indices array (NUMERIC type)
@@ -1286,10 +1282,11 @@ public class NDBase {
 
   /**
    * Scatter multiplication operation.<br>
-   * If indices is rank 0 (a scalar), then out[index, ...] *= updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] *= updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] *= updates[i, ..., k, ...]<br>
-   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.     <br>
+   *
+   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
    * @param indices Indices array (NUMERIC type)
@@ -1305,10 +1302,11 @@ public class NDBase {
 
   /**
    * Scatter subtraction operation.<br>
-   * If indices is rank 0 (a scalar), then out[index, ...] -= updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] -= updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] -= updates[i, ..., k, ...]<br>
-   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly.<br>
+   *
+   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
    * @param indices Indices array (NUMERIC type)
@@ -1324,11 +1322,11 @@ public class NDBase {
 
   /**
    * Scatter update operation.<br>
-   * If indices is rank 0 (a scalar), then out[index, ...] = updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = updates[i, ..., k, ...]<br>
-   * Note that if multiple indices refer to the same location, the output at those locations is undefined - different<br>
-   * updates may occur in different orders<br>
+   *
+   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
    * @param indices Indices array (NUMERIC type)
@@ -1460,7 +1458,7 @@ public class NDBase {
   }
 
   /**
-   * Returns the shape of the specified SDVariable as a 1D SDVariable<br>
+   * Returns the shape of the specified INDArray  as a 1D INDArray <br>
    *
    * @param input Input variable (NUMERIC type)
    * @return output 1D output variable with contents equal to the shape of the input (NUMERIC type)
@@ -1471,7 +1469,7 @@ public class NDBase {
   }
 
   /**
-   * Returns the size (number of elements, i.e., prod(shape)) of the specified SDVariable as a 0D scalar variable<br>
+   * Returns the size (number of elements, i.e., prod(shape)) of the specified INDArray  as a 0D scalar variable<br>
    *
    * @param in Input variable (NUMERIC type)
    * @return output 0D (scalar) output variable with value equal to the number of elements in the specified array (NUMERIC type)
@@ -1487,7 +1485,7 @@ public class NDBase {
    *
    * @param in Input variable (NUMERIC type)
    * @param dimension Dimension to get size of
-   * @return output Scalar SDVariable for size at specified variable (NUMERIC type)
+   * @return output Scalar INDArray  for size at specified variable (NUMERIC type)
    */
   public INDArray sizeAt(INDArray in, int dimension) {
     NDValidation.validateNumerical("sizeAt", "in", in);
@@ -1557,7 +1555,7 @@ public class NDBase {
   }
 
   /**
-   * Stack a set of N SDVariables of rank X into one rank X+1 variable.<br>
+   * Stack a set of N INDArray of rank X into one rank X+1 variable.<br>
    * If inputs have shape [a,b,c] then output has shape:<br>
    * axis = 0: [N,a,b,c]<br>
    * axis = 1: [a,N,b,c]<br>
