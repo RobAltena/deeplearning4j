@@ -754,7 +754,7 @@ public class NDBase {
     NDValidation.validateNumerical("mmul", "x", x);
     NDValidation.validateNumerical("mmul", "y", y);
     NDValidation.validateNumerical("mmul", "transpose", transpose);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.Mmul(x, y, transpose))[0];
+    return null; // TODO: Fix Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.Mmul(x, y, transpose))[0];
   }
 
   /**
@@ -1703,7 +1703,7 @@ public class NDBase {
     NDValidation.validateNumerical("tensorMmul", "x", x);
     NDValidation.validateNumerical("tensorMmul", "y", y);
     NDValidation.validateNumerical("tensorMmul", "dimensions", dimensions);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.TensorMmul(x, y, dimensions));
+    return null; // TODO: Fix  Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.TensorMmul(x, y, dimensions));
   }
 
   /**

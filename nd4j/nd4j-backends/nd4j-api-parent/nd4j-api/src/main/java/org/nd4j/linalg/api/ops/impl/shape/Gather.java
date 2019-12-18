@@ -66,7 +66,7 @@ public class Gather extends DynamicCustomOp {
 
     public Gather(INDArray x, INDArray indices, int axis){
         super(new INDArray[]{x, indices}, null);
-        addIArgument(axis)
+        addIArgument(axis);
         this.jaxis = axis;
     }
 
