@@ -139,7 +139,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testDot() {
+    public void testDot() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE,1.0, 1.0,3);
         INDArray y = base.dot(x, x,0);
@@ -148,7 +148,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testDynamicpartition() {
+    public void testDynamicpartition() {
 
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE,1.0, 1.0,5);
