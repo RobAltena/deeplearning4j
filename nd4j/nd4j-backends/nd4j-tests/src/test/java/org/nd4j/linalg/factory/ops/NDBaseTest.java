@@ -156,4 +156,125 @@ public class NDBaseTest extends BaseNd4jTest {
         int [] partitions = new int [] {1,0,0,1,0};
         INDArray y = base.dynamicPartition(x, partitions, numPartitions); //crashed at the moment.
     }
+
+    @Test
+    public void testDynamicStitch() {
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.linspace(DataType.DOUBLE,1.0, 1.0,9).reshape(3,3);
+        INDArray y = base.dynamicStitch(new INDArray[] {x, x}, 0);
+        //TODO: crashes here. Op needs fixing.
+    }
+
+    @Test
+    public void testScalarEq() {
+        //Scalar eq.
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.zeros(DataType.DOUBLE,3, 3);
+        INDArray y = base.eq(x, 0.0);
+        //TODO: crashes here. Op needs fixing.
+    }
+
+    @Test
+    public void testEq() {
+        //element wise  eq.
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.zeros(DataType.DOUBLE,3, 3);
+        INDArray y = base.eq(x, x);
+        INDArray  y_exp = Nd4j.createFromArray(new boolean[][]{{ true, true, true}, { true, true, true}, { true, true, true}});
+        assertTrue(y.equals(y_exp));
+    }
+
+    @Test
+    public void testExpandDims() {
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.zeros(DataType.DOUBLE,1, 2);
+        INDArray y = base.expandDims(x, 0);
+        INDArray  y_exp = Nd4j.createFromArray(new double[][]{{ 1.0, 0.0, 0.0}});
+        //TODO: Fix. Not getting the expected output.
+        assertTrue(y.equalsWithEps(y_exp, 1e-6));
+    }
+
+    @Test
+    public void testFill() {
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.createFromArray(2,2);
+        INDArray y = base.fill(x, DataType.DOUBLE, 1.1);
+        INDArray  y_exp = Nd4j.createFromArray(new double[][]{{ 1.1, 1.1}, { 1.1, 1.1}});
+        // Fails: y is a float, not a double as expected.
+        assertTrue(y.equalsWithEps(y_exp, 1e-1));
+    }
+
+    @Test
+    public void testGather() {
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.zeros(DataType.DOUBLE,3, 3);
+        int [] ind = new int[] {0};
+        INDArray y = base.gather(x, ind, 0);
+        //TODO: crashes here. Op needs fixing.
+    }
+
+    @Test
+    public void testGatherNd() {
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.linspace(DataType.DOUBLE,1.0, 1.0,9).reshape(3,3);
+        assertTrue(false); // Todo: Fix the Op. (current signature is wrong.)
+    }
+
+    @Test
+    public void testScalarGt() {
+        //Scalar gt.
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.zeros(DataType.DOUBLE,3, 3);
+        INDArray y = base.gt(x, -0.1);
+        //TODO: crashes here. Op needs fixing.
+    }
+
+    @Test
+    public void testGt() {
+        //element wise  gt.
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.zeros(DataType.DOUBLE,3, 3);
+        INDArray x1 = Nd4j.ones(DataType.DOUBLE,3, 3);
+        INDArray y = base.gt(x1, x);
+        INDArray  y_exp = Nd4j.createFromArray(new boolean[][]{{ true, true, true}, { true, true, true}, { true, true, true}});
+        assertTrue(y.equals(y_exp));
+    }
+
+
+    @Test
+    public void testScalarGte() {
+        //Scalar gte.
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.zeros(DataType.DOUBLE,3, 3);
+        INDArray y = base.gte(x, -0.1);
+        //TODO: crashes here. Op needs fixing.
+        assertTrue(false); // TODO: implement
+    }
+
+    @Test
+    public void testGte() {
+        //element wise  gte.
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.zeros(DataType.DOUBLE,3, 3);
+        INDArray x1 = Nd4j.ones(DataType.DOUBLE,3, 3);
+        INDArray y = base.gte(x1, x);
+        INDArray  y_exp = Nd4j.createFromArray(new boolean[][]{{ true, true, true}, { true, true, true}, { true, true, true}});
+        assertTrue(y.equals(y_exp));
+    }
+
+    @Test
+    public void testIdentity() {
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.zeros(DataType.DOUBLE,3, 3);
+        INDArray y = base.identity(x);
+        assertTrue(y.equalsWithEps(x, 1e-1));
+    }
+
+    @Test
+    public void testInvertPermutation() {
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.linspace(DataType.LONG,1.0, 1.0,9);
+        INDArray y = base.invertPermutation(x);
+        //TODO: crashes here. Op needs fixing.
+    }
 }
