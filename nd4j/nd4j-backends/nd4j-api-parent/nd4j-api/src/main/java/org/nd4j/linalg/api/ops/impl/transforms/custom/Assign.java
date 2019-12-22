@@ -24,6 +24,7 @@ import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.api.ops.Op;
+import org.nd4j.linalg.factory.Nd4j;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
 import org.tensorflow.framework.NodeDef;
@@ -47,7 +48,7 @@ public class Assign extends DynamicCustomOp {
     }
 
     public Assign(INDArray x, INDArray y ) {
-        this( new INDArray[] {x}, new INDArray[] {y}); // TODo check. modelled after the SameDiff constructor,
+        this( new INDArray[]{y ,x},new INDArray[]{y}); // TODO: Still check. y cannot be null, must be same shape as x.
     }
 
     @Override
