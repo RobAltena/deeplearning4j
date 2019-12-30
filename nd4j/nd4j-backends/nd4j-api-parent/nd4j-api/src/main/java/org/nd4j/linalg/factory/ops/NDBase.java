@@ -99,7 +99,7 @@ public class NDBase {
   public INDArray argmax(INDArray in, int... dimensions) {
     NDValidation.validateNumerical("argmax", "in", in);
     Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.indexaccum.IMax(in, dimensions));
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.indexaccum.IMax(in, false, dimensions));
   }
 
   /**
@@ -146,7 +146,7 @@ public class NDBase {
   public INDArray argmin(INDArray in, int... dimensions) {
     NDValidation.validateNumerical("argmin", "in", in);
     Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.indexaccum.IMin(in, dimensions));
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.indexaccum.IMin(in, false, dimensions));
   }
 
   /**
@@ -516,11 +516,9 @@ public class NDBase {
    * @param y Input 2 (NUMERIC type)
    * @return output Output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
    */
-  public INDArray lt(INDArray[] x, INDArray[] y) {
+  public INDArray lt(INDArray x, INDArray y) {
     NDValidation.validateNumerical("lt", "x", x);
-    Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
     NDValidation.validateNumerical("lt", "y", y);
-    Preconditions.checkArgument(y.length >= 1, "y has incorrect size/length. Expected: y.length >= 1, got %s", y.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.LessThan(x, y))[0];
   }
 
@@ -641,7 +639,7 @@ public class NDBase {
   public INDArray max(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("max", "x", x);
     Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Max(x, dimensions));
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Max(x, false, dimensions));
   }
 
   /**
@@ -844,12 +842,12 @@ public class NDBase {
    * out = sqrt(sum_i x[i]^2)<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions dimensions dimensions to reduce over (NUMERIC type)
+   * @param dimensions dimensions to reduce over (Size: AtLeast(min=1))
    * @return output Output variable (NUMERIC type)
    */
-  public INDArray norm2(INDArray x, INDArray dimensions) {
+  public INDArray norm2(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("norm2", "x", x);
-    NDValidation.validateNumerical("norm2", "dimensions", dimensions);
+    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Norm2(x, dimensions));
   }
 
@@ -1065,9 +1063,8 @@ public class NDBase {
    * @param axis 
    * @return output  (NUMERIC type)
    */
-  public INDArray repeat(INDArray[] df, int axis) {
+  public INDArray repeat(INDArray df, int axis) {
     NDValidation.validateNumerical("repeat", "df", df);
-    Preconditions.checkArgument(df.length >= 1, "df has incorrect size/length. Expected: df.length >= 1, got %s", df.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Repeat(df, axis))[0];
   }
 
@@ -1129,13 +1126,14 @@ public class NDBase {
    * Reverse sequence op: for each slice along dimension seqDimension, the first seqLength values are reversed<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param seq_lengths Length of the sequences
+   * @param seq_lengths Length of the sequences (NUMERIC type)
    * @param seqDim Sequence dimension
    * @param batchDim Batch dimension
    * @return output Reversed sequences (NUMERIC type)
    */
-  public INDArray reverseSequence(INDArray x, int seq_lengths, int seqDim, int batchDim) {
+  public INDArray reverseSequence(INDArray x, INDArray seq_lengths, int seqDim, int batchDim) {
     NDValidation.validateNumerical("reverseSequence", "x", x);
+    NDValidation.validateNumerical("reverseSequence", "seq_lengths", seq_lengths);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.ReverseSequence(x, seq_lengths, seqDim, batchDim))[0];
   }
 
@@ -1713,7 +1711,7 @@ public class NDBase {
     NDValidation.validateNumerical("tensorMmul", "x", x);
     NDValidation.validateNumerical("tensorMmul", "y", y);
     NDValidation.validateNumerical("tensorMmul", "dimensions", dimensions);
-    return null; //Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.TensorMmul(x, y, dimensions));
+    return null; // Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.TensorMmul(x, y, dimensions));
   }
 
   /**
