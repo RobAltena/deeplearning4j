@@ -50,7 +50,6 @@ public class LessThanOrEqual extends BaseDynamicTransformOp {
         this(new INDArray[]{x, y}, new INDArray[]{z});
     }
 
-    //TODO: Check.
     public LessThanOrEqual(INDArray x, INDArray y){
         this(new INDArray[]{x, y}, null);
     }

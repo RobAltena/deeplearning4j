@@ -46,7 +46,7 @@ public class Squeeze extends DynamicCustomOp {
     }
 
     public Squeeze(INDArray x, int axis){
-        //TODO: check
+        //TODO: test fails.
         super(new INDArray [] {x}, null);
         this.squeezeDims = new int []{axis};
         addIArgument(squeezeDims);

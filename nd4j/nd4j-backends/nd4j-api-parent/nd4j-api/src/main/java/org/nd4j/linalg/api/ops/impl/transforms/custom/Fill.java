@@ -60,6 +60,7 @@ public class Fill extends DynamicCustomOp {
     }
 
     public Fill(INDArray shape, DataType outputDataType, double value) {
+        //TODO: Fix, Test fails. not getting the right datatype back.
         super(null, shape, null, Collections.singletonList(value), null);
         this.value = value;
         this.outputDataType = outputDataType;

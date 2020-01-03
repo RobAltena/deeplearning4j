@@ -61,6 +61,7 @@ public class ReverseSequence extends DynamicCustomOp {
     }
 
     public ReverseSequence(INDArray x, INDArray seq_lengths, int seqDim, int batchDim){
+        //TODO: Test fails.
         super(new INDArray[]{x, seq_lengths}, null);
         this.seqDim = seqDim;
         this.batchDim = batchDim;

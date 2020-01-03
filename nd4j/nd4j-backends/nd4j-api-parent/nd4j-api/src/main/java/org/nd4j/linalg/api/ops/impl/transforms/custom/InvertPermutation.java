@@ -43,6 +43,7 @@ public class InvertPermutation extends BaseDynamicTransformOp {
     }
 
     public InvertPermutation(INDArray inputs) {
+        //TODO: Fix. Test crashes.
         super( new INDArray[] {inputs}, null);
     }
     @Override

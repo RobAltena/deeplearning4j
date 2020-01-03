@@ -71,13 +71,13 @@ public class Tile extends DynamicCustomOp {
     }
 
     public Tile(INDArray x, INDArray repeat){
-        //TODO Check. (this copied in style of SDVariable i_v, SDVariable axis).
+        //TODO Test fails. (this copied in style of SDVariable i_v, SDVariable axis).
         super(null, new INDArray[] {x, repeat}, null);
         this.jaxis = null;
     }
 
     public Tile(INDArray inputs, int... axis){
-        //TODO Check. (this copied in style of  SDVariable i_v, int[] axis).
+        //TODO Test fails.. (this copied in style of  SDVariable i_v, int[] axis).
         super(null, new INDArray[] {inputs}, null);
         this.jaxis = axis;
         addArguments();

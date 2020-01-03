@@ -43,6 +43,7 @@ public class UnsortedSegmentSqrtN extends DynamicCustomOp {
     }
 
     public UnsortedSegmentSqrtN(INDArray data, INDArray segmentIds, int numSegments){
+        //TODO: test fails.
         super(new INDArray[]{data, segmentIds}, null);
         this.numSegments = numSegments;
         addIArgument(numSegments);

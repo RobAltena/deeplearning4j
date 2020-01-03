@@ -81,6 +81,7 @@ public class OneHot extends DynamicCustomOp {
     }
 
     public OneHot(INDArray indices, int depth, int axis, double on, double off, DataType dataType){
+        //TODO: Test gets back the wrong datatype.
         this(indices, null, depth, axis, on, off);
         this.outputType = dataType;
     }

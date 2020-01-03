@@ -60,6 +60,7 @@ public class Reshape extends DynamicCustomOp {
     }
 
     public Reshape(INDArray in, INDArray shape){
+        //TODO: Test fails.
         this(in, shape, null);
     }
 

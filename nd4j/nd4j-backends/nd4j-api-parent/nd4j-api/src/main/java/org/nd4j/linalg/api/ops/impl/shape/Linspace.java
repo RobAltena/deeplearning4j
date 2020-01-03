@@ -49,6 +49,7 @@ public class Linspace extends DynamicCustomOp {
 
     public Linspace(DataType dataType, double start, double stop, double number){
         super(new INDArray[]{Nd4j.scalar(start), Nd4j.scalar(stop), Nd4j.scalar(number)}, null);
+        //TODO: test crashes.
         //TODO: switch to args once issue eclipse#8513 is done.
         this.dataType = dataType;
     }

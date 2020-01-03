@@ -40,7 +40,7 @@ public class SegmentProd extends DynamicCustomOp {
 
     public SegmentProd(){ }
 
-    public SegmentProd(INDArray data, INDArray segmentIds){
+    public SegmentProd(INDArray data, INDArray segmentIds){//TODO: test fails.
         super(new INDArray[]{data, segmentIds}, null);
     }
 

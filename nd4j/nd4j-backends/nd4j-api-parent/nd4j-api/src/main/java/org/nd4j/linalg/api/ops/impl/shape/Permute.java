@@ -60,6 +60,7 @@ public class Permute extends Transpose {
     }
 
     public Permute(INDArray input, int... permuteDims){
+        //TODO: test fails.
         super(input, null);
         this.permuteDims = permuteDims;
         addIArgument(permuteDims);

@@ -62,14 +62,14 @@ public class SequenceMask extends DynamicCustomOp {
     }
 
     public SequenceMask(INDArray lengths, int maxLen, DataType dataType){
-        //TODO: Check for correctness.
+        //TODO: Test fails
         super(new INDArray[] {lengths}, null);
         this.maxLen = maxLen;
         this.dataType = dataType;
     }
 
     public SequenceMask(INDArray lengths, DataType dataType){
-        //TODO: Check for correctness.
+        //TODO: Test fails
         super(new INDArray[] {lengths}, null);
         this.dataType = dataType;
     }

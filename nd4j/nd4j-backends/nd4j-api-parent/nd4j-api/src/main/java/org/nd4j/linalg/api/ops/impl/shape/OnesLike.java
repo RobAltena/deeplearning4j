@@ -57,6 +57,7 @@ public class OnesLike extends DynamicCustomOp {
     }
 
     public OnesLike(INDArray inputs){
+        //TODO: test fails.
         super(new INDArray[] {inputs}, null);
     }
 

@@ -44,7 +44,6 @@ public class ScalarNotEquals extends BaseScalarBoolOp {
         this(x, null, num);
     }
 
-
     public ScalarNotEquals(SameDiff sameDiff, SDVariable i_v, Number scalar) {
         super(sameDiff, i_v, scalar);
     }

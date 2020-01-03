@@ -58,7 +58,9 @@ public class ScalarGreaterThan extends BaseScalarBoolOp {
     }
 
     public ScalarGreaterThan(INDArray x, Number num) {
-        this(x, Nd4j.createUninitialized(DataType.BOOL, x.shape(), x.ordering()), num);
+        //TODO: Fix.   passing a new array instead of null works.
+        // Nd4j.createUninitialized(DataType.BOOL, x.shape(), x.ordering())
+        this(x, null, num);
     }
 
 

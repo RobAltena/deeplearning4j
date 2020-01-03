@@ -98,11 +98,13 @@ public class StridedSlice extends DynamicCustomOp {
     }
 
     public StridedSlice(INDArray in, int[] begin, int[] end, int[] strides){
+        //TODO: test fails.
         this(in, begin, end, strides, 0, 0, 0, 0, 0);
     }
 
     public StridedSlice(INDArray in, int[] begin, int[] end, int[] strides, int beginMask, int endMask, int ellipsisMask,
                         int newAxisMask, int shrinkAxisMask){
+        //TODO: test fails.
         super(new INDArray[]{in}, null);
         this.begin = ArrayUtil.toLongArray(begin);
         this.end = ArrayUtil.toLongArray(end);

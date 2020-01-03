@@ -51,7 +51,6 @@ public class MatchCondition extends BaseReduceLongOp {
 
     public MatchCondition() {}
 
-
     public MatchCondition(INDArray x, Condition condition, int... dimensions) {
         this(x, Nd4j.EPS_THRESHOLD, condition, dimensions);
     }

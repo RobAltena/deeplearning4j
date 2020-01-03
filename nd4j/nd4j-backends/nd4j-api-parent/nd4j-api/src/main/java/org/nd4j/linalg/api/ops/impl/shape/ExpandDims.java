@@ -68,6 +68,7 @@ public class ExpandDims extends DynamicCustomOp {
     }
 
     public ExpandDims(INDArray x, int axis){
+        //TODO: Fix. Test fails.
         super(new INDArray[]{x}, null);
         this.jaxis = axis;
         addIArgument(axis);

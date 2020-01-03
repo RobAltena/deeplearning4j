@@ -57,7 +57,6 @@ public class Shape extends DynamicCustomOp {
     }
 
     public Shape(INDArray in){
-        //TODO: check.
         this(in, null);
     }
 

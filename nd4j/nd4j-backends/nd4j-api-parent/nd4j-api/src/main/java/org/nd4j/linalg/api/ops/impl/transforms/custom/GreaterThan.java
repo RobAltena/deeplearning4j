@@ -51,7 +51,6 @@ public class GreaterThan extends BaseDynamicTransformOp {
         this(new INDArray[]{x, y}, new INDArray[]{z});
     }
 
-    //TODO: check and test.
     public GreaterThan(INDArray x, INDArray y){
         this(new INDArray[]{x, y}, null);
     }

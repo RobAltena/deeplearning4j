@@ -41,6 +41,7 @@ public class SegmentSum extends DynamicCustomOp {
     public SegmentSum(){ }
 
     public SegmentSum(INDArray data, INDArray segmentIds){
+        //Todo: test fails. JVM crash.
         super(new INDArray[]{data, segmentIds}, null);
     }
 

@@ -41,6 +41,7 @@ public class SegmentMin extends DynamicCustomOp {
     public SegmentMin(){ }
 
     public SegmentMin(INDArray data, INDArray segmentIds){
+        //TODO: test fails.
         super(new INDArray[]{data, segmentIds}, null);
     }
 

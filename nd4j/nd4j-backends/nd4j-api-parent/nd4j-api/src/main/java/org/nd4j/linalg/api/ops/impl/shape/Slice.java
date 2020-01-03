@@ -61,7 +61,6 @@ public class Slice extends DynamicCustomOp {
     }
 
     public Slice(INDArray input, int[] begin, int... size){
-        //TODO: Check.
         super(new INDArray[] {input}, null);
         this.begin = begin;
         this.size = size;

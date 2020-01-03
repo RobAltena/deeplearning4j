@@ -51,7 +51,6 @@ public class LessThan extends BaseDynamicTransformOp {
         this(new INDArray[]{x, y}, new INDArray[]{z});
     }
 
-    //TODO: check and test.
     public LessThan(INDArray x, INDArray y){
         this(new INDArray[]{x, y}, null);
     }

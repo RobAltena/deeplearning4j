@@ -39,6 +39,7 @@ public class SegmentMax extends DynamicCustomOp {
     }
 
     public SegmentMax(INDArray data, INDArray segmentIds){
+        //TODO: Test fails.
         super(new INDArray[]{data, segmentIds}, null);
     }
 

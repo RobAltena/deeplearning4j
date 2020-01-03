@@ -41,6 +41,7 @@ public class SegmentMean extends DynamicCustomOp {
     public SegmentMean(){ }
 
     public SegmentMean(INDArray data, INDArray segmentIds){
+        //TODO: test fails.
         super(new INDArray[]{data, segmentIds}, null);
     }
 

@@ -51,6 +51,7 @@ public class Stack extends DynamicCustomOp {
     }
 
     public Stack(INDArray input, int axis) {
+        //TODO: test fails.
         this(new INDArray[] {input}, null, axis);
     }
 
