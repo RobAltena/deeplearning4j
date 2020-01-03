@@ -42,8 +42,6 @@ public class ScalarGreaterThanOrEqual extends BaseScalarBoolOp {
     }
 
     public ScalarGreaterThanOrEqual(INDArray x, Number num) {
-        //TODO: Fix.   passing a new array instead of null works.
-        //Nd4j.createUninitialized(DataType.BOOL, x.shape(), x.ordering())
         this(x, null, num);
     }
 
