@@ -130,6 +130,23 @@ public class NDValidation {
     }
 
     /**
+     * Validate that the operation is being applied on an integer type INDArray []
+     *
+     * @param opName    Operation name to print in the exception
+     * @param inputName Name of the input to the op to validate
+     * @param v         Variable to validate datatype for (input to operation)
+     */
+    public static void validateInteger(String opName, String inputName, INDArray [] v) {
+        if (v == null)
+            return;
+        for (int i = 0; i < v.length; i++) {
+            if (!v[i].dataType().isIntType())
+                throw new IllegalStateException("Input \"" + inputName + "\" for operation \"" + opName + "\" must be an integer" +
+                        " type; got array with non-integer data type member" + v[i].dataType());
+        }
+    }
+
+    /**
      * Validate that the operation is being applied on an floating point type INDArray
      *
      * @param opName Operation name to print in the exception
@@ -232,5 +249,17 @@ public class NDValidation {
 
     public static boolean isSameType(INDArray x, INDArray y) {
         return x.dataType() == y.dataType();
+    }
+
+    public static boolean isSameType(INDArray[] x) {
+        if(x.length == 0)
+            return true;
+        DataType first = x[0].dataType();
+        for( int i=1; i<x.length; i++ ){
+            if(first != x[i].dataType()){
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -70,7 +70,7 @@ public class DynamicPartition extends DynamicCustomOp {
         addArgs();
     }
 
-    public DynamicPartition(INDArray x, int [] partitions, int numPartitions){
+    public DynamicPartition(INDArray x, INDArray [] partitions, int numPartitions){
         //TODO; This needs fixing.
         super(new INDArray[]{x}, null);
         // this.partitions = partitions;

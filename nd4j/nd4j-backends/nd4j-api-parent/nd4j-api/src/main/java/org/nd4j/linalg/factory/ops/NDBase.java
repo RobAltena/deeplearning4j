@@ -150,24 +150,12 @@ public class NDBase {
   }
 
   /**
-   * Assign/copy op: out = x.assign(y).<br>
-   *
-   * Note: supports broadcasting if x and y have different shapes and are broadcastable.<br>
-   *
-   * @param x Input variable x (NUMERIC type)
-   * @param y Input variable y (NUMERIC type)
-   * @return output Output variable (NUMERIC type)
-   */
-  public INDArray assign(INDArray x, INDArray y) {
-    NDValidation.validateNumerical("assign", "x", x);
-    NDValidation.validateNumerical("assign", "y", y);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.Assign(x, y))[0];
-  }
-
-  /**
    * Concatenate a set of inputs along the specified dimension.<br>
    * Note that inputs must have identical rank and identical dimensions, other than the dimension to stack on.<br>
    * For example, if 2 inputs have shape [a, x, c] and [a, y, c] and dimension = 1, then the output has shape [a, x+y, c]<br>
+   *
+   * Inputs must satisfy the following constraints: <br>
+   * Input arrays must all be the same datatype: isSameType(inputs)<br>
    *
    * @param inputs Input variables (NUMERIC type)
    * @param dimension Dimension to concatenate on
@@ -176,6 +164,7 @@ public class NDBase {
   public INDArray concat(INDArray[] inputs, int dimension) {
     NDValidation.validateNumerical("concat", "inputs", inputs);
     Preconditions.checkArgument(inputs.length >= 1, "inputs has incorrect size/length. Expected: inputs.length >= 1, got %s", inputs.length);
+    Preconditions.checkArgument(isSameType(inputs), "Input arrays must all be the same datatype");
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Concat(inputs, dimension))[0];
   }
 
@@ -200,6 +189,24 @@ public class NDBase {
   }
 
   /**
+   * Cumulative product operation.<br>
+   * For input: [ a, b, c], output is:<br>
+   * exclusive=false, reverse=false: [a, a*b, a*b*c]<br>
+   * exclusive=true, reverse=false, [0, a, a*b]<br>
+   * exclusive=false, reverse=true: [a*b*c, b*c, c]<br>
+   * exclusive=true, reverse=true: [b*c, c, 0]<br>
+   *
+   * @param in Input variable (NUMERIC type)
+   * @param axis Scalar axis argument for dimension to perform cumululative sum operations along (Size: AtLeast(min=1))
+   * @return output Output variable (NUMERIC type)
+   */
+  public INDArray cumprod(INDArray in, int... axis) {
+    NDValidation.validateNumerical("cumprod", "in", in);
+    Preconditions.checkArgument(axis.length >= 1, "axis has incorrect size/length. Expected: axis.length >= 1, got %s", axis.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.CumProd(in, false, false, axis))[0];
+  }
+
+  /**
    * Cumulative sum operation.<br>
    * For input: [ a, b, c], output is:<br>
    * exclusive=false, reverse=false: [a, a+b, a+b+c]<br>
@@ -220,18 +227,36 @@ public class NDBase {
   }
 
   /**
+   * Cumulative sum operation.<br>
+   * For input: [ a, b, c], output is:<br>
+   * exclusive=false, reverse=false: [a, a+b, a+b+c]<br>
+   * exclusive=true, reverse=false, [0, a, a+b]<br>
+   * exclusive=false, reverse=true: [a+b+c, b+c, c]<br>
+   * exclusive=true, reverse=true: [b+c, c, 0]<br>
+   *
+   * @param in Input variable (NUMERIC type)
+   * @param axis Scalar axis argument for dimension to perform cumululative sum operations along (Size: AtLeast(min=1))
+   * @return output  (NUMERIC type)
+   */
+  public INDArray cumsum(INDArray in, int... axis) {
+    NDValidation.validateNumerical("cumsum", "in", in);
+    Preconditions.checkArgument(axis.length >= 1, "axis has incorrect size/length. Expected: axis.length >= 1, got %s", axis.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.CumSum(in, false, false, axis))[0];
+  }
+
+  /**
    * Pairwise dot product reduction along dimension<br>
    * output = sum(i=0 ... size(dim)-1) x[i] * y[i]<br>
    *
    * @param x first input (NUMERIC type)
    * @param y second input (NUMERIC type)
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output output variable (NUMERIC type)
    */
   public INDArray dot(INDArray x, INDArray y, int... dimensions) {
     NDValidation.validateNumerical("dot", "x", x);
     NDValidation.validateNumerical("dot", "y", y);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce3.Dot(x, y, dimensions));
   }
 
@@ -247,12 +272,13 @@ public class NDBase {
    * </pre><br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param partitions 1D input with values 0 to numPartitions-1 (Size: AtLeast(min=1))
+   * @param partitions 1D input with values 0 to numPartitions-1 (INT type)
    * @param numPartitions Number of partitions, >= 1
    * @return output Output variables (equal in number to numPartitions) (NUMERIC type)
    */
-  public INDArray dynamicPartition(INDArray x, int[] partitions, int numPartitions) {
+  public INDArray dynamicPartition(INDArray x, INDArray[] partitions, int numPartitions) {
     NDValidation.validateNumerical("dynamicPartition", "x", x);
+    NDValidation.validateInteger("dynamicPartition", "partitions", partitions);
     Preconditions.checkArgument(partitions.length >= 1, "partitions has incorrect size/length. Expected: partitions.length >= 1, got %s", partitions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.DynamicPartition(x, partitions, numPartitions))[0];
   }
@@ -261,12 +287,13 @@ public class NDBase {
    * Dynamically merge the specified input arrays into a single array, using the specified indices<br>
    *
    * @param x Input variables. (NUMERIC type)
-   * @param indices Indices to use when merging. Must be >= 1, same length as input variables (Size: AtLeast(min=1))
+   * @param indices Indices to use when merging. Must be >= 1, same length as input variables (INT type)
    * @return output Merged output variable (NUMERIC type)
    */
-  public INDArray dynamicStitch(INDArray[] x, int... indices) {
+  public INDArray dynamicStitch(INDArray[] x, INDArray[] indices) {
     NDValidation.validateNumerical("dynamicStitch", "x", x);
     Preconditions.checkArgument(x.length >= 1, "x has incorrect size/length. Expected: x.length >= 1, got %s", x.length);
+    NDValidation.validateInteger("dynamicStitch", "indices", indices);
     Preconditions.checkArgument(indices.length >= 1, "indices has incorrect size/length. Expected: indices.length >= 1, got %s", indices.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.DynamicStitch(x, indices))[0];
   }
@@ -278,7 +305,7 @@ public class NDBase {
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray eq(INDArray x, double y) {
     NDValidation.validateNumerical("eq", "x", x);
@@ -295,7 +322,7 @@ public class NDBase {
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
-   * @return output INDArray with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray eq(INDArray x, INDArray y) {
     NDValidation.validateNumerical("eq", "x", x);
@@ -310,25 +337,24 @@ public class NDBase {
    * axis = 1: [a, 1, b]<br>
    * axis = 2: [a, b, 1]<br>
    *
-   * @param x Input variable (NUMERIC type)
+   * @param x Input variable (NDARRAY type)
    * @param axis Axis to expand
    * @return output Output variable (NUMERIC type)
    */
   public INDArray expandDims(INDArray x, int axis) {
-    NDValidation.validateNumerical("expandDims", "x", x);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.ExpandDims(x, axis))[0];
   }
 
   /**
    * Generate an output variable with the specified (dynamic) shape with all elements set to the specified value<br>
    *
-   * @param shape Shape: must be a 1D array/variable (NUMERIC type)
+   * @param shape Shape: must be a 1D array/variable (INT type)
    * @param dataType Datatype of the output array
    * @param value Value to set all elements to
    * @return output Output variable (NUMERIC type)
    */
   public INDArray fill(INDArray shape, DataType dataType, double value) {
-    NDValidation.validateNumerical("fill", "shape", shape);
+    NDValidation.validateInteger("fill", "shape", shape);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.Fill(shape, dataType, value))[0];
   }
 
@@ -384,7 +410,7 @@ public class NDBase {
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output INDArray with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray gt(INDArray x, double y) {
     NDValidation.validateNumerical("gt", "x", x);
@@ -401,7 +427,7 @@ public class NDBase {
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
-   * @return output Output INDArray with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray gt(INDArray x, INDArray y) {
     NDValidation.validateNumerical("gt", "x", x);
@@ -416,7 +442,7 @@ public class NDBase {
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output Output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray gte(INDArray x, double y) {
     NDValidation.validateNumerical("gte", "x", x);
@@ -469,7 +495,7 @@ public class NDBase {
    * Is the director a numeric tensor? In the current version of ND4J/SameDiff, this always returns true/1<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @return output scalar boolean with value true or false (NUMERIC type)
+   * @return output scalar boolean with value true or false (NDARRAY type)
    */
   public INDArray isNumericTensor(INDArray x) {
     NDValidation.validateNumerical("isNumericTensor", "x", x);
@@ -497,7 +523,7 @@ public class NDBase {
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray lt(INDArray x, double y) {
     NDValidation.validateNumerical("lt", "x", x);
@@ -514,7 +540,7 @@ public class NDBase {
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
-   * @return output Output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray lt(INDArray x, INDArray y) {
     NDValidation.validateNumerical("lt", "x", x);
@@ -529,7 +555,7 @@ public class NDBase {
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray lte(INDArray x, double y) {
     NDValidation.validateNumerical("lte", "x", x);
@@ -546,24 +572,12 @@ public class NDBase {
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
-   * @return output Output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray lte(INDArray x, INDArray y) {
     NDValidation.validateNumerical("lte", "x", x);
     NDValidation.validateNumerical("lte", "y", y);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.LessThanOrEqual(x, y))[0];
-  }
-
-  /**
-   * Returns a boolean mask of equal shape to the input, where the condition is satisfied - value 1 where satisfied, 0 otherwise<br>
-   *
-   * @param in Input (NUMERIC type)
-   * @param condition Condition
-   * @return output Boolean mask (NUMERIC type)
-   */
-  public INDArray matchCondition(INDArray in, Condition condition) {
-    NDValidation.validateNumerical("matchCondition", "in", in);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.bool.MatchConditionTransform(in, condition));
   }
 
   /**
@@ -591,14 +605,35 @@ public class NDBase {
    * @param in Input variable (NUMERIC type)
    * @param condition Condition
    * @param keepDim If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output Number of elements that the condition is satisfied for (NUMERIC type)
    */
   public INDArray matchConditionCount(INDArray in, Condition condition, boolean keepDim,
       int... dimensions) {
     NDValidation.validateNumerical("matchConditionCount", "in", in);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.longer.MatchCondition(in, condition, keepDim, dimensions));
+  }
+
+  /**
+   * Returns a count of the number of elements that satisfy the condition (for each slice along the specified dimensions)<br>
+   *
+   * Note that if keepDims = true, the output variable has the same rank as the input variable,<br>
+   * with the reduced dimensions having size 1. This can be useful for later broadcast operations (such as subtracting<br>
+   * the mean along a dimension).<br>
+   * Example: if input has shape [a,b,c] and dimensions=[1] then output has shape:<br>
+   * keepDims = true: [a,1,c]<br>
+   * keepDims = false: [a,c]<br>
+   *
+   * @param in Input variable (NUMERIC type)
+   * @param condition Condition
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
+   * @return output Number of elements that the condition is satisfied for (NUMERIC type)
+   */
+  public INDArray matchConditionCount(INDArray in, Condition condition, int... dimensions) {
+    NDValidation.validateNumerical("matchConditionCount", "in", in);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.longer.MatchCondition(in, condition, false, dimensions));
   }
 
   /**
@@ -613,12 +648,12 @@ public class NDBase {
    *
    * @param x Input variable (NUMERIC type)
    * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
   public INDArray max(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("max", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Max(x, keepDims, dimensions));
   }
 
@@ -633,12 +668,12 @@ public class NDBase {
    * keepDims = false: [a,c]<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
   public INDArray max(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("max", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Max(x, false, dimensions));
   }
 
@@ -661,12 +696,12 @@ public class NDBase {
    * Mean (average) array reduction operation, optionally along specified dimensions<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
   public INDArray mean(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("mean", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Mean(x, dimensions));
   }
 
@@ -682,12 +717,12 @@ public class NDBase {
    *
    * @param x Input variable (NUMERIC type)
    * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
   public INDArray mean(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("mean", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Mean(x, keepDims, dimensions));
   }
 
@@ -695,12 +730,12 @@ public class NDBase {
    * Minimum array reduction operation, optionally along specified dimensions. out = min(in)<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output  (NUMERIC type)
    */
   public INDArray min(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("min", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Min(x, dimensions));
   }
 
@@ -716,12 +751,12 @@ public class NDBase {
    *
    * @param x Input variable (NUMERIC type)
    * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output Reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
   public INDArray min(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("min", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Min(x, keepDims, dimensions));
   }
 
@@ -776,7 +811,7 @@ public class NDBase {
    *
    * @param x Input array (NUMERIC type)
    * @param y Double value argument to use in operation
-   * @return output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray neq(INDArray x, double y) {
     NDValidation.validateNumerical("neq", "x", x);
@@ -793,7 +828,7 @@ public class NDBase {
    *
    * @param x Input 1 (NUMERIC type)
    * @param y Input 2 (NUMERIC type)
-   * @return output INDArray  with values 0 and 1 based on where the condition is satisfied (NUMERIC type)
+   * @return output Boolean array out, with values true/false based on where the condition is satisfied (NUMERIC type)
    */
   public INDArray neq(INDArray x, INDArray y) {
     NDValidation.validateNumerical("neq", "x", x);
@@ -806,12 +841,12 @@ public class NDBase {
    * out = sum_i abs(x[i])<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @param dimensions dimensions dimensions to reduce over (Size: AtLeast(min=0))
    * @return output Output variable (NUMERIC type)
    */
   public INDArray norm1(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("norm1", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Norm1(x, dimensions));
   }
 
@@ -828,12 +863,12 @@ public class NDBase {
    *
    * @param x Input variable (NUMERIC type)
    * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
-   * @param dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @param dimensions dimensions to reduce over (Size: AtLeast(min=0))
    * @return output Output variable (NUMERIC type)
    */
   public INDArray norm1(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("norm1", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Norm1(x, keepDims, dimensions));
   }
 
@@ -842,12 +877,12 @@ public class NDBase {
    * out = sqrt(sum_i x[i]^2)<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @param dimensions dimensions to reduce over (Size: AtLeast(min=0))
    * @return output Output variable (NUMERIC type)
    */
   public INDArray norm2(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("norm2", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Norm2(x, dimensions));
   }
 
@@ -864,12 +899,12 @@ public class NDBase {
    *
    * @param x Input variable (NUMERIC type)
    * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
-   * @param dimensions dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @param dimensions dimensions dimensions to reduce over (Size: AtLeast(min=0))
    * @return output Output variable (NUMERIC type)
    */
   public INDArray norm2(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("norm2", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.Norm2(x, keepDims, dimensions));
   }
 
@@ -878,12 +913,12 @@ public class NDBase {
    * specified dimensions<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @param dimensions dimensions to reduce over (Size: AtLeast(min=0))
    * @return output Output variable (NUMERIC type)
    */
   public INDArray normmax(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("normmax", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.NormMax(x, dimensions));
   }
 
@@ -901,12 +936,12 @@ public class NDBase {
    *
    * @param x Input variable (NUMERIC type)
    * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
-   * @param dimensions dimensions to reduce over (Size: AtLeast(min=1))
+   * @param dimensions dimensions to reduce over (Size: AtLeast(min=0))
    * @return output Output variable (NUMERIC type)
    */
   public INDArray normmax(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("normmax", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.NormMax(x, keepDims, dimensions));
   }
 
@@ -988,12 +1023,12 @@ public class NDBase {
    * Example: if input has shape [a,b,c] and dimensions = [2,0,1] the output has shape [c,a,b]<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions  (Size: AtLeast(min=1))
+   * @param dimensions  (Size: AtLeast(min=0))
    * @return output Output variable (permuted input) (NUMERIC type)
    */
   public INDArray permute(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("permute", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Permute(x, dimensions))[0];
   }
 
@@ -1001,12 +1036,12 @@ public class NDBase {
    * Product array reduction operation, optionally along specified dimensions<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
   public INDArray prod(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("prod", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Prod(x, dimensions));
   }
 
@@ -1021,12 +1056,12 @@ public class NDBase {
    *
    * @param x Input variable (NUMERIC type)
    * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
-   * @param dimensions  (Size: AtLeast(min=1))
+   * @param dimensions  (Size: AtLeast(min=0))
    * @return output  (NUMERIC type)
    */
   public INDArray prod(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("prod", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Prod(x, keepDims, dimensions));
   }
 
@@ -1113,12 +1148,12 @@ public class NDBase {
    * [1, 2 3]<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions Input variable (Size: AtLeast(min=1))
+   * @param dimensions Input variable (Size: AtLeast(min=0))
    * @return output Output variable (NUMERIC type)
    */
   public INDArray reverse(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("reverse", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.Reverse(x, dimensions))[0];
   }
 
@@ -1202,9 +1237,9 @@ public class NDBase {
   /**
    * Scatter addition operation.<br>
    *
-   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * If indices is rank 0 (a scalar), then out[index, ...] = out[index, ...] + op(updates[...])<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = out[indices[i], ...] + op(updates[i, ...])<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = out[indices[i], ..., indices[k], ...]  + op(updates[i, ..., k, ...]) <br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
@@ -1222,9 +1257,9 @@ public class NDBase {
   /**
    * Scatter division operation.<br>
    *
-   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * If indices is rank 0 (a scalar), then out[index, ...] = out[index, ...] + op(updates[...])<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = out[indices[i], ...] + op(updates[i, ...])<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = out[indices[i], ..., indices[k], ...]  + op(updates[i, ..., k, ...]) <br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
@@ -1242,9 +1277,9 @@ public class NDBase {
   /**
    * Scatter max operation.<br>
    *
-   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * If indices is rank 0 (a scalar), then out[index, ...] = out[index, ...] + op(updates[...])<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = out[indices[i], ...] + op(updates[i, ...])<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = out[indices[i], ..., indices[k], ...]  + op(updates[i, ..., k, ...]) <br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
@@ -1262,9 +1297,9 @@ public class NDBase {
   /**
    * Scatter min operation.<br>
    *
-   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * If indices is rank 0 (a scalar), then out[index, ...] = out[index, ...] + op(updates[...])<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = out[indices[i], ...] + op(updates[i, ...])<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = out[indices[i], ..., indices[k], ...]  + op(updates[i, ..., k, ...]) <br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
@@ -1282,9 +1317,9 @@ public class NDBase {
   /**
    * Scatter multiplication operation.<br>
    *
-   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * If indices is rank 0 (a scalar), then out[index, ...] = out[index, ...] + op(updates[...])<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = out[indices[i], ...] + op(updates[i, ...])<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = out[indices[i], ..., indices[k], ...]  + op(updates[i, ..., k, ...]) <br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
@@ -1302,9 +1337,9 @@ public class NDBase {
   /**
    * Scatter subtraction operation.<br>
    *
-   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * If indices is rank 0 (a scalar), then out[index, ...] = out[index, ...] + op(updates[...])<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = out[indices[i], ...] + op(updates[i, ...])<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = out[indices[i], ..., indices[k], ...]  + op(updates[i, ..., k, ...]) <br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
@@ -1322,9 +1357,9 @@ public class NDBase {
   /**
    * Scatter update operation.<br>
    *
-   * If indices is rank 0 (a scalar), then out[index, ...] += updates[...]<br>
-   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] += updates[i, ...]<br>
-   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] += updates[i, ..., k, ...] <br>
+   * If indices is rank 0 (a scalar), then out[index, ...] = out[index, ...] + op(updates[...])<br>
+   * If indices is rank 1 (a vector), then for each position i, out[indices[i], ...] = out[indices[i], ...] + op(updates[i, ...])<br>
+   * If indices is rank 2+, then for each position (i,...,k), out[indices[i], ..., indices[k], ...] = out[indices[i], ..., indices[k], ...]  + op(updates[i, ..., k, ...]) <br>
    * Note that if multiple indices refer to the same location, the contributions from each is handled correctly. <br>
    *
    * @param ref Initial/source variable (NUMERIC type)
@@ -1344,9 +1379,9 @@ public class NDBase {
    *
    * If data =     [3, 6, 1, 4, 9, 2, 8]<br>
    * segmentIds =  [0, 0, 1, 1, 1, 2, 2]<br>
-   * then output = [6, 9, 8] = [max(3,6), max(1,4,9), max(2,8)]<br>
+   * then output = [6, 9, 8] = [op(3,6), op(1,4,9), op(2,8)]<br>
    * Note that the segment IDs must be sorted from smallest to largest segment.<br>
-   * See {unsortedSegmentMax(String, SDVariable, SDVariable, int)<br>
+   * See {unsortedSegment (String, SDVariable, SDVariable, int) ops<br>
    * for the same op without this sorted requirement<br>
    *
    * @param data Data to perform segment max on (NUMERIC type)
@@ -1364,9 +1399,9 @@ public class NDBase {
    *
    * If data =     [3, 6, 1, 4, 9, 2, 8]<br>
    * segmentIds =  [0, 0, 1, 1, 1, 2, 2]<br>
-   * then output = [6, 9, 8] = [max(3,6), max(1,4,9), max(2,8)]<br>
+   * then output = [6, 9, 8] = [op(3,6), op(1,4,9), op(2,8)]<br>
    * Note that the segment IDs must be sorted from smallest to largest segment.<br>
-   * See {unsortedSegmentMax(String, SDVariable, SDVariable, int)<br>
+   * See {unsortedSegment (String, SDVariable, SDVariable, int) ops<br>
    * for the same op without this sorted requirement<br>
    *
    * @param data Data to perform segment max on (NUMERIC type)
@@ -1384,9 +1419,9 @@ public class NDBase {
    *
    * If data =     [3, 6, 1, 4, 9, 2, 8]<br>
    * segmentIds =  [0, 0, 1, 1, 1, 2, 2]<br>
-   * then output = [6, 9, 8] = [max(3,6), max(1,4,9), max(2,8)]<br>
+   * then output = [6, 9, 8] = [op(3,6), op(1,4,9), op(2,8)]<br>
    * Note that the segment IDs must be sorted from smallest to largest segment.<br>
-   * See {unsortedSegmentMax(String, SDVariable, SDVariable, int)<br>
+   * See {unsortedSegment (String, SDVariable, SDVariable, int) ops<br>
    * for the same op without this sorted requirement<br>
    *
    * @param data Data to perform segment max on (NUMERIC type)
@@ -1404,9 +1439,9 @@ public class NDBase {
    *
    * If data =     [3, 6, 1, 4, 9, 2, 8]<br>
    * segmentIds =  [0, 0, 1, 1, 1, 2, 2]<br>
-   * then output = [6, 9, 8] = [max(3,6), max(1,4,9), max(2,8)]<br>
+   * then output = [6, 9, 8] = [op(3,6), op(1,4,9), op(2,8)]<br>
    * Note that the segment IDs must be sorted from smallest to largest segment.<br>
-   * See {unsortedSegmentMax(String, SDVariable, SDVariable, int)<br>
+   * See {unsortedSegment (String, SDVariable, SDVariable, int) ops<br>
    * for the same op without this sorted requirement<br>
    *
    * @param data Data to perform segment max on (NUMERIC type)
@@ -1424,9 +1459,9 @@ public class NDBase {
    *
    * If data =     [3, 6, 1, 4, 9, 2, 8]<br>
    * segmentIds =  [0, 0, 1, 1, 1, 2, 2]<br>
-   * then output = [6, 9, 8] = [max(3,6), max(1,4,9), max(2,8)]<br>
+   * then output = [6, 9, 8] = [op(3,6), op(1,4,9), op(2,8)]<br>
    * Note that the segment IDs must be sorted from smallest to largest segment.<br>
-   * See {unsortedSegmentMax(String, SDVariable, SDVariable, int)<br>
+   * See {unsortedSegment (String, SDVariable, SDVariable, int) ops<br>
    * for the same op without this sorted requirement<br>
    *
    * @param data Data to perform segment max on (NUMERIC type)
@@ -1527,12 +1562,12 @@ public class NDBase {
    *
    * @param x  (NUMERIC type)
    * @param keepDims 
-   * @param dimensions  (Size: AtLeast(min=1))
+   * @param dimensions  (Size: AtLeast(min=0))
    * @return output  (NUMERIC type)
    */
   public INDArray squaredNorm(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("squaredNorm", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.SquaredNorm(x, keepDims, dimensions));
   }
 
@@ -1540,12 +1575,12 @@ public class NDBase {
    * Squared L2 norm: see {norm2(String, SDVariable, int...)<br>
    *
    * @param x  (NUMERIC type)
-   * @param dimensions  (Size: AtLeast(min=1))
+   * @param dimensions  (Size: AtLeast(min=0))
    * @return output  (NUMERIC type)
    */
   public INDArray squaredNorm(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("squaredNorm", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.floating.SquaredNorm(x, dimensions));
   }
 
@@ -1585,12 +1620,12 @@ public class NDBase {
    *
    * @param x Input variable (NUMERIC type)
    * @param biasCorrected If true: divide by (N-1) (i.e., sample stdev). If false: divide by N (population stdev)
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
   public INDArray standardDeviation(INDArray x, boolean biasCorrected, int... dimensions) {
     NDValidation.validateNumerical("standardDeviation", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.summarystats.StandardDeviation(x, biasCorrected, dimensions));
   }
 
@@ -1607,13 +1642,13 @@ public class NDBase {
    * @param x Input variable (NUMERIC type)
    * @param biasCorrected If true: divide by (N-1) (i.e., sample stdev). If false: divide by N (population stdev)
    * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
   public INDArray standardDeviation(INDArray x, boolean biasCorrected, boolean keepDims,
       int... dimensions) {
     NDValidation.validateNumerical("standardDeviation", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.summarystats.StandardDeviation(x, biasCorrected, keepDims, dimensions));
   }
 
@@ -1670,12 +1705,12 @@ public class NDBase {
    * Sum array reduction operation, optionally along specified dimensions<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param dimensions dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) if keepDims = false, or of rank (input rank) if keepdims = true (NUMERIC type)
    */
   public INDArray sum(INDArray x, int... dimensions) {
     NDValidation.validateNumerical("sum", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Sum(x, dimensions));
   }
 
@@ -1691,12 +1726,12 @@ public class NDBase {
    *
    * @param x Input variable (NUMERIC type)
    * @param keepDims If true: keep the dimensions that are reduced on (as length 1). False: remove the reduction dimensions
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) if keepDims = false, or of rank (input rank) if keepdims = true (NUMERIC type)
    */
   public INDArray sum(INDArray x, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("sum", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.same.Sum(x, keepDims, dimensions));
   }
 
@@ -1872,12 +1907,12 @@ public class NDBase {
    *
    * @param x Input variable (NUMERIC type)
    * @param biasCorrected If true: divide by (N-1) (i.e., sample variable). If false: divide by N (population variance)
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
   public INDArray variance(INDArray x, boolean biasCorrected, int... dimensions) {
     NDValidation.validateNumerical("variance", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.summarystats.Variance(x, biasCorrected, dimensions));
   }
 
@@ -1893,12 +1928,12 @@ public class NDBase {
    * @param x Input variable (NUMERIC type)
    * @param biasCorrected If true: divide by (N-1) (i.e., sample variable). If false: divide by N (population variance)
    * @param keepDims If true: keep the dimensions that are reduced on (as size 1). False: remove the reduction dimensions
-   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=1))
+   * @param dimensions Dimensions to reduce over. If dimensions are not specified, full array reduction is performed (Size: AtLeast(min=0))
    * @return output reduced array of rank (input rank - num dimensions) (NUMERIC type)
    */
   public INDArray variance(INDArray x, boolean biasCorrected, boolean keepDims, int... dimensions) {
     NDValidation.validateNumerical("variance", "x", x);
-    Preconditions.checkArgument(dimensions.length >= 1, "dimensions has incorrect size/length. Expected: dimensions.length >= 1, got %s", dimensions.length);
+    Preconditions.checkArgument(dimensions.length >= 0, "dimensions has incorrect size/length. Expected: dimensions.length >= 0, got %s", dimensions.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.summarystats.Variance(x, biasCorrected, keepDims, dimensions));
   }
 
