@@ -581,6 +581,18 @@ public class NDBase {
   }
 
   /**
+   * Returns a boolean mask of equal shape to the input, where the condition is satisfied - value 1 where satisfied, 0 otherwise<br>
+   *
+   * @param in Input (NUMERIC type)
+   * @param condition Condition
+   * @return output Boolean mask (NUMERIC type)
+   */
+  public INDArray matchCondition(INDArray in, Condition condition) {
+    NDValidation.validateNumerical("matchCondition", "in", in);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.bool.MatchConditionTransform(in, condition));
+  }
+
+  /**
    * Returns a count of the number of elements that satisfy the condition<br>
    *
    * @param in Input (NUMERIC type)
@@ -1384,12 +1396,11 @@ public class NDBase {
    * See {unsortedSegment (String, SDVariable, SDVariable, int) ops<br>
    * for the same op without this sorted requirement<br>
    *
-   * @param data Data to perform segment max on (NUMERIC type)
+   * @param data Data to perform segment max on (NDARRAY type)
    * @param segmentIds Variable for the segment IDs (NUMERIC type)
    * @return output Segment output (NUMERIC type)
    */
   public INDArray segmentMax(INDArray data, INDArray segmentIds) {
-    NDValidation.validateNumerical("segmentMax", "data", data);
     NDValidation.validateNumerical("segmentMax", "segmentIds", segmentIds);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.segment.SegmentMax(data, segmentIds))[0];
   }
@@ -1404,12 +1415,11 @@ public class NDBase {
    * See {unsortedSegment (String, SDVariable, SDVariable, int) ops<br>
    * for the same op without this sorted requirement<br>
    *
-   * @param data Data to perform segment max on (NUMERIC type)
+   * @param data Data to perform segment max on (NDARRAY type)
    * @param segmentIds Variable for the segment IDs (NUMERIC type)
    * @return output Segment output (NUMERIC type)
    */
   public INDArray segmentMean(INDArray data, INDArray segmentIds) {
-    NDValidation.validateNumerical("segmentMean", "data", data);
     NDValidation.validateNumerical("segmentMean", "segmentIds", segmentIds);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.segment.SegmentMean(data, segmentIds))[0];
   }
@@ -1424,12 +1434,11 @@ public class NDBase {
    * See {unsortedSegment (String, SDVariable, SDVariable, int) ops<br>
    * for the same op without this sorted requirement<br>
    *
-   * @param data Data to perform segment max on (NUMERIC type)
+   * @param data Data to perform segment max on (NDARRAY type)
    * @param segmentIds Variable for the segment IDs (NUMERIC type)
    * @return output Segment output (NUMERIC type)
    */
   public INDArray segmentMin(INDArray data, INDArray segmentIds) {
-    NDValidation.validateNumerical("segmentMin", "data", data);
     NDValidation.validateNumerical("segmentMin", "segmentIds", segmentIds);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.segment.SegmentMin(data, segmentIds))[0];
   }
@@ -1444,12 +1453,11 @@ public class NDBase {
    * See {unsortedSegment (String, SDVariable, SDVariable, int) ops<br>
    * for the same op without this sorted requirement<br>
    *
-   * @param data Data to perform segment max on (NUMERIC type)
+   * @param data Data to perform segment max on (NDARRAY type)
    * @param segmentIds Variable for the segment IDs (NUMERIC type)
    * @return output Segment output (NUMERIC type)
    */
   public INDArray segmentProd(INDArray data, INDArray segmentIds) {
-    NDValidation.validateNumerical("segmentProd", "data", data);
     NDValidation.validateNumerical("segmentProd", "segmentIds", segmentIds);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.segment.SegmentProd(data, segmentIds))[0];
   }
@@ -1464,12 +1472,11 @@ public class NDBase {
    * See {unsortedSegment (String, SDVariable, SDVariable, int) ops<br>
    * for the same op without this sorted requirement<br>
    *
-   * @param data Data to perform segment max on (NUMERIC type)
+   * @param data Data to perform segment max on (NDARRAY type)
    * @param segmentIds Variable for the segment IDs (NUMERIC type)
    * @return output Segment output (NUMERIC type)
    */
   public INDArray segmentSum(INDArray data, INDArray segmentIds) {
-    NDValidation.validateNumerical("segmentSum", "data", data);
     NDValidation.validateNumerical("segmentSum", "segmentIds", segmentIds);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.transforms.custom.segment.SegmentSum(data, segmentIds))[0];
   }
