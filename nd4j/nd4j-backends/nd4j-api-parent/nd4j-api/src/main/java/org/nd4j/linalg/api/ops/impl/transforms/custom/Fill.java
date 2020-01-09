@@ -27,6 +27,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.api.ops.DynamicCustomOp;
 import org.nd4j.linalg.api.ops.Op;
 import org.nd4j.linalg.exception.ND4JIllegalStateException;
+import org.nd4j.linalg.factory.Nd4j;
 import org.tensorflow.framework.AttrValue;
 import org.tensorflow.framework.GraphDef;
 import org.tensorflow.framework.NodeDef;
@@ -60,8 +61,7 @@ public class Fill extends DynamicCustomOp {
     }
 
     public Fill(INDArray shape, DataType outputDataType, double value) {
-        //TODO: Fix, Test fails. not getting the right datatype back.
-        super(null, shape, null, Collections.singletonList(value), null);
+        super(new INDArray[]{shape, Nd4j.scalar(outputDataType, value)}, null);
         this.value = value;
         this.outputDataType = outputDataType;
     }
