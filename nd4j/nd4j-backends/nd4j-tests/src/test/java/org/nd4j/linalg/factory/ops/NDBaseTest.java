@@ -33,6 +33,11 @@ public class NDBaseTest extends BaseNd4jTest {
         super(backend);
     }
 
+    @Override
+    public char ordering(){
+        return 'c';
+    }
+
     // TODO: Comment from the review. We'll remove the new NDBase() at some point.
 
     @Test
@@ -89,7 +94,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testConcat() {
+    public void testConcat() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
         INDArray y = Nd4j.ones(DataType.DOUBLE, 3, 3);
@@ -102,7 +107,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testCumprod() {
+    public void testCumprod() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
         INDArray y = base.cumprod(x, false, false, 0);
@@ -116,7 +121,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testCumsum() {
+    public void testCumsum() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
         INDArray y = base.cumsum(x, false, false, 0);
@@ -129,7 +134,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testDot() {
+    public void testDot() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 3);
         INDArray y = base.dot(x, x, 0);
@@ -138,7 +143,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testDynamicpartition() {
+    public void testDynamicpartition() {
         //Try to execute the sample in the code dcumentation:
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 5);
@@ -150,7 +155,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testDynamicStitch() {
+    public void testDynamicStitch() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
         //INDArray y = base.dynamicStitch(new INDArray[]{x, x}, 0); TODO: Fix
@@ -158,7 +163,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testScalarEq() {
+    public void testScalarEq() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
         INDArray y = base.eq(x, 0.0);
@@ -167,7 +172,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testEq() {
+    public void testEq() {
         //element wise  eq.
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
@@ -177,7 +182,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testExpandDims() {
+    public void testExpandDims() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 1, 2);
         INDArray y = base.expandDims(x, 0);
@@ -187,7 +192,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testFill() {
+    public void testFill() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.createFromArray(2, 2);
         INDArray y = base.fill(x, DataType.DOUBLE, 1.1);
@@ -197,7 +202,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testGather() {
+    public void testGather() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
         int[] ind = new int[]{0};
@@ -206,14 +211,14 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testGatherNd() {
+    public void testGatherNd() {
         NDBase base = new NDBase();
 
         assertTrue(false); // TODO: Fix the Op. (current signature is wrong.)
     }
 
     @Test
-    void testScalarGt() {
+    public void testScalarGt() {
         //Scalar gt.
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
@@ -223,7 +228,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testGt() {
+    public void testGt() {
         //element wise  gt.
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
@@ -235,7 +240,7 @@ public class NDBaseTest extends BaseNd4jTest {
 
 
     @Test
-    void testScalarGte() {
+    public void testScalarGte() {
         //Scalar gte.
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
@@ -245,7 +250,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testGte() {
+    public void testGte() {
         //element wise  gte.
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
@@ -256,7 +261,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testIdentity() {
+    public void testIdentity() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
         INDArray y = base.identity(x);
@@ -264,7 +269,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testInvertPermutation() {
+    public void testInvertPermutation() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.INT64, 1.0, 1.0, 9);
         INDArray y = base.invertPermutation(x);
@@ -272,7 +277,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testisNumericTensor() {
+    public void testisNumericTensor() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
         INDArray y = base.isNumericTensor(x);
@@ -280,14 +285,14 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testLinspace() {
+    public void testLinspace() {
         NDBase base = new NDBase();
         INDArray y = base.linspace(DataType.DOUBLE, 0.0, 9.0, 19);
         //TODO: test crashes.
     }
 
     @Test
-    void testScalarLt() {
+    public void testScalarLt() {
         //Scalar lt.
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
@@ -297,7 +302,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testLt() {
+    public void testLt() {
         NDBase base = new NDBase();
         INDArray x1 = Nd4j.zeros(DataType.DOUBLE, 3, 3);
         INDArray x = Nd4j.ones(DataType.DOUBLE, 3, 3);
@@ -307,7 +312,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testScalarLte() {
+    public void testScalarLte() {
         //Scalar gt.
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
@@ -317,7 +322,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testLte() {
+    public void testLte() {
         NDBase base = new NDBase();
         INDArray x1 = Nd4j.zeros(DataType.DOUBLE, 3, 3);
         INDArray x = Nd4j.ones(DataType.DOUBLE, 3, 3);
@@ -327,7 +332,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testMatchCondition() {
+    public void testMatchCondition() {
         // same test as TestMatchTransformOp,
         NDBase base = new NDBase();
         INDArray x = Nd4j.create(new double[] {1, 1, 1, 0, 1, 1});
@@ -337,7 +342,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testMatchConditionCount() {
+    public void testMatchConditionCount() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.create(new double[] {1, 1, 1, 0, 1, 1});
         INDArray y = base.matchConditionCount(x, Conditions.epsEquals(0.0));
@@ -361,7 +366,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testMax() {
+    public void testMax() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.eye(3);
         INDArray y = base.max(x, 0);
@@ -374,7 +379,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testMean() {
+    public void testMean() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.eye(3);
         INDArray y = base.mean(x, 0);
@@ -387,7 +392,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testMin() {
+    public void testMin() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.eye(3);
         INDArray y = base.min(x, 0);
@@ -400,13 +405,13 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testMmulTranspose() {
+    public void testMmulTranspose() {
         //TODO: Transpose arguments.
         assertTrue(false); //TODO: build test
     }
 
     @Test
-    void testMmul() {
+    public void testMmul() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
         INDArray x1 = Nd4j.eye(3).castTo(DataType.DOUBLE);
@@ -415,7 +420,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testScalarNeq() {
+    public void testScalarNeq() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
         INDArray y = base.neq(x, 1.0);
@@ -424,7 +429,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testNeq() {
+    public void testNeq() {
         //element wise  eq.
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
@@ -435,7 +440,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testNorm1() {
+    public void testNorm1() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.eye(3);
         INDArray y = base.norm1(x, 0);
@@ -448,7 +453,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testNorm2() {
+    public void testNorm2() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.eye(3);
         INDArray y = base.norm2(x, 0);
@@ -461,7 +466,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testNormMax() {
+    public void testNormMax() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.eye(3);
         INDArray y = base.normmax(x, 0);
@@ -474,7 +479,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testOneHot() {
+    public void testOneHot() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.create(new double[]{0, 1, 2});
         INDArray y = base.oneHot(x, 1, 0, 1.0, 0.0);
@@ -491,7 +496,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testOnesLike() {
+    public void testOnesLike() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.create(new double[]{3, 3});
         INDArray y = base.onesLike(x);
@@ -504,7 +509,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testPermute() {
+    public void testPermute() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.createFromArray(1.0, 2.0, 3.0);
         INDArray y = base.permute(x, 2, 0, 1);
@@ -513,7 +518,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testProd() {
+    public void testProd() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.eye(3);
         INDArray y = base.prod(x, 0);
@@ -526,7 +531,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testRange() {
+    public void testRange() {
         NDBase base = new NDBase();
         INDArray y = base.range(0.0, 3.0, 1.0, DataType.DOUBLE);
         INDArray y_exp = Nd4j.createFromArray(0.0, 1.0, 2.0);
@@ -534,7 +539,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testRank() {
+    public void testRank() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.eye(3);
         INDArray y = base.rank(x);
@@ -544,7 +549,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testRepeat() {
+    public void testRepeat() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.eye(3);
         INDArray y = base.repeat(x, 0);
@@ -553,7 +558,7 @@ public class NDBaseTest extends BaseNd4jTest {
 
 
     @Test
-    void testReplaceWhere() {
+    public void testReplaceWhere() {
         // test from BooleanIndexingTest.
         NDBase base = new NDBase();
         INDArray array = Nd4j.create(new double[] {1, 2, 0, 4, 5});
@@ -565,7 +570,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testReshape() {
+    public void testReshape() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
         INDArray shape = Nd4j.create(new long[] {3, 3});
@@ -574,7 +579,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testReverse() {
+    public void testReverse() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 6).reshape(2, 3);
         INDArray y = base.reverse(x, 0);
@@ -583,7 +588,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void testReverseSequence() {
+    public void testReverseSequence() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9);
         INDArray seq_kengths = Nd4j.create(new long[] {3});
@@ -594,7 +599,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScalarFloorMod() {
+    public void TestScalarFloorMod() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
         INDArray y = base.scalarFloorMod(x, 2.0);
@@ -603,7 +608,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScalarMax() {
+    public void TestScalarMax() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
         INDArray y = base.scalarMax(x, 5.0);
@@ -613,7 +618,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScalarMin() {
+    public void TestScalarMin() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
         INDArray y = base.scalarMin(x, 5.0);
@@ -622,7 +627,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScalarSet() {
+    public void TestScalarSet() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.create(new double[] {1, 2, 0, 4, 5});
         INDArray y = base.scalarSet(x, 1.0);
@@ -631,7 +636,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScatterAdd() {
+    public void TestScatterAdd() {
         NDBase base = new NDBase();
 
         //from testScatterOpGradients.
@@ -645,7 +650,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScatterDiv() {
+    public void TestScatterDiv() {
         NDBase base = new NDBase();
 
         //from testScatterOpGradients.
@@ -659,7 +664,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScatterMax() {
+    public void TestScatterMax() {
         NDBase base = new NDBase();
 
         //from testScatterOpGradients.
@@ -673,7 +678,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScatterMin() {
+    public void TestScatterMin() {
         NDBase base = new NDBase();
 
         //from testScatterOpGradients.
@@ -687,7 +692,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScatterMul() {
+    public void TestScatterMul() {
         NDBase base = new NDBase();
 
         //from testScatterOpGradients.
@@ -701,7 +706,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScatterSub() {
+    public void TestScatterSub() {
         NDBase base = new NDBase();
 
         //from testScatterOpGradients.
@@ -715,7 +720,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestScatterUpdate() {
+    public void TestScatterUpdate() {
         NDBase base = new NDBase();
 
         //from testScatterOpGradients.
@@ -729,7 +734,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSegmentMax() {
+    public void TestSegmentMax() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2});
         INDArray segmentIDs = Nd4j.create(0,0,1,1,1,2,2);
@@ -739,7 +744,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSegmentMean() {
+    public void TestSegmentMean() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2});
         INDArray segmentIDs = Nd4j.create(0,0,1,1,1,2,2);
@@ -749,7 +754,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSegmentMin() {
+    public void TestSegmentMin() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2});
         INDArray segmentIDs = Nd4j.create(0,0,1,1,1,2,2);
@@ -759,7 +764,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSegmentProd() {
+    public void TestSegmentProd() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2});
         INDArray segmentIDs = Nd4j.create(0,0,1,1,1,2,2);
@@ -769,7 +774,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSegmentSum() {
+    public void TestSegmentSum() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2});
         INDArray segmentIDs = Nd4j.create(0,0,1,1,1,2,2);
@@ -780,7 +785,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSequenceMask() {
+    public void TestSequenceMask() {
         NDBase base = new NDBase();
         INDArray length = Nd4j.create(new float[] {1, 3, 2});
         int maxlength = 5;
@@ -791,7 +796,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestShape() {
+    public void TestShape() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(3,3);
         INDArray y = base.shape(x);
@@ -800,7 +805,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSize() {
+    public void TestSize() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(3,3);
         INDArray y = base.size(x);
@@ -808,7 +813,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSizeAt() {
+    public void TestSizeAt() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(10,20, 30);
         INDArray y = base.sizeAt(x, 1);
@@ -816,7 +821,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSlice() {
+    public void TestSlice() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 6).reshape(2, 3);
         INDArray y = base.slice(x, new int[]{0,1}, 2,1);
@@ -825,7 +830,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSquaredNorm() {
+    public void TestSquaredNorm() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
         INDArray y = base.squaredNorm(x, 0);
@@ -838,7 +843,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSqueeze() {
+    public void TestSqueeze() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 4);
         INDArray y = base.squeeze(x,2);
@@ -847,7 +852,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestStack() {
+    public void TestStack() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 3);
         INDArray y = base.stack(x, 1);
@@ -855,7 +860,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestStandardDeviation() {
+    public void TestStandardDeviation() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 4);
         INDArray y = base.standardDeviation(x, false, 0);
@@ -868,7 +873,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestStridedSlice() {
+    public void TestStridedSlice() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3,3);
         INDArray y = base.stridedSlice(x, new int[]{0,1}, new int[] {2,2}, 2,1);
@@ -878,7 +883,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestSum() {
+    public void TestSum() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3,3);
         INDArray y = base.sum(x, 0);
@@ -890,12 +895,12 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestTensorMul() {
+    public void TestTensorMul() {
         assertTrue(false); //TODO: Op not implemented.
     }
 
     @Test
-    void TestTile() {
+    public void TestTile() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 4).reshape(2,2);
         INDArray repeat = Nd4j.create(2, 3);
@@ -909,7 +914,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestTranspose() {
+    public void TestTranspose() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3,3);
         INDArray y = base.transpose(x);
@@ -918,7 +923,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestUnsegmentMax() {
+    public void TestUnsegmentMax() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.createFromArray(1,3,2,6,4,9,8);
         INDArray segmentIDs = Nd4j.createFromArray(1,0,2,0,1,1,2);
@@ -928,7 +933,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestUnsegmentMean() {
+    public void TestUnsegmentMean() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.createFromArray(1,3,2,6,4,9,8);
         INDArray segmentIDs = Nd4j.createFromArray(1,0,2,0,1,1,2);
@@ -940,7 +945,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestUnsegmentedMin() {
+    public void TestUnsegmentedMin() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.createFromArray(1,3,2,6,4,9,8);
         INDArray segmentIDs = Nd4j.createFromArray(1,0,2,0,1,1,2);
@@ -950,7 +955,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestUnsegmentProd() {
+    public void TestUnsegmentProd() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.createFromArray(1,3,2,6,4,9,8);
         INDArray segmentIDs = Nd4j.createFromArray(1,0,2,0,1,1,2);
@@ -960,7 +965,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestUnsortedSegmentSqrtN() {
+    public void TestUnsortedSegmentSqrtN() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.createFromArray(1,3,2,6,4,9,8);
         INDArray segmentIDs = Nd4j.createFromArray(1,0,2,0,1,1,2);
@@ -970,7 +975,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestUnsortedSegmentSum() {
+    public void TestUnsortedSegmentSum() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.createFromArray(1,3,2,6,4,9,8);
         INDArray segmentIDs = Nd4j.createFromArray(1,0,2,0,1,1,2);
@@ -980,7 +985,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestVariance() {
+    public void TestVariance() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 4);
         INDArray y = base.variance(x, false, 0);
@@ -993,7 +998,7 @@ public class NDBaseTest extends BaseNd4jTest {
     }
 
     @Test
-    void TestZerosLike() {
+    public void TestZerosLike() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.zeros(3,3);
         INDArray y = base.zerosLike(x);
