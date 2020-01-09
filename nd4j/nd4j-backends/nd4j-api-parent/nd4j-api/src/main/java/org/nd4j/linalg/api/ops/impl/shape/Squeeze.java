@@ -45,10 +45,10 @@ public class Squeeze extends DynamicCustomOp {
         addIArgument(squeezeDims);
     }
 
-    public Squeeze(INDArray x, int axis){
+    public Squeeze(INDArray x, int ... axis){
         //TODO: test fails.
         super(new INDArray [] {x}, null);
-        this.squeezeDims = new int []{axis};
+        this.squeezeDims = axis;
         addIArgument(squeezeDims);
     }
 

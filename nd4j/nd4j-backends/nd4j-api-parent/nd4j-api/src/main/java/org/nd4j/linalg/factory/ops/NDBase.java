@@ -800,7 +800,7 @@ public class NDBase {
     NDValidation.validateNumerical("mmul", "x", x);
     NDValidation.validateNumerical("mmul", "y", y);
     NDValidation.validateNumerical("mmul", "transpose", transpose);
-    return null; //Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.Mmul(x, y, transpose))[0];
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.Mmul(x, y, transpose))[0];
   }
 
   /**
@@ -1596,11 +1596,12 @@ public class NDBase {
    * For example, if input has shape [a,b,1,c] then squeeze(input, 2) returns an array of shape [a,b,c]<br>
    *
    * @param x Input variable (NUMERIC type)
-   * @param axis Size 1 dimension to remove
+   * @param axis Size 1 dimension to remove (Size: AtLeast(min=0))
    * @return output Output variable (NUMERIC type)
    */
-  public INDArray squeeze(INDArray x, int axis) {
+  public INDArray squeeze(INDArray x, int... axis) {
     NDValidation.validateNumerical("squeeze", "x", x);
+    Preconditions.checkArgument(axis.length >= 0, "axis has incorrect size/length. Expected: axis.length >= 0, got %s", axis.length);
     return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.shape.Squeeze(x, axis))[0];
   }
 
@@ -1753,7 +1754,7 @@ public class NDBase {
     NDValidation.validateNumerical("tensorMmul", "x", x);
     NDValidation.validateNumerical("tensorMmul", "y", y);
     NDValidation.validateNumerical("tensorMmul", "dimensions", dimensions);
-    return null; // Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.TensorMmul(x, y, dimensions));
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.TensorMmul(x, y, dimensions));
   }
 
   /**

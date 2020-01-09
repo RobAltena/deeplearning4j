@@ -59,13 +59,9 @@ public class Repeat extends DynamicCustomOp {
         super(null, inputs, outputs);
         this.jaxis = axis;
     }
-    public Repeat(INDArray[] inputs, int axis) {
-        this(inputs, null, axis);
-    }
 
     public Repeat(INDArray input, int axis) {
-       //TODO fix. This causes a JVM crash.
-        this(new INDArray[]{input}, axis);
+       //TODO implement.
     }
 
     public Repeat(SameDiff sameDiff, SDVariable[] args, boolean inPlace, int axis) {
