@@ -1963,7 +1963,7 @@ public class Nd4j {
      * @return the linearly spaced vector
      */
     public static INDArray linspace(@NonNull DataType dataType, double lower, double step, long num) {
-        Preconditions.checkState(dataType.isFPType());
+        Preconditions.checkState(dataType.isFPType(), "Datatype must be a floating point type for linspace, got %s", dataType);
         return Nd4j.getExecutioner().exec(new Linspace(lower, num, step, dataType));
     }
 
@@ -1976,7 +1976,7 @@ public class Nd4j {
      * @return the linearly spaced vector
      */
     public static INDArray linspace( double lower, double upper, long num, @NonNull DataType dataType) {
-        Preconditions.checkState(dataType.isFPType());
+        Preconditions.checkState(dataType.isFPType(), "Datatype must be a floating point type for linspace, got %s", dataType);
         return Nd4j.getExecutioner().exec(new Linspace(lower, upper, num, dataType));
     }
 

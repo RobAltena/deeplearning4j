@@ -182,10 +182,9 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testExpandDims() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.zeros(DataType.DOUBLE, 1, 2);
+        INDArray x = Nd4j.createFromArray(1,2).reshape(1,2);
         INDArray y = base.expandDims(x, 0);
-        INDArray y_exp = Nd4j.createFromArray(new double[][]{{1.0, 0.0, 0.0}});
-        //TODO: Fix. Not getting the expected output.
+        INDArray y_exp = x.reshape(1, 1, 2);
         assertEquals(y_exp, y);
     }
 
@@ -206,6 +205,7 @@ public class NDBaseTest extends BaseNd4jTest {
         int[] ind = new int[]{0};
         INDArray y = base.gather(x, ind, 0);
         //TODO: crashes here. Op needs fixing.
+        fail("expected value");
     }
 
     @Test
@@ -269,9 +269,10 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testInvertPermutation() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.linspace(DataType.INT64, 1.0, 1.0, 9);
+        INDArray x = Nd4j.createFromArray(2,0,1);
         INDArray y = base.invertPermutation(x);
-        //TODO: crashes here. Op needs fixing.
+        INDArray exp = Nd4j.createFromArray(1,2,0);
+        assertEquals(exp, y);
     }
 
     @Test
@@ -379,7 +380,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testMean() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.eye(3);
+        INDArray x = Nd4j.eye(3).castTo(DataType.FLOAT);
         INDArray y = base.mean(x, 0);
         INDArray  y_exp = Nd4j.createFromArray(0.333333f, 0.333333f, 0.333333f);
         assertEquals(y_exp, y);
@@ -440,7 +441,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testNorm1() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.eye(3);
+        INDArray x = Nd4j.eye(3).castTo(DataType.FLOAT);
         INDArray y = base.norm1(x, 0);
         INDArray  y_exp = Nd4j.createFromArray(1.0f, 1.0f, 1.0f);
         assertEquals(y_exp, y);
@@ -466,7 +467,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testNormMax() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.eye(3);
+        INDArray x = Nd4j.eye(3).castTo(DataType.FLOAT);
         INDArray y = base.normmax(x, 0);
         INDArray  y_exp = Nd4j.createFromArray(1.0f, 1.0f, 1.0f);
         assertEquals(y_exp, y);
@@ -490,7 +491,7 @@ public class NDBaseTest extends BaseNd4jTest {
 
         y = base.oneHot(x, 1, 0, 1.0, 0.0, DataType.DOUBLE);
         y_exp = Nd4j.createFromArray(new double[][]{{1.0, 0.0, 0.0}});
-        assertEquals(y_exp, y); //TODO: Looks like we're getting back the wrong datatype.
+        assertEquals(y_exp, y); //TODO: Looks like we're getting back the wrong datatype.       https://github.com/eclipse/deeplearning4j/issues/8607
     }
 
     @Test
@@ -518,7 +519,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testProd() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.eye(3);
+        INDArray x = Nd4j.eye(3).castTo(DataType.FLOAT);
         INDArray y = base.prod(x, 0);
         INDArray y_exp = Nd4j.createFromArray(0.0f, 0.0f, 0.0f);
         assertEquals(y_exp, y);
@@ -548,6 +549,7 @@ public class NDBaseTest extends BaseNd4jTest {
 
     @Test
     public void testRepeat() {
+        fail("AB 2020/01/09 - Not sure what this op is supposed to do...");
         NDBase base = new NDBase();
         INDArray x = Nd4j.eye(3);
         INDArray y = base.repeat(x, 0);
@@ -571,7 +573,7 @@ public class NDBaseTest extends BaseNd4jTest {
     public void testReshape() {
         NDBase base = new NDBase();
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
-        INDArray shape = Nd4j.create(new long[] {3, 3});
+        INDArray shape = Nd4j.createFromArray(new long[] {3, 3});
         INDArray y = base.reshape(x, shape);
         //TODO: Fix operator.  java.lang.RuntimeException: Op [reshape] execution failed
     }
@@ -588,12 +590,13 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testReverseSequence() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9);
-        INDArray seq_kengths = Nd4j.create(new long[] {3});
+        INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3,3);
+        INDArray seq_kengths = Nd4j.createFromArray(2,3,1);
         INDArray y = base.reverseSequence(x, seq_kengths);
         // TODO: org.nd4j.linalg.exception.ND4JIllegalStateException: Op name reverse_sequence - no output arrays were provided and calculateOutputShape failed to execute
 
         //TODO: test reverseSequence(INDArray x, INDArray seq_lengths, int seqDim, int batchDim)
+        fail("expected value needed");
     }
 
     @Test
@@ -784,12 +787,13 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testSequenceMask() {
         NDBase base = new NDBase();
-        INDArray length = Nd4j.create(new float[] {1, 3, 2});
+        INDArray length = Nd4j.createFromArray(1, 3, 2);
         int maxlength = 5;
         DataType dt = DataType.FLOAT;
         INDArray y = base.sequenceMask(length, maxlength, dt);
         System.out.println(y);
         //TODO: org.nd4j.linalg.exception.ND4JIllegalStateException: Op name sequence_mask - no output arrays were provided and calculateOutputShape failed to execute
+        fail("expected value required");
     }
 
     @Test

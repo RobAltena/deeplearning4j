@@ -58,9 +58,9 @@ public class Gather extends DynamicCustomOp {
     }
 
     public Gather(INDArray x, int[] indices, int axis){
-        //TODO: Fix. Test crashes.
         super(new INDArray[]{x}, null);
         addIArgument(axis);
+        addIArgument(indices);
         this.indices = indices;
         this.jaxis = axis;
     }
