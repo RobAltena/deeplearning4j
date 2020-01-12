@@ -68,10 +68,6 @@ public class DynamicStitch extends DynamicCustomOp {
         super(ArrayUtils.addAll(indices, inputs), null);
     }
 
-    public DynamicStitch(INDArray[] x, int... indices){
-        //TODO implement.
-    }
-
     @Override
     public List<SDVariable> doDiff(List<SDVariable> i_v) {
         // DynamicPartition and DynamicStitch are mutually inverse

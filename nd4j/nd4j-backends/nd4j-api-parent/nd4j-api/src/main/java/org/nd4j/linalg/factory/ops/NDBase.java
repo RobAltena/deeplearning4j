@@ -800,7 +800,7 @@ public class NDBase {
     NDValidation.validateNumerical("mmul", "x", x);
     NDValidation.validateNumerical("mmul", "y", y);
     NDValidation.validateNumerical("mmul", "transpose", transpose);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.Mmul(x, y, transpose))[0];
+    return null; //Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.Mmul(x, y, transpose))[0];
   }
 
   /**
@@ -1748,13 +1748,19 @@ public class NDBase {
    *
    * @param x Input variable x (NUMERIC type)
    * @param y Input variable y (NUMERIC type)
-   * @param dimensions dimensions (NUMERIC type)
+   * @param dimX x dimensions (Size: AtLeast(min=1))
+   * @param dimY y dimensions (Size: AtLeast(min=1))
+   * @param transposeX transpose X
+   * @param transposeY transpose Y
+   * @param transposeResult transpose result
    */
-  public INDArray[] tensorMmul(INDArray x, INDArray y, INDArray dimensions) {
+  public INDArray[] tensorMmul(INDArray x, INDArray y, int[] dimX, int[] dimY, boolean transposeX,
+      boolean transposeY, boolean transposeResult) {
     NDValidation.validateNumerical("tensorMmul", "x", x);
     NDValidation.validateNumerical("tensorMmul", "y", y);
-    NDValidation.validateNumerical("tensorMmul", "dimensions", dimensions);
-    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.TensorMmul(x, y, dimensions));
+    Preconditions.checkArgument(dimX.length >= 1, "dimX has incorrect size/length. Expected: dimX.length >= 1, got %s", dimX.length);
+    Preconditions.checkArgument(dimY.length >= 1, "dimY has incorrect size/length. Expected: dimY.length >= 1, got %s", dimY.length);
+    return Nd4j.exec(new org.nd4j.linalg.api.ops.impl.reduce.TensorMmul(x, y, dimX, dimY, transposeX, transposeY, transposeResult));
   }
 
   /**
@@ -1823,7 +1829,7 @@ public class NDBase {
 
   /**
    * Unsorted segment mean operation. As per segmentMean(String, SDVariable, SDVariable) but without<br>
-   * the requirement for the indices to be sorted.<br>
+   * the requirement for the indices to be sorted. Supports only floating point input data.<br>
    * If data =     [1, 3, 2, 6, 4, 9, 8]<br>
    * segmentIds =  [1, 0, 2, 0, 1, 1, 2]<br>
    * then output = [4.5, 4.666, 5] = [mean(3,6), mean(1,4,9), mean(2,8)]<br>
@@ -1880,6 +1886,7 @@ public class NDBase {
    * If data =     [1, 3, 2, 6, 4, 9, 8]<br>
    * segmentIds =  [1, 0, 2, 0, 1, 1, 2]<br>
    * then output = [1.414, 1.732, 1.414] = [sqrt(2), sqrtN(3), sqrtN(2)]<br>
+   * Supports only floating point input data.<br>
    *
    * @param data Data (variable) to perform unsorted segment max on (NUMERIC type)
    * @param segmentIds Variable for the segment IDs (NUMERIC type)

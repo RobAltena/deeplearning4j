@@ -2634,7 +2634,7 @@ public abstract class SDBaseOps {
      * [a, b, c]<br>
      * [d, e, f]<br>
      * [g, h, i]<br>
-     * then stridedSlice(input, begin=[0,1], end=[2,2], strides=[2,1]) will return:<br>
+     * then stridedSlice(input, begin=[0,1], end=[3,3], strides=[2,1]) will return:<br>
      * [b, c]<br>
      * [h, i]<br>
      * <br>
