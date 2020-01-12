@@ -510,10 +510,9 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testPermute() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.createFromArray(1.0, 2.0, 3.0);
-        INDArray y = base.permute(x, 2, 0, 1);
-        //TODO: fix. no output arrays were provided and calculateOutputShape failed to execute
-
+        INDArray x = Nd4j.linspace(1, 6, 6).reshape(2, 3);
+        INDArray y = base.permute(x, 1,0);
+        assertArrayEquals(new long[]{3, 2}, y.shape());
     }
 
     @Test
@@ -575,7 +574,8 @@ public class NDBaseTest extends BaseNd4jTest {
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3, 3);
         INDArray shape = Nd4j.createFromArray(new long[] {3, 3});
         INDArray y = base.reshape(x, shape);
-        //TODO: Fix operator.  java.lang.RuntimeException: Op [reshape] execution failed
+        INDArray y_exp = Nd4j.createFromArray(new double[][]{{1.0, 2.0, 3.0}, { 4.0, 5.0, 6.0}, { 7.0, 8.0, 9.0} } );
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -593,10 +593,13 @@ public class NDBaseTest extends BaseNd4jTest {
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3,3);
         INDArray seq_kengths = Nd4j.createFromArray(2,3,1);
         INDArray y = base.reverseSequence(x, seq_kengths);
-        // TODO: org.nd4j.linalg.exception.ND4JIllegalStateException: Op name reverse_sequence - no output arrays were provided and calculateOutputShape failed to execute
 
-        //TODO: test reverseSequence(INDArray x, INDArray seq_lengths, int seqDim, int batchDim)
-        fail("expected value needed");
+        INDArray y_exp = Nd4j.createFromArray(new double[][]{{ 2.0, 1.0, 3.0},{6.0, 5.0, 4.0},{7.0, 8.0, 9.0} } );
+        assertEquals(y_exp, y);
+
+        y = base.reverseSequence(x, seq_kengths, 0, 1);
+        y_exp = Nd4j.createFromArray(new double[][]{{ 4.0, 8.0, 3.0},{1.0, 5.0, 6.0},{7.0, 2.0, 9.0} } );
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -725,8 +728,8 @@ public class NDBaseTest extends BaseNd4jTest {
         NDBase base = new NDBase();
 
         //from testScatterOpGradients.
-        INDArray x = Nd4j.ones(DataType.DOUBLE, 20, 10).add(1.0);
-        INDArray indices = Nd4j.create(new double[]{3, 4, 5, 10, 18}).castTo(DataType.INT32);
+        INDArray x = Nd4j.ones(DataType.DOUBLE, 10, 10);
+        INDArray indices = Nd4j.create(new double[]{3, 4, 5, 8, 9}).castTo(DataType.INT32);
         INDArray updates = Nd4j.ones(DataType.DOUBLE, 5, 10).add(1.0);
         INDArray y = base.scatterUpdate(x,indices, updates);
 
@@ -737,51 +740,51 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testSegmentMax() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2});
+        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2, 2});
         INDArray segmentIDs = Nd4j.createFromArray(0,0,1,1,1,2,2);
         INDArray y = base.segmentMax(x, segmentIDs);
-        System.out.println(y);
-        //TODO: org.nd4j.linalg.exception.ND4JIllegalStateException: Op name segment_max - no output arrays were provided and calculateOutputShape failed to execute
+        INDArray y_exp = Nd4j.createFromArray(6.0, 9.0, 2.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
     public void testSegmentMean() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2});
+        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2, 2});
         INDArray segmentIDs = Nd4j.createFromArray(0,0,1,1,1,2,2);
         INDArray y = base.segmentMean(x, segmentIDs);
-        System.out.println(y);
-        //TODO: org.nd4j.linalg.exception.ND4JIllegalStateException: Op name segment_max - no output arrays were provided and calculateOutputShape failed to execute
+        INDArray y_exp = Nd4j.createFromArray(4.5, 4.6667, 2.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
     public void testSegmentMin() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2});
+        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2, 2});
         INDArray segmentIDs = Nd4j.createFromArray(0,0,1,1,1,2,2);
         INDArray y = base.segmentMin(x, segmentIDs);
-        System.out.println(y);
-        //TODO: org.nd4j.linalg.exception.ND4JIllegalStateException: Op name segment_max - no output arrays were provided and calculateOutputShape failed to execute
+        INDArray y_exp = Nd4j.createFromArray(3.0, 1.0, 2.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
     public void testSegmentProd() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2});
+        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2, 2});
         INDArray segmentIDs = Nd4j.createFromArray(0,0,1,1,1,2,2);
         INDArray y = base.segmentProd(x, segmentIDs);
-        System.out.println(y);
-        fail("expected value needed");
+        INDArray y_exp = Nd4j.createFromArray(18.0, 36.0, 4.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
     public void testSegmentSum() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2});
+        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2,2});
         INDArray segmentIDs = Nd4j.createFromArray(0,0,1,1,1,2,2);
         INDArray y = base.segmentSum(x, segmentIDs);
-        System.out.println(y);
-        fail("expected value needed");
+        INDArray y_exp = Nd4j.createFromArray(9.0, 14.0, 4.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -897,7 +900,18 @@ public class NDBaseTest extends BaseNd4jTest {
 
     @Test
     public void testTensorMul() {
-        assertTrue(false); //TODO: Op not implemented.
+        NDBase base = new NDBase();
+        INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3,3);
+        INDArray y = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 9).reshape(3,3);
+        int[] dimX = new int[] {3,3};
+        int[] dimY = new int[] {3,3};
+        boolean transposeX = false;
+        boolean transposeY = false;
+        boolean transposeResult = false;
+
+        INDArray [] res = base.tensorMmul(x, y, dimX, dimY, transposeX, transposeY, transposeResult);
+
+        System.out.println(res);
     }
 
     @Test
@@ -906,11 +920,12 @@ public class NDBaseTest extends BaseNd4jTest {
         INDArray x = Nd4j.linspace(DataType.DOUBLE, 1.0, 1.0, 4).reshape(2,2);
         INDArray repeat = Nd4j.createFromArray(2, 3);
         INDArray y = base.tile(x, repeat); // the sample from the code docs.
-        //TODO: org.nd4j.linalg.exception.ND4JIllegalStateException: Op name tile - no output arrays were provided and calculateOutputShape failed to execute
+
+        INDArray y_exp = Nd4j.createFromArray(new double[][]{{1.0, 2.0, 1.0, 2.0, 1.0, 2.0}, {3.0, 4.0, 3.0, 4.0, 3.0, 4.0}, {1.0, 2.0, 1.0, 2.0, 1.0, 2.0}, {3.0, 4.0, 3.0, 4.0, 3.0, 4.0}});
+        assertEquals(y_exp, y);
 
         y = base.tile(x, 2, 3); // the sample from the code docs.
-        System.out.println(y);
-        fail("need expected values for both tests");
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -940,7 +955,7 @@ public class NDBaseTest extends BaseNd4jTest {
         INDArray y = base.unsortedSegmentMean(x, segmentIDs, 3);
         // TODO: Op [unsorted_segment_mean] failed check for output [0], DataType: [INT32];
         //    leaving this in here for a moment. as everything works fine with unsortedSegmentMax, min and prod.
-        INDArray y_exp = Nd4j.createFromArray(4.5,4.666, 5.0);
+        INDArray y_exp = Nd4j.createFromArray(4.5f,4.6667f, 5.0f);
         assertEquals(y_exp, y);
     }
 
@@ -967,11 +982,11 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testUnsortedSegmentSqrtN() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.createFromArray(1,3,2,6,4,9,8);
+        INDArray x = Nd4j.createFromArray(1.0,3.0,2.0,6.0,4.0,9.0,8.0);
         INDArray segmentIDs = Nd4j.createFromArray(1,0,2,0,1,1,2);
         INDArray y = base.unsortedSegmentSqrtN(x, segmentIDs, 3);
-        // Op [unsorted_segment_sqrt_n] failed check for input [0], DataType: [INT32]
-        //    leaving this in here for a moment. as everything works fine with unsortedSegmentMax, min and prod
+        INDArray y_exp = Nd4j.createFromArray( 6.3640,    8.0829,    7.0711);
+        assertEquals(y_exp, y);
     }
 
     @Test
