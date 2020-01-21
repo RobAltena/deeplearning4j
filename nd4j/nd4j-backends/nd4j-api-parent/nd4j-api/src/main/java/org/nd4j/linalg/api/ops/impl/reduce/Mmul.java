@@ -53,10 +53,7 @@ public class Mmul extends DynamicCustomOp {
      * @param i_v2
      * @param mt
      */
-    public Mmul(SameDiff sameDiff,
-                SDVariable i_v1,
-                SDVariable i_v2,
-                MMulTranspose mt) {
+    public Mmul(SameDiff sameDiff, SDVariable i_v1, SDVariable i_v2, MMulTranspose mt) {
         super(null,sameDiff,new SDVariable[]{i_v1,i_v2});
         this.mt = mt;
         addIArgument(ArrayUtil.fromBoolean(mt.isTransposeA()), ArrayUtil.fromBoolean(mt.isTransposeB()), ArrayUtil.fromBoolean(mt.isTransposeResult()));
@@ -69,10 +66,12 @@ public class Mmul extends DynamicCustomOp {
      * @param i_v1
      * @param i_v2
      */
-    public Mmul(SameDiff sameDiff,
-                SDVariable i_v1,
-                SDVariable i_v2) {
+    public Mmul(SameDiff sameDiff, SDVariable i_v1, SDVariable i_v2) {
         this(sameDiff,i_v1,i_v2,MMulTranspose.allFalse());
+    }
+
+    public Mmul(INDArray x, INDArray y, boolean tX, boolean tY, boolean tZ) {
+        this(x, y, null, MMulTranspose.builder().transposeA(tX).transposeB(tY).transposeResult(tZ).build());
     }
 
     /**
@@ -81,10 +80,7 @@ public class Mmul extends DynamicCustomOp {
      * @param y
      * @param z
      */
-    public Mmul(INDArray x,
-                INDArray y,
-                INDArray z,
-                MMulTranspose mt) {
+    public Mmul(INDArray x, INDArray y, INDArray z, MMulTranspose mt) {
         super(null, new INDArray[]{x, y}, z == null ? null : new INDArray[]{z});
         if (mt != null) {
           this.mt = mt;
