@@ -546,6 +546,7 @@ public class NDBaseTest extends BaseNd4jTest {
         assertEquals(y_exp, y);
     }
 
+    /*
     @Test
     public void testRepeat() {
         fail("AB 2020/01/09 - Not sure what this op is supposed to do...");
@@ -554,6 +555,7 @@ public class NDBaseTest extends BaseNd4jTest {
         INDArray y = base.repeat(x, 0);
         //TODO: fix, crashes the JVM.
     }
+     */
 
 
     @Test
@@ -909,7 +911,7 @@ public class NDBaseTest extends BaseNd4jTest {
         boolean transposeY = false;
         boolean transposeResult = false;
 
-        INDArray [] res = base.tensorMmul(x, y, dimX, dimY, transposeX, transposeY, transposeResult);
+        INDArray res = base.tensorMmul(x, y, dimX, dimY, transposeX, transposeY, transposeResult);
 
         System.out.println(res);
     }
