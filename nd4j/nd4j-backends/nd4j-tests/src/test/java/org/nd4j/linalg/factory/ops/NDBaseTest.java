@@ -41,7 +41,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testAll() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
+        INDArray x = Nd4j.zeros(DataType.BOOL, 3, 3);
         INDArray y = base.all(x, 1);
         INDArray y_exp = Nd4j.createFromArray(false, false, false);
         assertEquals(y_exp, y);
@@ -50,7 +50,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testAny() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.eye(3);
+        INDArray x = Nd4j.eye(3).castTo(DataType.BOOL);
         INDArray y = base.any(x, 1);
         INDArray y_exp = Nd4j.createFromArray(true, true, true);
         assertEquals(y_exp, y);
@@ -60,7 +60,7 @@ public class NDBaseTest extends BaseNd4jTest {
     public void testArgmax() {
         NDBase base = new NDBase();
 
-        INDArray x = Nd4j.create(new double[][]{{0.75, 0.5, 0.25}, {0.5, 0.75, 0.25}, {0.5, 0.25, 0.75}});
+        INDArray x = Nd4j.createFromArray(new double[][]{{0.75, 0.5, 0.25}, {0.5, 0.75, 0.25}, {0.5, 0.25, 0.75}});
         INDArray y = base.argmax(x, 0); //with default keepdims
         INDArray y_exp = Nd4j.createFromArray(0L, 1L, 2L);
         assertEquals(y_exp, y);
@@ -78,7 +78,7 @@ public class NDBaseTest extends BaseNd4jTest {
         //Copy Paste from argmax, replaced with argmin.
         NDBase base = new NDBase();
 
-        INDArray x = Nd4j.create(new double[][]{{0.75, 0.5, 0.25}, {0.5, 0.75, 0.25}, {0.5, 0.25, 0.75}});
+        INDArray x = Nd4j.createFromArray(new double[][]{{0.75, 0.5, 0.25}, {0.5, 0.75, 0.25}, {0.5, 0.25, 0.75}});
         INDArray y = base.argmin(x, 0); //with default keepdims
         INDArray y_exp = Nd4j.createFromArray(1L, 2L, 0L);
         assertEquals(y_exp, y);
@@ -194,7 +194,6 @@ public class NDBaseTest extends BaseNd4jTest {
         INDArray x = Nd4j.createFromArray(2, 2);
         INDArray y = base.fill(x, DataType.DOUBLE, 1.1);
         INDArray y_exp = Nd4j.createFromArray(new double[][]{{1.1, 1.1}, {1.1, 1.1}});
-        // TODO: Fails: y is a float, not a double as expected.
         assertEquals(y_exp, y);
     }
 
@@ -204,8 +203,8 @@ public class NDBaseTest extends BaseNd4jTest {
         INDArray x = Nd4j.zeros(DataType.DOUBLE, 3, 3);
         int[] ind = new int[]{0};
         INDArray y = base.gather(x, ind, 0);
-        //TODO: crashes here. Op needs fixing.
-        fail("expected value");
+        INDArray y_exp = Nd4j.createFromArray(0.0, 0.0, 0.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -334,16 +333,16 @@ public class NDBaseTest extends BaseNd4jTest {
     public void testMatchCondition() {
         // same test as TestMatchTransformOp,
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[] {1, 1, 1, 0, 1, 1});
+        INDArray x = Nd4j.createFromArray(1.0, 1.0, 1.0, 0.0, 1.0, 1.0);
         INDArray y = base.matchCondition(x, Conditions.epsEquals(0.0));
-        INDArray y_exp = Nd4j.create(new boolean[] {false, false, false, true, false, false});
+        INDArray y_exp = Nd4j.createFromArray(false, false, false, true, false, false);
         assertEquals(y_exp, y);
     }
 
     @Test
     public void testMatchConditionCount() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[] {1, 1, 1, 0, 1, 1});
+        INDArray x = Nd4j.createFromArray(1.0, 1.0, 1.0, 0.0, 1.0, 1.0);
         INDArray y = base.matchConditionCount(x, Conditions.epsEquals(0.0));
         assertEquals(Nd4j.scalar(1L), y);
 
@@ -480,7 +479,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testOneHot() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{0, 1, 2});
+        INDArray x = Nd4j.createFromArray(0.0, 1.0, 2.0);
         INDArray y = base.oneHot(x, 1, 0, 1.0, 0.0);
         INDArray y_exp = Nd4j.createFromArray(new float[][]{{1.0f, 0.0f, 0.0f}});
         assertEquals(y_exp, y);
@@ -497,7 +496,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testOnesLike() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 3});
+        INDArray x = Nd4j.createFromArray(3, 3);
         INDArray y = base.onesLike(x);
         INDArray  y_exp = Nd4j.createFromArray(1.0, 1.0);
         assertEquals(y_exp, y);
@@ -562,12 +561,12 @@ public class NDBaseTest extends BaseNd4jTest {
     public void testReplaceWhere() {
         // test from BooleanIndexingTest.
         NDBase base = new NDBase();
-        INDArray array = Nd4j.create(new double[] {1, 2, 0, 4, 5});
-        INDArray comp = Nd4j.create(new double[] {1, 2, 3, 4, 5});
-        INDArray y = base.replaceWhere(array, comp, Conditions.lessThan(1));
-        assertEquals(comp, array);
-        assertEquals(y, array);
-        assertNotSame(y, array); //TODO: fails.
+        INDArray array1 = Nd4j.createFromArray( 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0);
+        INDArray array2 = Nd4j.createFromArray( 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0);
+
+        INDArray y = base.replaceWhere(array1, array2 , Conditions.greaterThan(4));
+        INDArray y_exp = Nd4j.createFromArray( 1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 1.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -635,7 +634,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testScalarSet() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[] {1, 2, 0, 4, 5});
+        INDArray x = Nd4j.createFromArray(1.0, 2.0, 0.0, 4.0, 5.0);
         INDArray y = base.scalarSet(x, 1.0);
         INDArray y_exp = Nd4j.ones(DataType.DOUBLE, 5);
         assertEquals(y_exp, y);
@@ -647,12 +646,13 @@ public class NDBaseTest extends BaseNd4jTest {
 
         //from testScatterOpGradients.
         INDArray x = Nd4j.ones(DataType.DOUBLE, 20, 10);
-        INDArray indices = Nd4j.create(new double[]{3, 4, 5, 10, 18}).castTo(DataType.INT32);
+        INDArray indices = Nd4j.createFromArray(3, 4, 5, 10, 18);
         INDArray updates = Nd4j.ones(DataType.DOUBLE, 5, 10);
         INDArray y = base.scatterAdd(x,indices, updates);
 
-        //just be happy it runs for now.
-        System.out.println(y);
+        y = y.getColumn(0);
+        INDArray  y_exp = Nd4j.createFromArray(1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -661,12 +661,13 @@ public class NDBaseTest extends BaseNd4jTest {
 
         //from testScatterOpGradients.
         INDArray x = Nd4j.ones(DataType.DOUBLE, 20, 10).add(1.0);
-        INDArray indices = Nd4j.create(new double[]{3, 4, 5, 10, 18}).castTo(DataType.INT32);
+        INDArray indices = Nd4j.createFromArray(3, 4, 5, 10, 18);
         INDArray updates = Nd4j.ones(DataType.DOUBLE, 5, 10).add(1.0);
         INDArray y = base.scatterDiv(x,indices, updates);
 
-        //just be happy it runs for now.
-        System.out.println(y);
+        y = y.getColumn(0);
+        INDArray  y_exp = Nd4j.createFromArray(2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -675,12 +676,13 @@ public class NDBaseTest extends BaseNd4jTest {
 
         //from testScatterOpGradients.
         INDArray x = Nd4j.ones(DataType.DOUBLE, 20, 10).add(1.0);
-        INDArray indices = Nd4j.create(new double[]{3, 4, 5, 10, 18}).castTo(DataType.INT32);
+        INDArray indices = Nd4j.createFromArray(3, 4, 5, 10, 18);
         INDArray updates = Nd4j.ones(DataType.DOUBLE, 5, 10).add(1.0);
         INDArray y = base.scatterMax(x,indices, updates);
 
-        //just be happy it runs for now.
-        System.out.println(y);
+        y = y.getColumn(0);
+        INDArray  y_exp = Nd4j.createFromArray(2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -689,12 +691,13 @@ public class NDBaseTest extends BaseNd4jTest {
 
         //from testScatterOpGradients.
         INDArray x = Nd4j.ones(DataType.DOUBLE, 20, 10).add(1.0);
-        INDArray indices = Nd4j.create(new double[]{3, 4, 5, 10, 18}).castTo(DataType.INT32);
+        INDArray indices = Nd4j.createFromArray(3, 4, 5, 10, 18);
         INDArray updates = Nd4j.ones(DataType.DOUBLE, 5, 10).add(1.0);
         INDArray y = base.scatterMin(x,indices, updates);
 
-        //just be happy it runs for now.
-        System.out.println(y);
+        y = y.getColumn(0);
+        INDArray  y_exp = Nd4j.createFromArray(2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -703,12 +706,13 @@ public class NDBaseTest extends BaseNd4jTest {
 
         //from testScatterOpGradients.
         INDArray x = Nd4j.ones(DataType.DOUBLE, 20, 10).add(1.0);
-        INDArray indices = Nd4j.create(new double[]{3, 4, 5, 10, 18}).castTo(DataType.INT32);
+        INDArray indices = Nd4j.createFromArray(3, 4, 5, 10, 18);
         INDArray updates = Nd4j.ones(DataType.DOUBLE, 5, 10).add(1.0);
         INDArray y = base.scatterMul(x,indices, updates);
 
-        //just be happy it runs for now.
-        System.out.println(y);
+        y = y.getColumn(0);
+        INDArray  y_exp = Nd4j.createFromArray(2.0, 2.0, 2.0, 4.0, 4.0, 4.0, 2.0, 2.0, 2.0, 2.0, 4.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 4.0, 2.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -717,12 +721,13 @@ public class NDBaseTest extends BaseNd4jTest {
 
         //from testScatterOpGradients.
         INDArray x = Nd4j.ones(DataType.DOUBLE, 20, 10).add(1.0);
-        INDArray indices = Nd4j.create(new double[]{3, 4, 5, 10, 18}).castTo(DataType.INT32);
+        INDArray indices = Nd4j.createFromArray(3, 4, 5, 10, 18);
         INDArray updates = Nd4j.ones(DataType.DOUBLE, 5, 10).add(1.0);
         INDArray y = base.scatterSub(x,indices, updates);
 
-        //just be happy it runs for now.
-        System.out.println(y);
+        y = y.getColumn(0);
+        INDArray  y_exp = Nd4j.createFromArray(2.0, 2.0, 2.0, 0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 0.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 0.0, 2.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -735,24 +740,25 @@ public class NDBaseTest extends BaseNd4jTest {
         INDArray updates = Nd4j.ones(DataType.DOUBLE, 5, 10).add(1.0);
         INDArray y = base.scatterUpdate(x,indices, updates);
 
-        //just be happy it runs for now.
-        System.out.println(y);
+        y = y.getColumn(0);
+        INDArray  y_exp = Nd4j.createFromArray(1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0);
+        assertEquals(y_exp, y);
     }
 
     @Test
     public void testSegmentMax() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2, 2});
+        INDArray x = Nd4j.createFromArray(3, 6, 1, 4, 9,2, 2);
         INDArray segmentIDs = Nd4j.createFromArray(0,0,1,1,1,2,2);
         INDArray y = base.segmentMax(x, segmentIDs);
-        INDArray y_exp = Nd4j.createFromArray(6.0, 9.0, 2.0);
+        INDArray y_exp = Nd4j.createFromArray(6, 9, 2);
         assertEquals(y_exp, y);
     }
 
     @Test
     public void testSegmentMean() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2, 2});
+        INDArray x = Nd4j.createFromArray(3.0, 6.0, 1.0, 4.0, 9.0,2.0, 2.0);
         INDArray segmentIDs = Nd4j.createFromArray(0,0,1,1,1,2,2);
         INDArray y = base.segmentMean(x, segmentIDs);
         INDArray y_exp = Nd4j.createFromArray(4.5, 4.6667, 2.0);
@@ -762,7 +768,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testSegmentMin() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2, 2});
+        INDArray x = Nd4j.createFromArray(3.0, 6.0, 1.0, 4.0, 9.0,2.0, 2.0);
         INDArray segmentIDs = Nd4j.createFromArray(0,0,1,1,1,2,2);
         INDArray y = base.segmentMin(x, segmentIDs);
         INDArray y_exp = Nd4j.createFromArray(3.0, 1.0, 2.0);
@@ -772,7 +778,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testSegmentProd() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2, 2});
+        INDArray x = Nd4j.createFromArray(3.0, 6.0, 1.0, 4.0, 9.0,2.0, 2.0);
         INDArray segmentIDs = Nd4j.createFromArray(0,0,1,1,1,2,2);
         INDArray y = base.segmentProd(x, segmentIDs);
         INDArray y_exp = Nd4j.createFromArray(18.0, 36.0, 4.0);
@@ -782,7 +788,7 @@ public class NDBaseTest extends BaseNd4jTest {
     @Test
     public void testSegmentSum() {
         NDBase base = new NDBase();
-        INDArray x = Nd4j.create(new double[]{3, 6, 1, 4, 9,2,2});
+        INDArray x = Nd4j.createFromArray(3.0, 6.0, 1.0, 4.0, 9.0,2.0, 2.0);
         INDArray segmentIDs = Nd4j.createFromArray(0,0,1,1,1,2,2);
         INDArray y = base.segmentSum(x, segmentIDs);
         INDArray y_exp = Nd4j.createFromArray(9.0, 14.0, 4.0);
@@ -796,9 +802,8 @@ public class NDBaseTest extends BaseNd4jTest {
         int maxlength = 5;
         DataType dt = DataType.FLOAT;
         INDArray y = base.sequenceMask(length, maxlength, dt);
-        System.out.println(y);
-        //TODO: org.nd4j.linalg.exception.ND4JIllegalStateException: Op name sequence_mask - no output arrays were provided and calculateOutputShape failed to execute
-        fail("expected value required");
+        INDArray y_exp = Nd4j.createFromArray(new boolean[][]{{true, false, false}, {true, true, true}, {true, true, false}});
+        assertEquals(y_exp, y);
     }
 
     @Test
@@ -912,8 +917,7 @@ public class NDBaseTest extends BaseNd4jTest {
         boolean transposeResult = false;
 
         INDArray res = base.tensorMmul(x, y, dimX, dimY, transposeX, transposeY, transposeResult);
-
-        System.out.println(res);
+        // org.nd4j.linalg.exception.ND4JIllegalStateException: Op name tensordot - no output arrays were provided and calculateOutputShape failed to execute
     }
 
     @Test
@@ -955,8 +959,6 @@ public class NDBaseTest extends BaseNd4jTest {
         INDArray x = Nd4j.createFromArray(1,3,2,6,4,9,8).castTo(DataType.FLOAT);
         INDArray segmentIDs = Nd4j.createFromArray(1,0,2,0,1,1,2);
         INDArray y = base.unsortedSegmentMean(x, segmentIDs, 3);
-        // TODO: Op [unsorted_segment_mean] failed check for output [0], DataType: [INT32];
-        //    leaving this in here for a moment. as everything works fine with unsortedSegmentMax, min and prod.
         INDArray y_exp = Nd4j.createFromArray(4.5f,4.6667f, 5.0f);
         assertEquals(y_exp, y);
     }
@@ -1022,5 +1024,4 @@ public class NDBaseTest extends BaseNd4jTest {
         assertEquals(x, y);
         assertNotSame(x, y);
     }
-
 }
